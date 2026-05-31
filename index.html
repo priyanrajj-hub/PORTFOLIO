@@ -1,209 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="cyber-mainframe">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priyanraj J | Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Priyanraj J | Interactive Engineering Mainframe</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
-<body>
+<body class="mainframe-body ready-state">
 
-    <!-- Animated Canvas Background -->
-    <canvas id="particleCanvas"></canvas>
+    <canvas id="cyberCanvas" class="background-engine-canvas"></canvas>
 
-    <!-- Header / Navbar -->
-    <header>
-        <nav class="container">
-            <div class="logo">priyanrajj<span>_hub</span></div>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#certifications">Certifications</a></li>
-                <li><a href="#workspace">Workspace</a></li>
+    <div class="pointer-glow-field" id="mouseGlow" aria-hidden="true"></div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;" aria-hidden="true">
+        <defs>
+            <filter id="cyber-glitch-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05 0.95" numOctaves="1" result="noise" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" result="displacement" />
+            </filter>
+        </defs>
+    </svg>
+
+    <header class="global-navbar-container">
+        <nav class="navigation-grid container" aria-label="Mainframe Navigation Architecture">
+            <div class="brand-logo-block">
+                <a href="#about" class="logo-link-node" data-value="priyanrajj_hub">priyanrajj<span class="accent-pulse-token">_hub</span></a>
+            </div>
+            <ul class="navigation-links-list">
+                <li class="nav-item-node"><a href="#about" class="nav-anchor-link active-node"><span class="nav-index-marker">01//</span>Core</a></li>
+                <li class="nav-item-node"><a href="#projects" class="nav-anchor-link"><span class="nav-index-marker">02//</span>Node_Projects</a></li>
+                <li class="nav-item-node"><a href="#certifications" class="nav-anchor-link"><span class="nav-index-marker">03//</span>Auth_Credentials</a></li>
+                <li class="nav-item-node"><a href="#workspace" class="nav-anchor-link"><span class="nav-index-marker">04//</span>Mainframe</a></li>
             </ul>
         </nav>
     </header>
 
-    <main class="container">
+    <main class="primary-application-wrapper container">
         
-        <!-- Hero Section -->
-        <section id="about" class="hero-section reveal">
-            <div class="hero-card">
-                <div class="profile-side">
-                    <div class="profile-img-container">
-                        <!-- Default placeholder image path inside your repository -->
-                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80" alt="Priyanraj J" class="profile-img">
-                        <div class="status-indicator"></div>
+        <section id="about" class="application-section-wrapper reveal-node active-reveal" aria-label="Identity Node Profile">
+            <div class="hero-split-grid-card">
+                
+                <aside class="identity-profile-sidebar">
+                    <div class="interactive-avatar-frame">
+                        <div class="avatar-aspect-ratio-box">
+                            <img src="priyanrajport.png" alt="Priyanraj J Structural Profile Portrait" class="avatar-image-asset" loading="eager">
+                        </div>
+                        <div class="dynamic-status-ping" title="System Status: Online"></div>
                     </div>
-                    <h1>PRIYANRAJ J</h1>
-                    <p class="subtitle">priyanrajj-hub</p>
-                    <p class="tagline">First Year Student at Amrita Vishwa Vidyapeetham, Chennai - CCE Dept.</p>
                     
-                    <div class="social-links">
-                        <a href="https://www.linkedin.com/in/priyanraj" target="_blank" class="btn btn-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</a>
-                        <a href="mailto:priyanrajj@gmail.com" class="btn btn-gmail"><i class="fas fa-envelope"></i> Gmail</a>
-                        <a href="#" target="_blank" class="btn btn-leetcode"><i class="fas fa-code"></i> LeetCode</a>
+                    <header class="identity-header-block">
+                        <h1 class="matrix-glitch-heading" data-text="PRIYANRAJ J" id="matrixName">PRIYANRAJ J</h1>
+                        <p class="system-uid-label">UID: <span class="highlight-token">priyanrajj-hub</span></p>
+                        <p class="institutional-tagline-text">First Year Undergrad at Amrita Vishwa Vidyapeetham, Chennai Campus • Department of Computer and Communication Engineering (CCE).</p>
+                    </header>
+                    
+                    <div class="interactive-action-button-stack">
+                        <a href="https://www.linkedin.com/in/priyanraj" target="_blank" rel="noopener noreferrer" class="action-btn-node btn-linkedin" aria-label="Establish LinkedIn Connection Platform">
+                            <i class="fab fa-linkedin" aria-hidden="true"></i> <span>LinkedIn Connection</span>
+                        </a>
+                        <a href="mailto:priyanrajj@gmail.com" class="action-btn-node btn-gmail" aria-label="Initialize Secure SSH Mail Channel">
+                            <i class="fas fa-envelope" aria-hidden="true"></i> <span>Secure Mail Channel</span>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" class="action-btn-node btn-leetcode" aria-label="Access LeetCode Algorithmic Registry">
+                            <i class="fas fa-code" aria-hidden="true"></i> <span>LeetCode Registry</span>
+                        </a>
                     </div>
-                </div>
+                </aside>
 
-                <div class="content-side">
-                    <div class="terminal-banner">
-                        <pre class="ascii-art">
+                <article class="terminal-shell-console-block">
+                    <div class="terminal-banner-ascii-frame">
+                        <pre class="ascii-typography-canvas" aria-label="ASCII representation of the name PRIYANRAJ">
 ██████  ██████  ██ ██    ██  █████  ███    ██ ██████   █████       ██ 
 ██   ██ ██   ██ ██  ██  ██  ██   ██ ████   ██ ██   ██ ██   ██      ██ 
 ██████  ██████  ██   ████   ███████ ██ ██  ██ ██████  ███████      ██ 
 ██      ██   ██ ██    ██    ██   ██ ██  ██ ██ ██   ██ ██   ██ ██   ██ 
 ██      ██   ██ ██    ██    ██   ██ ██   ████ ██   ██ ██   ██  █████  
                         </pre>
-                        <p class="subtitle-center glitch" data-text="AI & Data Science Enthusiast | Builder | Researcher">AI & Data Science Enthusiast | Builder | Researcher</p>
+                        <div class="typewriter-runtime-field" id="typewriterText" aria-live="polite"></div>
                     </div>
 
-                    <!-- Whoami Terminal Block -->
-                    <div class="terminal-block">
-                        <div class="terminal-header">
-                            <span class="dot red"></span>
-                            <span class="dot yellow"></span>
-                            <span class="dot green"></span>
-                            <span class="terminal-title">bash — status</span>
+                    <div class="mainframe-terminal-window-component">
+                        <div class="window-decorations-bar">
+                            <div class="window-control-dots-group">
+                                <span class="control-dot-node dot-red" aria-hidden="true"></span>
+                                <span class="control-dot-node dot-yellow" aria-hidden="true"></span>
+                                <span class="control-dot-node dot-green" aria-hidden="true"></span>
+                            </div>
+                            <span class="window-title-string-node">bash — user_environment_parameters.sh</span>
                         </div>
-                        <div class="terminal-body">
-                            <p><span class="prompt">$</span> whoami</p>
-                            <div class="info-grid">
-                                <div><span class="lbl">name</span>: Priyanraj J</div>
-                                <div><span class="lbl">location</span>: Tamil Nadu, India</div>
-                                <div><span class="lbl">education</span>: Amrita Vishwa Vidyapeetham + IIT Madras + IIT Guwahati</div>
-                                <div><span class="lbl">degrees</span>: B.Tech CCE + BS Data Science + BS DSAI</div>
-                                <div><span class="lbl">year</span>: First Year (2025-2029)</div>
-                                <div><span class="lbl">goal</span>: AI Researcher & Software Engineer</div>
-                                <div><span class="lbl">ieee</span>: Active Member</div>
+                        <div class="window-content-body-field">
+                            <p class="command-input-line-simulation"><span class="terminal-prompt-string">root@priyanrajj_hub:~#</span> whoami --detailed-specification</p>
+                            <div class="structured-mainframe-data-grid">
+                                <div class="data-row-node"><span class="data-key-label"><i class="fas fa-id-badge" aria-hidden="true"></i> identity_token</span><span class="data-value-string">Priyanraj J (Roll: CH.EN.U4CCE25020)</span></div>
+                                <div class="data-row-node"><span class="data-key-label"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> matrix_coordinates</span><span class="data-value-string">Tamil Nadu, India [Geo-Zone: UTC +5:30]</span></div>
+                                <div class="data-row-node"><span class="data-key-label"><i class="fas fa-university" aria-hidden="true"></i> active_nodes</span><span class="data-value-string">Amrita Vishwa Vidyapeetham + IIT Madras + IIT Guwahati</span></div>
+                                <div class="data-row-node"><span class="data-key-label"><i class="fas fa-graduation-cap" aria-hidden="true"></i> degree_tracks</span><span class="data-value-string">B.Tech CCE + BS Data Science + BS DSAI</span></div>
+                                <div class="data-row-node"><span class="data-key-label"><i class="fas fa-hourglass-start" aria-hidden="true"></i> structural_lifecycle</span><span class="data-value-string">First Year Target Horizon (2025-2029)</span></div>
+                                <div class="data-row-node"><span class="data-key-label"><i class="fas fa-crosshairs" aria-hidden="true"></i> mission_directive</span><span class="data-value-string">AI Researcher & Embedded Cryptographic Systems Software Engineer</span></div>
+                                <div class="data-row-node"><span class="data-key-label"><i class="fas fa-network-wired" aria-hidden="true"></i> system_affiliations</span><span class="data-value-string">IEEE Active Engineering Network Member</span></div>
                             </div>
                         </div>
                     </div>
-                    <blockquote class="quote">
-                        "Exploring multiple domains and building a strong interdisciplinary foundation before specializing."
+                    <blockquote class="motivational-quote-block">
+                        <p class="quote-text-string">"Exploring multiple domains and building a strong interdisciplinary foundation before specializing."</p>
                     </blockquote>
-                </div>
+                </article>
             </div>
         </section>
 
-        <!-- Projects Section -->
-        <section id="projects" class="section-block reveal">
-            <h2 class="section-title"><i class="fas fa-folder-open"></i> Projects</h2>
-            <div class="projects-grid">
+        <section class="application-section-wrapper reveal-node" aria-label="Brand Exhibition Asset">
+            <div class="brand-exhibition-viewport-card">
+                <img src="23b3235d-d946-4b44-a6e3-1be6d0a186c4.jpg" alt="Priyanraj J Multi-Institutional Brand Presentation Poster" class="brand-exhibition-image-asset" loading="lazy">
+                <div class="neon-lens-flare-overlay" aria-hidden="true"></div>
+            </div>
+        </section>
+
+        <section id="projects" class="application-section-wrapper reveal-node" aria-label="Engineering System Projects Repository">
+            <h2 class="mainframe-section-title"><i class="fas fa-folder-open text-blue" aria-hidden="true"></i> Core Systems Node_Projects</h2>
+            <div class="production-projects-fluid-grid">
                 
-                <!-- Project 1 -->
-                <div class="project-card">
-                    <div class="project-header">
-                        <h3>💊 Pharmaceutical Evergreening Detection & Management</h3>
-                    </div>
-                    <p>Patent registry in C — fuzzy drug name matching via Levenshtein edit distance, struct-based records, file I/O, and category/date table display.</p>
-                    <div class="tags">
-                        <span class="tag tag-c">C</span>
-                        <span class="tag">Algorithms</span>
-                        <span class="tag">File I/O</span>
-                    </div>
-                </div>
-
-                <!-- Project 2 -->
-                <div class="project-card">
-                    <div class="project-header">
-                        <h3>🤖 Smart Autonomous Patrol Robot</h3>
-                    </div>
-                    <p>Obstacle avoidance, gas & temperature sensors, velocity tracking, autonomous navigation built with robust embedded logic architecture.</p>
-                    <div class="tags">
-                        <span class="tag tag-cpp">Embedded C</span>
-                        <span class="tag">Sensors</span>
-                        <span class="tag">Robotics</span>
+                <div class="interactive-project-card-component">
+                    <div class="card-neon-border-glow-field" aria-hidden="true"></div>
+                    <div class="project-card-inner-structural-box">
+                        <header class="project-card-header-block">
+                            <span class="project-node-index-tag">SYS_NODE//01</span>
+                            <h3 class="project-node-title">💊 Pharmaceutical Evergreening Detection & Management</h3>
+                        </header>
+                        <p class="project-node-description-paragraph">High-complexity computational engine written in structural C. Detects intellectual property patent extensions utilizing optimized Levenshtein edit distance algorithms, customized struct-based database records, binary file I/O operations, and dynamic categorical table visualization grids designed for B.Tech Project Expo standards.</p>
+                        <footer class="project-card-tags-and-links-footer">
+                            <div class="tag-tokens-collection-group">
+                                <span class="tag-token tag-c">C Core Architecture</span>
+                                <span class="tag-token">Fuzzy String Matching</span>
+                                <span class="tag-token">Patent Analytics</span>
+                            </div>
+                        </footer>
                     </div>
                 </div>
 
-                <!-- Project 3 -->
-                <div class="project-card">
-                    <div class="project-header">
-                        <h3>📝 Student Management System</h3>
+                <div class="interactive-project-card-component">
+                    <div class="card-neon-border-glow-field" aria-hidden="true"></div>
+                    <div class="project-card-inner-structural-box">
+                        <header class="project-card-header-block">
+                            <span class="project-node-index-tag">SYS_NODE//02</span>
+                            <h3 class="project-node-title">🤖 Smart Autonomous Patrol Robot with Environment Sensing</h3>
+                        </header>
+                        <p class="project-node-description-paragraph">Autonomous tracking robotics platform engineered with hardware safe-states. Integrates real-time ultrasonic distance sensor arrays for obstacle avoidance, gas/smoke intelligence parsing via analog sensor registers, hardware velocity tracking loops, step-down buck converters for voltage regulation, and an on-board MicroSD data logging system.</p>
+                        <footer class="project-card-tags-and-links-footer">
+                            <div class="tag-tokens-collection-group">
+                                <span class="tag-token tag-cpp">Embedded C (ESP32/Arduino)</span>
+                                <span class="tag-token">Sensor Fusion Arrays</span>
+                                <span class="tag-token">IoT Telemetry</span>
+                            </div>
+                        </footer>
                     </div>
-                    <p>Python CLI — comprehensive application featuring attendance tracking, performance ranking, CSV data exports, backups, and reports.</p>
-                    <div class="tags">
-                        <span class="tag tag-py">Python</span>
-                        <span class="tag">CSV</span>
-                        <a href="#" class="repo-link"><i class="fab fa-github"></i> View Repo</a>
+                </div>
+
+                <div class="interactive-project-card-component">
+                    <div class="card-neon-border-glow-field" aria-hidden="true"></div>
+                    <div class="project-card-inner-structural-box">
+                        <header class="project-card-header-block">
+                            <span class="project-node-index-tag">SYS_NODE//03</span>
+                            <h3 class="project-node-title">📝 Student Data Management Mainframe Engine</h3>
+                        </header>
+                        <p class="project-node-description-paragraph">Clean command-line operational environment built in optimized Python 3. Evaluates class attendance records, calculates multi-tier academic performance ranking arrays, manages automated CSV data log stream exports, and handles redundant database validation checks tailored to curriculum specifications.</p>
+                        <footer class="project-card-tags-and-links-footer">
+                            <div class="tag-tokens-collection-group">
+                                <span class="tag-token tag-py">Python 3 Execution Core</span>
+                                <span class="tag-token">Data Lifecycle Management</span>
+                            </div>
+                            <a href="https://github.com/priyanrajj-hub/student-management-system-python" target="_blank" rel="noopener noreferrer" class="repository-anchor-node" aria-label="Access Public Python Project Source Repository">
+                                <i class="fab fa-github" aria-hidden="true"></i> <span>View Repository</span>
+                            </a>
+                        </footer>
                     </div>
                 </div>
 
             </div>
         </section>
 
-        <!-- Certifications & Roadmap -->
-        <section id="certifications" class="grid-two-col reveal">
-            <div class="section-block">
-                <h2 class="section-title"><i class="fas fa-award"></i> Certifications</h2>
-                <div class="table-wrapper">
-                    <table class="styled-table">
+        <section id="certifications" class="application-section-wrapper reveal-node split-layout-double-column-grid" aria-label="Verified Credentials and Roadmap Framework">
+            
+            <div class="inner-column-block-node">
+                <h2 class="mainframe-section-title"><i class="fas fa-award text-green" aria-hidden="true"></i> Auth_Certificates</h2>
+                <div class="table-outer-overflow-wrapper">
+                    <table class="mainframe-production-data-table">
                         <thead>
                             <tr>
-                                <th>Provider</th>
-                                <th>Certification Name</th>
+                                <th scope="col">Authentication Authority</th>
+                                <th scope="col">Validated Technical Token Module</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>NPTEL</td><td>The Joy of Computing Using Python</td></tr>
-                            <tr><td>NPTEL</td><td>English Language for Competitive Exams</td></tr>
-                            <tr><td>Infosys</td><td>Computational Problem Solving</td></tr>
-                            <tr><td>IIT Guwahati</td><td>BS DSAI Orientation Course</td></tr>
-                            <tr><td>IEEE</td><td>Active Member</td></tr>
+                            <tr><td><i class="fas fa-certificate text-blue" aria-hidden="true"></i> NPTEL Framework</td><td>The Joy of Computing Using Python — Core Track</td></tr>
+                            <tr><td><i class="fas fa-certificate text-blue" aria-hidden="true"></i> NPTEL Framework</td><td>English Language for Competitive Exams — Advanced Module</td></tr>
+                            <tr><td><i class="fas fa-shield-halved text-purple" aria-hidden="true"></i> Infosys Platform</td><td>Computational Problem Solving & Algorithmic Optimization</td></tr>
+                            <tr><td><i class="fas fa-atom text-green" aria-hidden="true"></i> IIT Guwahati</td><td>BS DSAI Intensive Core Orientation Token</td></tr>
+                            <tr><td><i class="fas fa-satellite text-blue" aria-hidden="true"></i> IEEE Global Node</td><td>Active Global Research Engineering Network Member</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="section-block">
-                <h2 class="section-title"><i class="fas fa-map-signs"></i> 2026 Roadmap</h2>
-                <div class="roadmap-card">
-                    <ul class="roadmap-list">
-                        <li>
-                            <span class="quarter">Q2 2026</span> 
-                            <div class="progress-track"><div class="progress-bar" style="width: 85%;"></div></div>
-                            <span class="task">Master Python + DSA</span>
+            <div class="inner-column-block-node">
+                <h2 class="mainframe-section-title"><i class="fas fa-map-signs text-purple" aria-hidden="true"></i> 2026 Core Operations Roadmap</h2>
+                <div class="roadmap-production-container-card">
+                    <ul class="roadmap-chronological-list">
+                        <li class="roadmap-event-item-node">
+                            <span class="timeline-quarter-tag">Q2 2026</span> 
+                            <div class="progress-track-rail" aria-hidden="true"><div class="progress-fill-bar" style="width: 85%;"></div></div>
+                            <span class="timeline-task-string">Advance Data Structures & Advanced Algorithmic Optimization Protocols</span>
                         </li>
-                        <li>
-                            <span class="quarter">Q3 2026</span> 
-                            <div class="progress-track"><div class="progress-bar" style="width: 40%;"></div></div>
-                            <span class="task">Build & deploy first AI/ML project</span>
+                        <li class="roadmap-event-item-node">
+                            <span class="timeline-quarter-tag">Q3 2026</span> 
+                            <div class="progress-track-rail" aria-hidden="true"><div class="progress-fill-bar" style="width: 45%;"></div></div>
+                            <span class="timeline-task-string">Model and Deploy Deep Learning Neuromorphic Predictive Layers</span>
                         </li>
-                        <li>
-                            <span class="quarter">Q4 2026</span> 
-                            <div class="progress-track"><div class="progress-bar" style="width: 10%;"></div></div>
-                            <span class="task">Open Source + research portfolio</span>
+                        <li class="roadmap-event-item-node">
+                            <span class="timeline-quarter-tag">Q4 2026</span> 
+                            <div class="progress-track-rail" aria-hidden="true"><div class="progress-fill-bar" style="width: 15%;"></div></div>
+                            <span class="timeline-task-string">Publish Cryptographic Open-Source Repositories to Global Nodes</span>
                         </li>
-                        <li>
-                            <span class="quarter">2027</span> 
-                            <div class="progress-track"><div class="progress-bar" style="width: 5%;"></div></div>
-                            <span class="task">GATE CSE prep - publish technical work</span>
+                        <li class="roadmap-event-item-node">
+                            <span class="timeline-quarter-tag">CY 2027</span> 
+                            <div class="progress-track-rail" aria-hidden="true"><div class="progress-fill-bar" style="width: 5%;"></div></div>
+                            <span class="timeline-task-string">Execute Complete GATE CSE Target Preparation Architecture</span>
                         </li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- Workspace Section -->
-        <section id="workspace" class="section-block reveal">
-            <h2 class="section-title"><i class="fas fa-desktop"></i> Workspace</h2>
-            <div class="workspace-card">
-                <div class="workspace-item"><i class="fas fa-laptop text-blue pulse-slow"></i> <span><strong>Hardware:</strong> ASUS TUF Gaming Laptop</span></div>
-                <div class="workspace-item"><i class="fas fa-microchip text-purple pulse-slow"></i> <span><strong>Processor:</strong> Intel Core i7</span></div>
-                <div class="workspace-item"><i class="fas fa-gamepad text-green pulse-slow"></i> <span><strong>Graphics:</strong> NVIDIA RTX 5060</span></div>
-                <div class="workspace-item"><i class="fas fa-map-marker-alt text-red pulse-slow"></i> <span><strong>Zone:</strong> Tamil Nadu, India • UTC +5:30</span></div>
+        <section id="workspace" class="application-section-wrapper reveal-node" aria-label="Hardware Mainframe Environment Specification">
+            <h2 class="mainframe-section-title"><i class="fas fa-desktop text-blue" aria-hidden="true"></i> Mainframe Workspace Specification</h2>
+            <div class="workspace-specifications-fluid-grid">
+                <div class="spec-node-item-box"><i class="fas fa-laptop text-blue pulse-slow-effect" aria-hidden="true"></i> <span><strong>Hardware Platform:</strong> ASUS TUF Gaming Premium Core Architecture</span></div>
+                <div class="spec-node-item-box"><i class="fas fa-microchip text-purple pulse-slow-effect" aria-hidden="true"></i> <span><strong>Processor Unit:</strong> Intel Core i7 High-Performance HX Series</span></div>
+                <div class="spec-node-item-box"><i class="fas fa-gamepad text-green pulse-slow-effect" aria-hidden="true"></i> <span><strong>Graphics Processing Array:</strong> NVIDIA GeForce RTX 5060 Edition</span></div>
+                <div class="spec-node-item-box"><i class="fas fa-network-wired text-red pulse-slow-effect" aria-hidden="true"></i> <span><strong>Mainframe Node Location:</strong> Tamil Nadu, India • Network Coordinate UTC +5:30</span></div>
             </div>
-            <p class="footer-motto">🚀 Learning Relentlessly • Building Consistently • Growing Every Day</p>
+            <p class="mainframe-footer-motto-string" role="doc-subtitle">🚀 Learning Relentlessly • Building Consistently • Growing Every Day</p>
         </section>
 
     </main>
 
-    <footer>
-        <p>&copy; 2026 Priyanraj J. Powered by GitHub Pages.</p>
+    <footer class="mainframe-global-footer-block" role="contentinfo">
+        <p class="footer-copyright-string">&copy; 2026 Priyanraj J. Portions of code compiled securely under SSH Shell Access. Hosted via GitHub Secure Infrastructure Pages.</p>
     </footer>
 
-    <script src="script.js"></script>
 </body>
 </html>
