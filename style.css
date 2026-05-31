@@ -1,417 +1,256 @@
-:root {
-    --bg-main: #0a0e14;
-    --bg-card: rgba(22, 27, 34, 0.75);
-    --bg-terminal: #05070a;
-    --border-color: #30363d;
-    --text-primary: #c9d1d9;
-    --text-muted: #8b949e;
-    --accent-blue: #58a6ff;
-    --accent-green: #2ea44f;
-    --font-code: 'Courier New', Courier, monospace;
-}
+/**
+ * ==========================================================================
+ * Priyanraj J | Interactive Mainframe Script Engine Core
+ * Architecture: Optimized Vanishing Vector Arrays & Performance Node Clusters
+ * ==========================================================================
+ */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+"use strict";
 
-html {
-    scroll-behavior: smooth;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- 01. HARDWARE-ACCELERATED HTML5 CANVASES NEURAL ENGINE ---
+    const canvas = document.getElementById('cyberCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false }); // Disable transparency layer for memory optimization
 
-body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    line-height: 1.6;
-    padding-top: 70px;
-    overflow-x: hidden;
-}
+    let nodeArray = [];
+    let animationFrameId = null;
+    const maxConnectionDistance = 140;
+    const targetNodeDensityCount = 65;
 
-/* Background Canvas */
-#particleCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-    pointer-events: none;
-}
+    // Viewport Scaler Configuration Mapping
+    function fitEngineViewportBounds() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    
+    // Low-overhead debouncer rule matching resize events
+    let resizeDebounceTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeDebounceTimeout);
+        resizeDebounceTimeout = setTimeout(() => {
+            fitEngineViewportBounds();
+            rebootNeuralClusterGrid();
+        }, 150);
+    });
+    fitEngineViewportBounds();
 
-.container {
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
+    // Data-Structure Model Tracking Physics Properties
+    class MainframeNode {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.radius = Math.random() * 1.3 + 0.6;
+            this.vx = (Math.random() - 0.5) * 0.38;
+            this.vy = (Math.random() - 0.5) * 0.38;
+        }
+        computePhysicsVector() {
+            this.x += this.vx;
+            this.y += this.vy;
 
-/* Scroll-Reveal Framework */
-.reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
+            // Boundary Collisions Check Logic Loop
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        renderNodeDot() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(88, 166, 255, 0.28)';
+            ctx.fill();
+        }
+    }
 
-.reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-}
+    function rebootNeuralClusterGrid() {
+        nodeArray = [];
+        for (let i = 0; i < targetNodeDensityCount; i++) {
+            nodeArray.push(new MainframeNode());
+        }
+    }
 
-/* Header / Navbar Layout */
-header {
-    background-color: rgba(10, 14, 20, 0.85);
-    border-bottom: 1px solid var(--border-color);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    backdrop-filter: blur(12px);
-}
+    function traceNeuralIntersections() {
+        const nodesCount = nodeArray.length;
+        const maxDistSq = maxConnectionDistance * maxConnectionDistance;
 
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 60px;
-}
+        for (let a = 0; a < nodesCount; a++) {
+            const nodeA = nodeArray[a];
+            for (let b = a + 1; b < nodesCount; b++) {
+                const nodeB = nodeArray[b];
+                
+                // Fast distance approximation checking before Math.sqrt execution
+                const dx = nodeA.x - nodeB.x;
+                const dy = nodeA.y - nodeB.y;
+                const distSq = (dx * dx) + (dy * dy);
 
-.logo {
-    font-weight: 700;
-    font-size: 1.2rem;
-    letter-spacing: 0.5px;
-}
+                if (distSq < maxDistSq) {
+                    const linearAlpha = 1 - (Math.sqrt(distSq) / maxConnectionDistance);
+                    ctx.strokeStyle = `rgba(33, 38, 45, ${linearAlpha * 0.6})`;
+                    ctx.lineWidth = 0.85;
+                    ctx.beginPath();
+                    ctx.moveTo(nodeA.x, nodeA.y);
+                    ctx.lineTo(nodeB.x, nodeB.y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
 
-.logo span {
-    color: var(--accent-blue);
-    animation: pulse 2s infinite alternate;
-}
+    function coreRenderEngineLoop() {
+        // Optimization: Use deep solid filling instead of clearRect to avoid compositing cost layers
+        ctx.fillStyle = '#06090e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-.nav-links {
-    display: flex;
-    list-style: none;
-    gap: 24px;
-}
+        const nodesCount = nodeArray.length;
+        for (let i = 0; i < nodesCount; i++) {
+            nodeArray[i].computePhysicsVector();
+            nodeArray[i].renderNodeDot();
+        }
+        
+        traceNeuralIntersections();
+        animationFrameId = requestAnimationFrame(coreRenderEngineLoop);
+    }
 
-.nav-links a {
-    color: var(--text-muted);
-    text-decoration: none;
-    position: relative;
-    font-size: 0.95rem;
-    transition: color 0.3s;
-}
+    rebootNeuralClusterGrid();
+    coreRenderEngineLoop();
 
-.nav-links a:hover {
-    color: var(--text-primary);
-}
 
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 0;
-    background-color: var(--accent-blue);
-    transition: width 0.3s ease;
-}
+    // --- 02. FLUID POINTER GLOW INTERACTIVE TRACKER ---
+    const mouseGlowElement = document.getElementById('mouseGlow');
+    let currentX = 0, currentY = 0;
+    let targetX = 0, targetY = 0;
+    const lerpInterpolationFactor = 0.08; // Smooth trailing delay parameter
 
-.nav-links a:hover::after {
-    width: 100%;
-}
+    window.addEventListener('mousemove', (event) => {
+        targetX = event.clientX;
+        targetY = event.clientY;
+    }, { passive: true }); // Passivity optimization flags for frame performance
 
-/* Hero Section / Profile Cards */
-.hero-card {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 30px;
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-}
+    function animatePointerTrail() {
+        currentX += (targetX - currentX) * lerpInterpolationFactor;
+        currentY += (targetY - currentY) * lerpInterpolationFactor;
+        
+        mouseGlowElement.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+        requestAnimationFrame(animatePointerTrail);
+    }
+    animatePointerTrail();
 
-.profile-side {
-    text-align: center;
-    border-right: 1px solid var(--border-color);
-    padding-right: 30px;
-}
 
-.profile-img-container {
-    position: relative;
-    width: 160px;
-    height: 160px;
-    margin: 0 auto 15px;
-}
+    // --- 03. HIGH-FIDELITY MATRIX LOG TYPEWRITER ENGINE ---
+    const typewriterTargetField = document.getElementById('typewriterText');
+    const logDataStringsArray = [
+        "AI & Data Science Enthusiast | Builder | Researcher",
+        "Initializing secure mainframe node dependencies...",
+        "Current Status: Active Member // System Integrity: Secure"
+    ];
+    let activeStringIndex = 0;
+    let currentCharacterIndex = 0;
+    let isDeletingStateActive = false;
 
-.profile-img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--border-color);
-    transition: transform 0.5s ease;
-}
+    function executeTypewriterLifecycleLoop() {
+        const fullStringText = logDataStringsArray[activeStringIndex];
+        
+        if (!isDeletingStateActive) {
+            typewriterTargetField.textContent = fullStringText.substring(0, currentCharacterIndex + 1);
+            currentCharacterIndex++;
+            
+            if (currentCharacterIndex === fullStringText.length) {
+                isDeletingStateActive = true;
+                setTimeout(executeTypewriterLifecycleLoop, 2500); // Terminal visual dwell delay
+            } else {
+                setTimeout(executeTypewriterLifecycleLoop, 55);
+            }
+        } else {
+            typewriterTargetField.textContent = fullStringText.substring(0, currentCharacterIndex - 1);
+            currentCharacterIndex--;
+            
+            if (currentCharacterIndex === 0) {
+                isDeletingStateActive = false;
+                activeStringIndex = (activeStringIndex + 1) % logDataStringsArray.length;
+                setTimeout(executeTypewriterLifecycleLoop, 450); // Buffer loop block
+            } else {
+                setTimeout(executeTypewriterLifecycleLoop, 25);
+            }
+        }
+    }
+    setTimeout(executeTypewriterLifecycleLoop, 1000);
 
-.profile-img-container:hover .profile-img {
-    transform: scale(1.04) rotate(2deg);
-    border-color: var(--accent-blue);
-}
 
-.status-indicator {
-    position: absolute;
-    bottom: 8px;
-    right: 12px;
-    width: 16px;
-    height: 16px;
-    background-color: #238636;
-    border: 3px solid var(--bg-card);
-    border-radius: 50%;
-    animation: breathe 2s infinite ease-in-out;
-}
+    // --- 04. REAL-TIME NAME STRING SCRAMBLE MATRIX PROTOCOL ---
+    const targetNameHeadingNode = document.getElementById('matrixName');
+    const cryptographicGlyphsToken = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+=?";
+    let scrambleIntervalTrackerInstance = null;
 
-.social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 15px;
-}
+    function runIdentityScrambleSequence() {
+        const standardLiteralValue = targetNameHeadingNode.dataset.text;
+        let runningIterationCount = 0;
+        
+        clearInterval(scrambleIntervalTrackerInstance);
+        
+        scrambleIntervalTrackerInstance = setInterval(() => {
+            targetNameHeadingNode.innerText = standardLiteralValue.split("").map((character, index) => {
+                if (index < runningIterationCount) {
+                    return standardLiteralValue[index]; // Return correct string value lock
+                }
+                return cryptographicGlyphsToken[Math.floor(Math.random() * cryptographicGlyphsToken.length)];
+            }).join("");
+            
+            if (runningIterationCount >= standardLiteralValue.length) {
+                clearInterval(scrambleIntervalTrackerInstance);
+            }
+            runningIterationCount += 1 / 3; // Controls progression speed
+        }, 30);
+    }
+    // Triggers beautifully whenever the user inspects or hovers your profile name
+    targetNameHeadingNode.addEventListener('mouseenter', runIdentityScrambleSequence);
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-    color: #fff;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
 
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
+    // --- 05. HIGH-PERFORMANCE INTERSECTION OBSERVER SCROLL REVEALS ---
+    const revealNodeTargetsList = document.querySelectorAll('.reveal-node');
+    
+    const intersectionObserverOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -25px 0px"
+    };
 
-.btn-linkedin { background-color: #0077b5; }
-.btn-gmail { background-color: #ea4335; }
-.btn-leetcode { background-color: #d946ef; }
+    const viewportScrollObserver = new IntersectionObserver((observedEntries, referenceObserver) => {
+        observedEntries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active-reveal');
+                referenceObserver.unobserve(entry.target); // Unbind to optimize hardware processes
+            }
+        });
+    }, intersectionObserverOptions);
 
-/* Content / Terminal Area */
-.content-side {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+    revealNodeTargetsList.forEach(targetNode => {
+        viewportScrollObserver.observe(targetNode);
+    });
 
-.terminal-banner {
-    background-color: var(--bg-terminal);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    overflow-x: auto;
-}
 
-.ascii-art {
-    font-family: var(--font-code);
-    color: var(--accent-blue);
-    font-size: 0.65rem;
-    line-height: 1.2;
-}
+    // --- 06. SMOOTH AUTO-LINK ACTIVE VIEWPORT SCROLL COORDINATOR ---
+    const navigationalAnchors = document.querySelectorAll('.nav-anchor-link');
+    const systemSections = document.querySelectorAll('section');
 
-.terminal-block {
-    background-color: var(--bg-terminal);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-}
+    function syncActiveNavMarkerState() {
+        let activeSectionId = "";
+        let minimumTopDistance = Infinity;
 
-.terminal-header {
-    background-color: #161b22;
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border-bottom: 1px solid var(--border-color);
-}
+        systemSections.forEach(section => {
+            const boundaryBoxRect = section.getBoundingClientRect();
+            // Checks which section occupies the viewport epicenter
+            if (boundaryBoxRect.top >= -200 && boundaryBoxRect.top < minimumTopDistance) {
+                minimumTopDistance = boundaryBoxRect.top;
+                activeSectionId = section.getAttribute('id');
+            }
+        });
 
-.dot { width: 10px; height: 10px; border-radius: 50%; }
-.red { background-color: #ff5f56; }
-.yellow { background-color: #ffbd2e; }
-.green { background-color: #27c93f; }
+        if (activeSectionId) {
+            navigationalAnchors.forEach(anchor => {
+                anchor.classList.remove('active-node');
+                if (anchor.getAttribute('href') === `#${activeSectionId}`) {
+                    anchor.classList.add('active-node');
+                }
+            });
+        }
+    }
 
-.terminal-title {
-    font-family: var(--font-code);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-left: 5px;
-}
-
-.terminal-body {
-    padding: 18px;
-    font-family: var(--font-code);
-    font-size: 0.88rem;
-}
-
-.prompt { color: var(--accent-green); }
-
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-    margin-top: 10px;
-    padding-left: 12px;
-}
-
-.lbl { color: var(--accent-blue); }
-
-.quote {
-    border-left: 3px solid var(--accent-blue);
-    padding-left: 15px;
-    font-style: italic;
-    color: var(--text-muted);
-    margin-top: 15px;
-    font-size: 0.9rem;
-}
-
-/* Projects Layout Section */
-.section-block { margin: 50px 0; }
-
-.section-title {
-    font-size: 1.4rem;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-}
-
-.project-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.project-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--accent-blue);
-    box-shadow: 0 12px 24px rgba(88, 166, 255, 0.1);
-}
-
-.project-header h3 { font-size: 1.1rem; margin-bottom: 12px; }
-.project-card p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px; }
-
-.tags { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-
-.tag {
-    background-color: var(--bg-terminal);
-    border: 1px solid var(--border-color);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-}
-
-.tag-c { border-color: #a8b9cc; color: #58a6ff; }
-.tag-cpp { border-color: #00599c; color: #58a6ff; }
-.tag-py { border-color: #3572A5; color: #ffd43b; }
-.repo-link { font-size: 0.8rem; color: var(--accent-blue); text-decoration: none; margin-left: auto; }
-
-/* Mixed Columns Layout Components */
-.grid-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-.table-wrapper { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
-.styled-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
-.styled-table th { background-color: var(--bg-terminal); padding: 14px 18px; border-bottom: 1px solid var(--border-color); }
-.styled-table td { padding: 12px 18px; border-bottom: 1px solid var(--border-color); transition: background-color 0.2s; }
-.styled-table tr:hover td { background-color: rgba(88, 166, 255, 0.04); }
-
-/* Progress Tracks & Roadmap */
-.roadmap-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; }
-.roadmap-list { list-style: none; }
-.roadmap-list li { display: grid; grid-template-columns: 80px 120px 1fr; align-items: center; margin-bottom: 18px; }
-.roadmap-list li:last-child { margin-bottom: 0; }
-.quarter { color: var(--accent-blue); font-weight: bold; font-family: var(--font-code); font-size: 0.85rem; }
-
-.progress-track {
-    background-color: var(--bg-terminal);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    height: 8px;
-    width: 100px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
-    height: 100%;
-    border-radius: 10px;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 1.5s cubic-bezier(0.1, 1, 0.1, 1);
-}
-
-.reveal.active .progress-bar {
-    transform: scaleX(1);
-}
-
-.task { font-size: 0.88rem; padding-left: 10px; }
-
-/* Workspace Component Layouts */
-.workspace-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 24px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-}
-
-.workspace-item { display: flex; align-items: center; gap: 14px; font-size: 0.9rem; }
-.text-blue { color: var(--accent-blue); }
-.text-purple { color: #d946ef; }
-.text-green { color: var(--accent-green); }
-.text-red { color: #ea4335; }
-
-.footer-motto { text-align: center; margin-top: 30px; font-size: 0.95rem; font-weight: 600; color: var(--text-muted); }
-footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.8rem; margin-top: 60px; }
-
-/* Animation Keyframes */
-@keyframes breathe {
-    0%, 100% { transform: scale(1); opacity: 0.9; box-shadow: 0 0 0 0 rgba(35, 134, 54, 0.4); }
-    50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 8px 4px rgba(35, 134, 54, 0.6); }
-}
-
-@keyframes pulse {
-    0% { opacity: 0.7; }
-    100% { opacity: 1; }
-}
-
-.pulse-slow { animation: pulse 2s infinite alternate; }
-
-/* Responsive Media Controls */
-@media (max-width: 850px) {
-    .hero-card { grid-template-columns: 1fr; }
-    .profile-side { border-right: none; border-bottom: 1px solid var(--border-color); padding-right: 0; padding-bottom: 25px; }
-    .grid-two-col { grid-template-columns: 1fr; }
-    .roadmap-list li { grid-template-columns: 80px 1fr; gap: 10px; }
-    .progress-track { display: none; }
-}
+    window.addEventListener('scroll', syncActiveNavMarkerState, { passive: true });
+});
