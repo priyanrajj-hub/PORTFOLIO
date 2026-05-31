@@ -1,256 +1,171 @@
-/**
- * ==========================================================================
- * Priyanraj J | Interactive Mainframe Script Engine Core
- * Architecture: Optimized Vanishing Vector Arrays & Performance Node Clusters
- * ==========================================================================
- */
+:root {
+    --bg-main: #0a0e14;
+    --bg-card: rgba(17, 22, 28, 0.75);
+    --bg-terminal: #05070a;
+    --border-color: #21262d;
+    --text-primary: #f0f6fc;
+    --text-muted: #8b949e;
+    --accent-blue: #58a6ff;
+    --accent-blue-rgb: 88, 166, 255;
+    --accent-green: #3fb950;
+    --accent-purple: #bc8cff;
+    --accent-red: #f85149;
+    --font-code: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
 
-"use strict";
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding-top: 90px;
+    overflow-x: hidden;
+}
 
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- 01. HARDWARE-ACCELERATED HTML5 CANVASES NEURAL ENGINE ---
-    const canvas = document.getElementById('cyberCanvas');
-    const ctx = canvas.getContext('2d', { alpha: false }); // Disable transparency layer for memory optimization
+/* Base Canvas Engine */
+.background-engine-canvas {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -3; pointer-events: none;
+}
 
-    let nodeArray = [];
-    let animationFrameId = null;
-    const maxConnectionDistance = 140;
-    const targetNodeDensityCount = 65;
+.pointer-glow-field {
+    position: fixed;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(var(--accent-blue-rgb), 0.06) 0%, rgba(0,0,0,0) 70%);
+    border-radius: 50%; z-index: -2; pointer-events: none;
+    transform: translate(-50%, -50%);
+}
 
-    // Viewport Scaler Configuration Mapping
-    function fitEngineViewportBounds() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    
-    // Low-overhead debouncer rule matching resize events
-    let resizeDebounceTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeDebounceTimeout);
-        resizeDebounceTimeout = setTimeout(() => {
-            fitEngineViewportBounds();
-            rebootNeuralClusterGrid();
-        }, 150);
-    });
-    fitEngineViewportBounds();
+.container { width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 24px; }
 
-    // Data-Structure Model Tracking Physics Properties
-    class MainframeNode {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.radius = Math.random() * 1.3 + 0.6;
-            this.vx = (Math.random() - 0.5) * 0.38;
-            this.vy = (Math.random() - 0.5) * 0.38;
-        }
-        computePhysicsVector() {
-            this.x += this.vx;
-            this.y += this.vy;
+/* Global Header Components */
+.global-navbar-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 65px;
+    background-color: rgba(10, 14, 20, 0.85);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000; backdrop-filter: blur(12px);
+}
+.navigation-grid { display: flex; justify-content: space-between; align-items: center; height: 100%; }
+.logo-link-node { font-family: var(--font-code); font-weight: bold; color: #fff; text-decoration: none; }
+.logo-link-node span { color: var(--accent-blue); }
+.navigation-links-list { display: flex; list-style: none; gap: 24px; }
+.nav-anchor-link { color: var(--text-muted); text-decoration: none; font-family: var(--font-code); font-size: 0.85rem; }
+.nav-index-marker { color: var(--accent-blue); margin-right: 4px; }
 
-            // Boundary Collisions Check Logic Loop
-            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-        }
-        renderNodeDot() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(88, 166, 255, 0.28)';
-            ctx.fill();
-        }
-    }
+/* Structural Split Main Layout Split Cards */
+.primary-application-wrapper { display: flex; flex-direction: column; gap: 45px; }
+.hero-split-grid-card {
+    display: grid; grid-template-columns: 320px 1fr; gap: 40px;
+    background-color: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+}
 
-    function rebootNeuralClusterGrid() {
-        nodeArray = [];
-        for (let i = 0; i < targetNodeDensityCount; i++) {
-            nodeArray.push(new MainframeNode());
-        }
-    }
+.identity-profile-sidebar { display: flex; flex-direction: column; align-items: center; border-right: 1px solid var(--border-color); padding-right: 40px; }
+.interactive-avatar-frame { position: relative; width: 170px; height: 170px; margin-bottom: 20px; }
+.avatar-aspect-ratio-box { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; border: 3px solid var(--border-color); }
+.avatar-image-asset { width: 100%; height: 100%; object-fit: cover; }
+.dynamic-status-ping {
+    position: absolute; bottom: 10px; right: 12px; width: 16px; height: 16px;
+    background-color: var(--accent-green); border: 3px solid #11161d; border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-green);
+}
 
-    function traceNeuralIntersections() {
-        const nodesCount = nodeArray.length;
-        const maxDistSq = maxConnectionDistance * maxConnectionDistance;
+.matrix-glitch-heading { font-family: var(--font-code); font-size: 1.65rem; font-weight: 800; text-align: center; }
+.system-uid-label { font-family: var(--font-code); color: var(--text-muted); font-size: 0.8rem; margin: 4px 0 15px; }
+.institutional-tagline-text { font-size: 0.85rem; color: var(--text-primary); opacity: 0.95; margin-bottom: 24px; text-align: center; }
 
-        for (let a = 0; a < nodesCount; a++) {
-            const nodeA = nodeArray[a];
-            for (let b = a + 1; b < nodesCount; b++) {
-                const nodeB = nodeArray[b];
-                
-                // Fast distance approximation checking before Math.sqrt execution
-                const dx = nodeA.x - nodeB.x;
-                const dy = nodeA.y - nodeB.y;
-                const distSq = (dx * dx) + (dy * dy);
+/* Buttons Controls */
+.interactive-action-button-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.action-btn-node {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 11px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-code);
+    text-decoration: none; color: #fff; border: 1px solid rgba(255,255,255,0.05);
+}
+.btn-linkedin { background-color: #1f6feb; }
+.btn-gmail { background-color: #f85149; }
+.btn-leetcode { background-color: #ab47bc; }
 
-                if (distSq < maxDistSq) {
-                    const linearAlpha = 1 - (Math.sqrt(distSq) / maxConnectionDistance);
-                    ctx.strokeStyle = `rgba(33, 38, 45, ${linearAlpha * 0.6})`;
-                    ctx.lineWidth = 0.85;
-                    ctx.beginPath();
-                    ctx.moveTo(nodeA.x, nodeA.y);
-                    ctx.lineTo(nodeB.x, nodeB.y);
-                    ctx.stroke();
-                }
-            }
-        }
-    }
+/* Main Shell Windows Panel Content rules */
+.terminal-shell-console-block { display: flex; flex-direction: column; justify-content: space-between; }
+.terminal-banner-ascii-frame { background-color: var(--bg-terminal); border: 1px solid var(--border-color); border-radius: 8px; padding: 18px; margin-bottom: 20px; }
+.ascii-typography-canvas { font-family: var(--font-code); color: var(--accent-blue); font-size: 0.62rem; line-height: 1.2; font-weight: bold; }
+.typewriter-runtime-field { font-family: var(--font-code); font-size: 0.85rem; margin-top: 10px; color: #a5d6ff; min-height: 1.2rem; }
 
-    function coreRenderEngineLoop() {
-        // Optimization: Use deep solid filling instead of clearRect to avoid compositing cost layers
-        ctx.fillStyle = '#06090e';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+.mainframe-terminal-window-component { background-color: var(--bg-terminal); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+.window-decorations-bar { background-color: #161b22; padding: 10px 16px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border-color); }
+.control-dot-node { width: 10px; height: 10px; border-radius: 50%; }
+.dot-red { background-color: var(--accent-red); }
+.dot-yellow { background-color: #f0883e; }
+.dot-green { background-color: var(--accent-green); }
+.window-title-string-node { font-family: var(--font-code); font-size: 0.72rem; color: var(--text-muted); margin-left: 5px; }
+.window-content-body-field { padding: 20px; font-family: var(--font-code); font-size: 0.85rem; }
+.terminal-prompt-string { color: #56d364; }
 
-        const nodesCount = nodeArray.length;
-        for (let i = 0; i < nodesCount; i++) {
-            nodeArray[i].computePhysicsVector();
-            nodeArray[i].renderNodeDot();
-        }
-        
-        traceNeuralIntersections();
-        animationFrameId = requestAnimationFrame(coreRenderEngineLoop);
-    }
+.structured-mainframe-data-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.data-row-node { display: grid; grid-template-columns: 180px 1fr; line-height: 1.4; }
+.data-key-label { color: var(--accent-blue); }
+.data-key-label i { margin-right: 5px; }
 
-    rebootNeuralClusterGrid();
-    coreRenderEngineLoop();
+.motivational-quote-block { border-left: 3px solid var(--accent-blue); padding-left: 15px; font-style: italic; color: var(--text-muted); margin-top: 20px; font-size: 0.88rem; }
 
+/* Brand Presentation Poster Card elements */
+.brand-exhibition-viewport-card { width: 100%; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+.brand-exhibition-image-asset { width: 100%; height: auto; display: block; }
+.neon-lens-flare-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 40px rgba(88, 166, 255, 0.15); pointer-events: none; }
 
-    // --- 02. FLUID POINTER GLOW INTERACTIVE TRACKER ---
-    const mouseGlowElement = document.getElementById('mouseGlow');
-    let currentX = 0, currentY = 0;
-    let targetX = 0, targetY = 0;
-    const lerpInterpolationFactor = 0.08; // Smooth trailing delay parameter
+/* Grid Project Modules */
+.mainframe-section-title { font-size: 1.35rem; font-family: var(--font-code); margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+.production-projects-fluid-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+.interactive-project-card-component { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; display: flex; }
+.project-card-inner-structural-box { padding: 24px; width: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+.project-node-index-tag { font-family: var(--font-code); font-size: 0.7rem; color: var(--accent-blue); opacity: 0.6; display: block; margin-bottom: 4px; }
+.project-node-title { font-family: var(--font-code); font-size: 1.1rem; margin-bottom: 10px; }
+.project-node-description-paragraph { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px; }
+.project-card-tags-and-links-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.tag-tokens-collection-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag-token { background-color: var(--bg-terminal); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-family: var(--font-code); font-size: 0.72rem; }
+.tag-token.tag-c { border-color: #388bfd; color: var(--accent-blue); }
+.tag-token.tag-cpp { border-color: #bc8cff; color: var(--accent-purple); }
+.tag-token.tag-py { border-color: #f2cc60; color: #ffdf5d; }
+.repository-anchor-node { font-family: var(--font-code); font-size: 0.8rem; color: var(--accent-blue); text-decoration: none; }
 
-    window.addEventListener('mousemove', (event) => {
-        targetX = event.clientX;
-        targetY = event.clientY;
-    }, { passive: true }); // Passivity optimization flags for frame performance
+/* Double Column Data Matrices layouts */
+.split-layout-double-column-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.table-outer-overflow-wrapper { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+.mainframe-production-data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+.mainframe-production-data-table th { background-color: var(--bg-terminal); padding: 14px 18px; font-family: var(--font-code); border-bottom: 1px solid var(--border-color); }
+.mainframe-production-data-table td { padding: 12px 18px; border-bottom: 1px solid var(--border-color); color: var(--text-muted); }
 
-    function animatePointerTrail() {
-        currentX += (targetX - currentX) * lerpInterpolationFactor;
-        currentY += (targetY - currentY) * lerpInterpolationFactor;
-        
-        mouseGlowElement.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
-        requestAnimationFrame(animatePointerTrail);
-    }
-    animatePointerTrail();
+/* Roadmap Timeline and Modules tracks settings */
+.roadmap-production-container-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; }
+.roadmap-chronological-list { list-style: none; }
+.roadmap-event-item-node { display: grid; grid-template-columns: 80px 110px 1fr; align-items: center; margin-bottom: 16px; }
+.roadmap-event-item-node:last-child { margin-bottom: 0; }
+.timeline-quarter-tag { color: var(--accent-blue); font-weight: bold; font-family: var(--font-code); font-size: 0.82rem; }
+.progress-track-rail { background-color: var(--bg-terminal); border: 1px solid var(--border-color); border-radius: 10px; height: 6px; width: 90px; overflow: hidden; }
+.progress-fill-bar { background: linear-gradient(90deg, var(--accent-blue), var(--accent-green)); height: 100%; border-radius: 10px; transform: scaleX(0); transform-origin: left; transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal-node.active-reveal .progress-fill-bar { transform: scaleX(1); }
+.timeline-task-string { font-size: 0.85rem; color: var(--text-primary); padding-left: 8px; }
 
+/* Workspace specifications design */
+.workspace-specifications-fluid-grid { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+.spec-node-item-box { display: flex; align-items: center; gap: 12px; font-size: 0.88rem; font-family: var(--font-code); }
+.mainframe-footer-motto-string { text-align: center; margin-top: 30px; font-size: 0.9rem; font-family: var(--font-code); color: var(--text-muted); }
+.mainframe-global-footer-block { text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.78rem; font-family: var(--font-code); margin-top: 60px; }
 
-    // --- 03. HIGH-FIDELITY MATRIX LOG TYPEWRITER ENGINE ---
-    const typewriterTargetField = document.getElementById('typewriterText');
-    const logDataStringsArray = [
-        "AI & Data Science Enthusiast | Builder | Researcher",
-        "Initializing secure mainframe node dependencies...",
-        "Current Status: Active Member // System Integrity: Secure"
-    ];
-    let activeStringIndex = 0;
-    let currentCharacterIndex = 0;
-    let isDeletingStateActive = false;
+/* Reveal Scroll animations controller definitions */
+.reveal-node { opacity: 0; transform: translateY(25px); transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal-node.active-reveal { opacity: 1; transform: translateY(0); }
 
-    function executeTypewriterLifecycleLoop() {
-        const fullStringText = logDataStringsArray[activeStringIndex];
-        
-        if (!isDeletingStateActive) {
-            typewriterTargetField.textContent = fullStringText.substring(0, currentCharacterIndex + 1);
-            currentCharacterIndex++;
-            
-            if (currentCharacterIndex === fullStringText.length) {
-                isDeletingStateActive = true;
-                setTimeout(executeTypewriterLifecycleLoop, 2500); // Terminal visual dwell delay
-            } else {
-                setTimeout(executeTypewriterLifecycleLoop, 55);
-            }
-        } else {
-            typewriterTargetField.textContent = fullStringText.substring(0, currentCharacterIndex - 1);
-            currentCharacterIndex--;
-            
-            if (currentCharacterIndex === 0) {
-                isDeletingStateActive = false;
-                activeStringIndex = (activeStringIndex + 1) % logDataStringsArray.length;
-                setTimeout(executeTypewriterLifecycleLoop, 450); // Buffer loop block
-            } else {
-                setTimeout(executeTypewriterLifecycleLoop, 25);
-            }
-        }
-    }
-    setTimeout(executeTypewriterLifecycleLoop, 1000);
-
-
-    // --- 04. REAL-TIME NAME STRING SCRAMBLE MATRIX PROTOCOL ---
-    const targetNameHeadingNode = document.getElementById('matrixName');
-    const cryptographicGlyphsToken = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+=?";
-    let scrambleIntervalTrackerInstance = null;
-
-    function runIdentityScrambleSequence() {
-        const standardLiteralValue = targetNameHeadingNode.dataset.text;
-        let runningIterationCount = 0;
-        
-        clearInterval(scrambleIntervalTrackerInstance);
-        
-        scrambleIntervalTrackerInstance = setInterval(() => {
-            targetNameHeadingNode.innerText = standardLiteralValue.split("").map((character, index) => {
-                if (index < runningIterationCount) {
-                    return standardLiteralValue[index]; // Return correct string value lock
-                }
-                return cryptographicGlyphsToken[Math.floor(Math.random() * cryptographicGlyphsToken.length)];
-            }).join("");
-            
-            if (runningIterationCount >= standardLiteralValue.length) {
-                clearInterval(scrambleIntervalTrackerInstance);
-            }
-            runningIterationCount += 1 / 3; // Controls progression speed
-        }, 30);
-    }
-    // Triggers beautifully whenever the user inspects or hovers your profile name
-    targetNameHeadingNode.addEventListener('mouseenter', runIdentityScrambleSequence);
-
-
-    // --- 05. HIGH-PERFORMANCE INTERSECTION OBSERVER SCROLL REVEALS ---
-    const revealNodeTargetsList = document.querySelectorAll('.reveal-node');
-    
-    const intersectionObserverOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -25px 0px"
-    };
-
-    const viewportScrollObserver = new IntersectionObserver((observedEntries, referenceObserver) => {
-        observedEntries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active-reveal');
-                referenceObserver.unobserve(entry.target); // Unbind to optimize hardware processes
-            }
-        });
-    }, intersectionObserverOptions);
-
-    revealNodeTargetsList.forEach(targetNode => {
-        viewportScrollObserver.observe(targetNode);
-    });
-
-
-    // --- 06. SMOOTH AUTO-LINK ACTIVE VIEWPORT SCROLL COORDINATOR ---
-    const navigationalAnchors = document.querySelectorAll('.nav-anchor-link');
-    const systemSections = document.querySelectorAll('section');
-
-    function syncActiveNavMarkerState() {
-        let activeSectionId = "";
-        let minimumTopDistance = Infinity;
-
-        systemSections.forEach(section => {
-            const boundaryBoxRect = section.getBoundingClientRect();
-            // Checks which section occupies the viewport epicenter
-            if (boundaryBoxRect.top >= -200 && boundaryBoxRect.top < minimumTopDistance) {
-                minimumTopDistance = boundaryBoxRect.top;
-                activeSectionId = section.getAttribute('id');
-            }
-        });
-
-        if (activeSectionId) {
-            navigationalAnchors.forEach(anchor => {
-                anchor.classList.remove('active-node');
-                if (anchor.getAttribute('href') === `#${activeSectionId}`) {
-                    anchor.classList.add('active-node');
-                }
-            });
-        }
-    }
-
-    window.addEventListener('scroll', syncActiveNavMarkerState, { passive: true });
-});
+/* Responsive break fields metrics overlays */
+@media (max-width: 950px) {
+    .hero-split-grid-card { grid-template-columns: 1fr; padding: 24px; }
+    .identity-profile-sidebar { border-right: none; border-bottom: 1px solid var(--border-color); padding-right: 0; padding-bottom: 30px; margin-bottom: 20px; }
+    .split-layout-double-column-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+    .navigation-links-list { display: none; }
+    .roadmap-event-item-node { grid-template-columns: 80px 1fr; gap: 6px; }
+    .progress-track-rail { display: none; }
+}
