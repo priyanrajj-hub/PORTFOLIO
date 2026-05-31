@@ -78,8 +78,8 @@ body {
     box-shadow: 0 0 12px var(--accent-green);
 }
 
-.matrix-glitch-heading { font-family: var(--font-code); font-size: 1.8rem; font-weight: 800; text-align: center; color: #fff; letter-spacing: -0.5px; }
-.system-uid-label { font-family: var(--font-code); color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 18px; }
+.matrix-glitch-heading { font-family: var(--font-code); font-size: 1.8rem; font-weight: 800; text-align: center; color: #fff; letter-spacing: -0.5px; margin-top: 10px; }
+.system-uid-label { font-family: var(--font-code); color: var(--text-muted); font-size: 0.85rem; margin: 6px 0 18px; text-align: center;}
 .institutional-tagline-text { font-size: 0.92rem; color: var(--text-primary); opacity: 0.9; margin-bottom: 28px; text-align: center; line-height: 1.5; }
 
 /* Interactive Modern Communication Button Grid Elements */
@@ -101,9 +101,8 @@ body {
 
 /* Main Shell Panel Interface Layouts */
 .terminal-shell-console-block { display: flex; flex-direction: column; justify-content: space-between; }
-.terminal-banner-ascii-frame { background-color: var(--bg-terminal); border: 1px solid var(--border-color); border-radius: 8px; padding: 22px; margin-bottom: 24px; }
-.ascii-typography-canvas { font-family: var(--font-code); color: var(--accent-blue); font-size: 0.65rem; line-height: 1.25; font-weight: bold; }
-.typewriter-runtime-field { font-family: var(--font-code); font-size: 0.92rem; margin-top: 12px; color: #a5d6ff; font-weight: 600; min-height: 1.3rem; }
+.terminal-banner-ascii-frame { border: 1px solid var(--border-color); border-radius: 8px; padding: 22px; margin-bottom: 24px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+.typewriter-runtime-field { font-family: var(--font-code); font-size: 0.92rem; margin-top: 15px; color: #a5d6ff; font-weight: 600; min-height: 1.3rem; text-align: center; }
 
 .mainframe-terminal-window-component { background-color: var(--bg-terminal); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
 .window-decorations-bar { background-color: #161b22; padding: 12px 18px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); }
@@ -197,4 +196,5 @@ body {
     .navigation-links-list { display: none; }
     .roadmap-event-item-node { grid-template-columns: 85px 1fr; gap: 8px; }
     .progress-track-rail { display: none; }
+    .animated-svg-text { font-size: 90px; } /* Adjust SVG text size for mobile */
 }
