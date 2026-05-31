@@ -159,37 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setTimeout(executeTypewriterLifecycleLoop, 800);
 
-
-    // --- 04. REAL-TIME NAME STRING SCRAMBLE MATRIX PROTOCOL ---
-    const targetNameHeadingNode = document.getElementById('matrixName');
-    const cryptographicGlyphsToken = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-    let scrambleIntervalTrackerInstance = null;
-
-    function runIdentityScrambleSequence() {
-        const standardLiteralValue = targetNameHeadingNode.dataset.text;
-        let runningIterationCount = 0;
-        
-        clearInterval(scrambleIntervalTrackerInstance);
-        
-        scrambleIntervalTrackerInstance = setInterval(() => {
-            targetNameHeadingNode.innerText = standardLiteralValue.split("").map((character, index) => {
-                if (index < runningIterationCount) {
-                    return standardLiteralValue[index]; // Return correct string value lock
-                }
-                return cryptographicGlyphsToken[Math.floor(Math.random() * cryptographicGlyphsToken.length)];
-            }).join("");
-            
-            if (runningIterationCount >= standardLiteralValue.length) {
-                clearInterval(scrambleIntervalTrackerInstance);
-            }
-            runningIterationCount += 1 / 3; // Controls progression speed
-        }, 30);
-    }
-    // Triggers beautifully whenever the user inspects or hovers your profile name
-    targetNameHeadingNode.addEventListener('mouseenter', runIdentityScrambleSequence);
-
-
-    // --- 05. HIGH-PERFORMANCE INTERSECTION OBSERVER SCROLL REVEALS ---
+    // --- 04. HIGH-PERFORMANCE INTERSECTION OBSERVER SCROLL REVEALS ---
     const revealNodeTargetsList = document.querySelectorAll('.reveal-node');
     
     const viewportScrollObserver = new IntersectionObserver((entries) => {
