@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Priyanraj J | Interactive Engineering Mainframe</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body class="mainframe-body ready-state">
@@ -12,16 +12,6 @@
     <canvas id="cyberCanvas" class="background-engine-canvas"></canvas>
 
     <div class="pointer-glow-field" id="mouseGlow" aria-hidden="true"></div>
-
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;" aria-hidden="true">
-        <defs>
-            <filter id="cyber-glitch-filter">
-                <feTurbulence type="fractalNoise" baseFrequency="0.05 0.95" numOctaves="1" result="noise" />
-                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" result="displacement" />
-            </filter>
-        </defs>
-    </svg>
 
     <header class="global-navbar-container">
         <nav class="navigation-grid container" aria-label="Mainframe Navigation Architecture">
@@ -45,7 +35,7 @@
                 <aside class="identity-profile-sidebar">
                     <div class="interactive-avatar-frame">
                         <div class="avatar-aspect-ratio-box">
-                            <img src="priyanrajport.png" alt="Priyanraj J Structural Profile Portrait" class="avatar-image-asset" loading="eager">
+                            <img src="./23b3235d-d946-4b44-a6e3-1be6d0a186c4.jpg" alt="Priyanraj J Structural Profile Portrait" class="avatar-image-asset" loading="eager">
                         </div>
                         <div class="dynamic-status-ping" title="System Status: Online"></div>
                     </div>
@@ -57,13 +47,13 @@
                     </header>
                     
                     <div class="interactive-action-button-stack">
-                        <a href="https://www.linkedin.com/in/priyanraj" target="_blank" rel="noopener noreferrer" class="action-btn-node btn-linkedin" aria-label="Establish LinkedIn Connection Platform">
+                        <a href="https://www.linkedin.com/in/priyanraj" target="_blank" rel="noopener noreferrer" class="action-btn-node btn-linkedin">
                             <i class="fab fa-linkedin" aria-hidden="true"></i> <span>LinkedIn Connection</span>
                         </a>
-                        <a href="mailto:priyanrajj@gmail.com" class="action-btn-node btn-gmail" aria-label="Initialize Secure SSH Mail Channel">
+                        <a href="mailto:priyanrajj@gmail.com" class="action-btn-node btn-gmail">
                             <i class="fas fa-envelope" aria-hidden="true"></i> <span>Secure Mail Channel</span>
                         </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" class="action-btn-node btn-leetcode" aria-label="Access LeetCode Algorithmic Registry">
+                        <a href="#" target="_blank" rel="noopener noreferrer" class="action-btn-node btn-leetcode">
                             <i class="fas fa-code" aria-hidden="true"></i> <span>LeetCode Registry</span>
                         </a>
                     </div>
@@ -71,7 +61,7 @@
 
                 <article class="terminal-shell-console-block">
                     <div class="terminal-banner-ascii-frame">
-                        <pre class="ascii-typography-canvas" aria-label="ASCII representation of the name PRIYANRAJ">
+                        <pre class="ascii-typography-canvas">
 ██████  ██████  ██ ██    ██  █████  ███    ██ ██████   █████       ██ 
 ██   ██ ██   ██ ██  ██  ██  ██   ██ ████   ██ ██   ██ ██   ██      ██ 
 ██████  ██████  ██   ████   ███████ ██ ██  ██ ██████  ███████      ██ 
@@ -112,7 +102,7 @@
 
         <section class="application-section-wrapper reveal-node" aria-label="Brand Exhibition Asset">
             <div class="brand-exhibition-viewport-card">
-                <img src="23b3235d-d946-4b44-a6e3-1be6d0a186c4.jpg" alt="Priyanraj J Multi-Institutional Brand Presentation Poster" class="brand-exhibition-image-asset" loading="lazy">
+                <img src="./priyanrajport.png" alt="Priyanraj J Multi-Institutional Brand Presentation Poster" class="brand-exhibition-image-asset" loading="lazy">
                 <div class="neon-lens-flare-overlay" aria-hidden="true"></div>
             </div>
         </section>
@@ -122,7 +112,6 @@
             <div class="production-projects-fluid-grid">
                 
                 <div class="interactive-project-card-component">
-                    <div class="card-neon-border-glow-field" aria-hidden="true"></div>
                     <div class="project-card-inner-structural-box">
                         <header class="project-card-header-block">
                             <span class="project-node-index-tag">SYS_NODE//01</span>
@@ -140,7 +129,6 @@
                 </div>
 
                 <div class="interactive-project-card-component">
-                    <div class="card-neon-border-glow-field" aria-hidden="true"></div>
                     <div class="project-card-inner-structural-box">
                         <header class="project-card-header-block">
                             <span class="project-node-index-tag">SYS_NODE//02</span>
@@ -158,7 +146,6 @@
                 </div>
 
                 <div class="interactive-project-card-component">
-                    <div class="card-neon-border-glow-field" aria-hidden="true"></div>
                     <div class="project-card-inner-structural-box">
                         <header class="project-card-header-block">
                             <span class="project-node-index-tag">SYS_NODE//03</span>
@@ -170,7 +157,7 @@
                                 <span class="tag-token tag-py">Python 3 Execution Core</span>
                                 <span class="tag-token">Data Lifecycle Management</span>
                             </div>
-                            <a href="https://github.com/priyanrajj-hub/student-management-system-python" target="_blank" rel="noopener noreferrer" class="repository-anchor-node" aria-label="Access Public Python Project Source Repository">
+                            <a href="#" target="_blank" class="repository-anchor-node">
                                 <i class="fab fa-github" aria-hidden="true"></i> <span>View Repository</span>
                             </a>
                         </footer>
@@ -180,7 +167,7 @@
             </div>
         </section>
 
-        <section id="certifications" class="application-section-wrapper reveal-node split-layout-double-column-grid" aria-label="Verified Credentials and Roadmap Framework">
+        <section id="certifications" class="application-section-wrapper reveal-node split-layout-double-column-grid">
             
             <div class="inner-column-block-node">
                 <h2 class="mainframe-section-title"><i class="fas fa-award text-green" aria-hidden="true"></i> Auth_Certificates</h2>
@@ -209,22 +196,22 @@
                     <ul class="roadmap-chronological-list">
                         <li class="roadmap-event-item-node">
                             <span class="timeline-quarter-tag">Q2 2026</span> 
-                            <div class="progress-track-rail" aria-hidden="true"><div class="progress-fill-bar" style="width: 85%;"></div></div>
+                            <div class="progress-track-rail"><div class="progress-fill-bar" style="width: 85%;"></div></div>
                             <span class="timeline-task-string">Advance Data Structures & Advanced Algorithmic Optimization Protocols</span>
                         </li>
                         <li class="roadmap-event-item-node">
                             <span class="timeline-quarter-tag">Q3 2026</span> 
-                            <div class="progress-track-rail" aria-hidden="true"><div class="progress-fill-bar" style="width: 45%;"></div></div>
+                            <div class="progress-track-rail"><div class="progress-fill-bar" style="width: 45%;"></div></div>
                             <span class="timeline-task-string">Model and Deploy Deep Learning Neuromorphic Predictive Layers</span>
                         </li>
                         <li class="roadmap-event-item-node">
                             <span class="timeline-quarter-tag">Q4 2026</span> 
-                            <div class="progress-track-rail" aria-hidden="true"><div class="progress-fill-bar" style="width: 15%;"></div></div>
+                            <div class="progress-track-rail"><div class="progress-fill-bar" style="width: 15%;"></div></div>
                             <span class="timeline-task-string">Publish Cryptographic Open-Source Repositories to Global Nodes</span>
                         </li>
                         <li class="roadmap-event-item-node">
                             <span class="timeline-quarter-tag">CY 2027</span> 
-                            <div class="progress-track-rail" aria-hidden="true"><div class="progress-fill-bar" style="width: 5%;"></div></div>
+                            <div class="progress-track-rail"><div class="progress-fill-bar" style="width: 5%;"></div></div>
                             <span class="timeline-task-string">Execute Complete GATE CSE Target Preparation Architecture</span>
                         </li>
                     </ul>
@@ -232,22 +219,23 @@
             </div>
         </section>
 
-        <section id="workspace" class="application-section-wrapper reveal-node" aria-label="Hardware Mainframe Environment Specification">
+        <section id="workspace" class="application-section-wrapper reveal-node">
             <h2 class="mainframe-section-title"><i class="fas fa-desktop text-blue" aria-hidden="true"></i> Mainframe Workspace Specification</h2>
             <div class="workspace-specifications-fluid-grid">
                 <div class="spec-node-item-box"><i class="fas fa-laptop text-blue pulse-slow-effect" aria-hidden="true"></i> <span><strong>Hardware Platform:</strong> ASUS TUF Gaming Premium Core Architecture</span></div>
                 <div class="spec-node-item-box"><i class="fas fa-microchip text-purple pulse-slow-effect" aria-hidden="true"></i> <span><strong>Processor Unit:</strong> Intel Core i7 High-Performance HX Series</span></div>
                 <div class="spec-node-item-box"><i class="fas fa-gamepad text-green pulse-slow-effect" aria-hidden="true"></i> <span><strong>Graphics Processing Array:</strong> NVIDIA GeForce RTX 5060 Edition</span></div>
-                <div class="spec-node-item-box"><i class="fas fa-network-wired text-red pulse-slow-effect" aria-hidden="true"></i> <span><strong>Mainframe Node Location:</strong> Tamil Nadu, India • Network Coordinate UTC +5:30</span></div>
+                <div class="spec-node-item-box"><i class="fas fa-network-wired text-red pulse-slow-effect" aria-hidden="true"></i> <span><strong>Mainframe Node Location:</strong> Tamil Nadu, India • Coordinate UTC +5:30</span></div>
             </div>
-            <p class="mainframe-footer-motto-string" role="doc-subtitle">🚀 Learning Relentlessly • Building Consistently • Growing Every Day</p>
+            <p class="mainframe-footer-motto-string">🚀 Learning Relentlessly • Building Consistently • Growing Every Day</p>
         </section>
 
     </main>
 
-    <footer class="mainframe-global-footer-block" role="contentinfo">
-        <p class="footer-copyright-string">&copy; 2026 Priyanraj J. Portions of code compiled securely under SSH Shell Access. Hosted via GitHub Secure Infrastructure Pages.</p>
+    <footer class="mainframe-global-footer-block">
+        <p class="footer-copyright-string">&copy; 2026 Priyanraj J. Powered by GitHub Pages secure server grids.</p>
     </footer>
 
+    <script src="./script.js"></script>
 </body>
 </html>
