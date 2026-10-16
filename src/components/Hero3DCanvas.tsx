@@ -114,9 +114,10 @@ function ParticleField({ count = 250 }: { count?: number }) {
   );
 }
 
-export const Hero3DCanvas: React.FC = () => {
+export const Hero3DCanvas: React.FC<{ className?: string }> = ({ className = 'min-h-[420px] lg:min-h-[560px]' }) => {
   return (
-    <div className="w-full h-full min-h-[420px] lg:min-h-[560px] relative pointer-events-auto">
+    <div className={`w-full h-full relative pointer-events-auto ${className}`}>
+
       <Canvas
         camera={{ position: [0, 0, 7.5], fov: 45 }}
         gl={{ antialias: true, alpha: true }}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Sparkles, 
   MapPin, 
@@ -8,27 +8,31 @@ import {
   Code2,
   Cpu,
   GraduationCap,
-  Bot
+  Bot,
+  Zap,
+  Layers
 } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, InstagramIcon } from './BrandIcons';
-
 import { PERSONAL_INFO } from '../data/portfolioData';
 import { Hero3DCanvas } from './Hero3DCanvas';
+import { JarvisHeroWidget } from './JarvisHeroWidget';
 
 export const HeroSection: React.FC = () => {
+  const [hudView, setHudView] = useState<'unified' | 'jarvis' | '3d'>('unified');
+
   return (
     <section id="hero" className="relative min-h-screen pt-28 pb-16 flex items-center overflow-hidden">
       
       {/* Dynamic Ambient Background Glows */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[140px] pointer-events-none"></div>
-      <div className="absolute top-1/3 right-1/4 w-[450px] h-[450px] bg-purple-500/10 rounded-full blur-[130px] pointer-events-none"></div>
+      <div className="absolute top-1/3 right-1/4 w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Column: Identity & Bio */}
-          <div className="lg:col-span-7 space-y-6">
+          {/* Left Column: Identity, Degrees & Action Buttons (lg:col-span-6) */}
+          <div className="lg:col-span-6 space-y-6">
             
             {/* Live Status Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-sky-500/30 text-sky-300 text-xs font-mono shadow-sm">
@@ -105,16 +109,6 @@ export const HeroSection: React.FC = () => {
                 <ArrowRight className="w-4 h-4" />
               </a>
 
-              <button
-                onClick={() => {
-                  window.dispatchEvent(new CustomEvent('open-ai-chat'));
-                }}
-                className="px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
-              >
-                <Bot className="w-4 h-4 text-slate-950" />
-                <span>Launch AI Assistant</span>
-              </button>
-
               <a
                 href="#competitive"
                 className="px-5 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-amber-300 border border-slate-700 font-mono text-sm flex items-center gap-2 transition"
@@ -166,26 +160,71 @@ export const HeroSection: React.FC = () => {
 
           </div>
 
-          {/* Right Column: 3D Interactive Quantum Simulation Core */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative rounded-3xl overflow-hidden border border-slate-800/80 bg-slate-950/60 shadow-2xl backdrop-blur-xl">
-              
-              {/* Header Label on 3D Container */}
-              <div className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/80 border border-slate-800 text-[11px] font-mono text-sky-400">
-                <Binary className="w-3.5 h-3.5 animate-spin" />
-                <span>WEBGL INTERACTIVE 3D CORE</span>
+          {/* Right Column: Unified 3D Model + Iron Man J.A.R.V.I.S AI Assistant (lg:col-span-6) */}
+          <div className="lg:col-span-6 space-y-4">
+            
+            {/* HUD View Mode Switcher */}
+            <div className="flex items-center justify-between p-1.5 rounded-2xl bg-slate-900/80 border border-cyan-500/30 backdrop-blur-md">
+              <span className="text-[11px] font-mono text-cyan-400 pl-2 flex items-center gap-1.5 font-bold">
+                <Zap className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                STARK HUD DISPLAY:
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setHudView('unified')}
+                  className={`px-3 py-1 rounded-xl text-xs font-mono transition ${
+                    hudView === 'unified'
+                      ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/30'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  3D + J.A.R.V.I.S.
+                </button>
+                <button
+                  onClick={() => setHudView('jarvis')}
+                  className={`px-3 py-1 rounded-xl text-xs font-mono transition ${
+                    hudView === 'jarvis'
+                      ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/30'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  J.A.R.V.I.S. Only
+                </button>
+                <button
+                  onClick={() => setHudView('3d')}
+                  className={`px-3 py-1 rounded-xl text-xs font-mono transition ${
+                    hudView === '3d'
+                      ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/30'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  3D Core Only
+                </button>
               </div>
-
-              {/* 3D Canvas Rendering */}
-              <Hero3DCanvas />
-
-              {/* Lower HUD Overlay */}
-              <div className="absolute bottom-4 left-4 right-4 z-20 p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-md flex items-center justify-between text-xs font-mono">
-                <span className="text-gray-400">Interaction: Drag & orbit mesh</span>
-                <span className="text-emerald-400">60 FPS • Real-time</span>
-              </div>
-
             </div>
+
+            {/* 3D Quantum Canvas Frame (Visible in unified & 3d modes) */}
+            {(hudView === 'unified' || hudView === '3d') && (
+              <div className="relative rounded-3xl overflow-hidden border border-cyan-500/30 bg-slate-950/60 shadow-2xl backdrop-blur-xl">
+                <div className="absolute top-3 left-4 z-20 flex items-center gap-2 px-3 py-1 rounded-full bg-slate-950/80 border border-cyan-500/30 text-[11px] font-mono text-cyan-400">
+                  <Binary className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+                  <span>WEBGL QUANTUM EMBEDDED CORE</span>
+                </div>
+
+                <Hero3DCanvas className={hudView === 'unified' ? 'min-h-[220px] max-h-[240px]' : 'min-h-[480px]'} />
+
+                <div className="absolute bottom-2.5 left-4 right-4 z-20 px-3 py-1 rounded-lg bg-slate-950/70 border border-slate-800 text-[10px] font-mono flex items-center justify-between text-gray-400">
+                  <span>Interactive: Drag to rotate view</span>
+                  <span className="text-emerald-400">60 FPS • Real-time</span>
+                </div>
+              </div>
+            )}
+
+            {/* Iron Man J.A.R.V.I.S AI Assistant (Visible in unified & jarvis modes) */}
+            {(hudView === 'unified' || hudView === 'jarvis') && (
+              <JarvisHeroWidget />
+            )}
+
           </div>
 
         </div>
