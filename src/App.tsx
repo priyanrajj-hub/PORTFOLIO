@@ -62,12 +62,12 @@ export function App() {
         <section className="py-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl overflow-hidden border border-slate-800 shadow-2xl relative group">
             <img
-              src="./priyanrajport.png"
+              src="./priyanrajport.png?v=2"
               alt="Priyanraj J Multi-Institutional Brand Presentation Poster"
-              className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
-              loading="lazy"
+              className="w-full h-auto object-cover opacity-95 group-hover:opacity-100 transition-opacity duration-300"
+              loading="eager"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none"></div>
           </div>
         </section>
 
