@@ -22,6 +22,7 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: 'Core Identity', href: '#hero' },
+    { name: 'AI Voice Assistant', href: '#hero', onClick: () => window.dispatchEvent(new CustomEvent('open-ai-chat')) },
     { name: 'Experience', href: '#experience' },
     { name: 'Projects', href: '#projects' },
     { name: 'Progress Engine', href: '#progress' },
@@ -29,6 +30,7 @@ export const Navbar: React.FC = () => {
     { name: 'Education', href: '#education' },
     { name: 'Contact', href: '#contact' },
   ];
+
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -60,7 +62,14 @@ export const Navbar: React.FC = () => {
               <a
                 key={link.name}
                 href={link.href}
-                className="px-3 py-1.5 rounded-xl text-xs font-medium text-gray-300 hover:text-white hover:bg-slate-800/80 transition"
+                onClick={() => {
+                  if (link.onClick) link.onClick();
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                  link.name.includes('AI')
+                    ? 'text-cyan-300 bg-cyan-950/70 border border-cyan-800/60 font-semibold hover:bg-cyan-900/60'
+                    : 'text-gray-300 hover:text-white hover:bg-slate-800/80'
+                }`}
               >
                 {link.name}
               </a>

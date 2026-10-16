@@ -7,9 +7,11 @@ import {
   Binary,
   Code2,
   Cpu,
-  GraduationCap
+  GraduationCap,
+  Bot
 } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, InstagramIcon } from './BrandIcons';
+
 import { PERSONAL_INFO } from '../data/portfolioData';
 import { Hero3DCanvas } from './Hero3DCanvas';
 
@@ -102,6 +104,16 @@ export const HeroSection: React.FC = () => {
                 <span>Explore 9+ Projects</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
+
+              <button
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('open-ai-chat'));
+                }}
+                className="px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+              >
+                <Bot className="w-4 h-4 text-slate-950" />
+                <span>Launch AI Assistant</span>
+              </button>
 
               <a
                 href="#competitive"

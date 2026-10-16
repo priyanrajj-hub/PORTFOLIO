@@ -64,12 +64,17 @@ export const AiVoiceAssistant: React.FC = () => {
   const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
+    const handleOpenAi = () => setIsOpen(true);
+    window.addEventListener('open-ai-chat', handleOpenAi);
+
     return () => {
+      window.removeEventListener('open-ai-chat', handleOpenAi);
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
     };
   }, []);
+
 
   const speakText = (text: string, langCode: string) => {
     if (!voiceEnabled || !('speechSynthesis' in window)) return;
