@@ -2,12 +2,11 @@ import React from 'react';
 import { 
   GraduationCap, 
   Award, 
-  MapPin, 
   Calendar, 
-  ExternalLink, 
-  Sparkles,
+  CheckCircle2,
   BookmarkCheck,
-  CheckCircle2
+  ShieldCheck,
+  Users
 } from 'lucide-react';
 import { EDUCATION_DATA, CERTIFICATIONS_DATA } from '../data/portfolioData';
 
@@ -22,39 +21,69 @@ export const EducationAndCertifications: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono mb-3">
               <GraduationCap className="w-3.5 h-3.5" />
-              <span>ACADEMIC FOUNDATION</span>
+              <span>ACADEMIC FOUNDATION & STUDENT SOCIETIES</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
               Triple-Track <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Education</span>
             </h2>
             <p className="mt-2 text-gray-400 text-sm mb-8">
-              Rigorous simultaneous academic immersion spanning systems engineering, applied data analytics, and artificial intelligence.
+              Concurrent academic immersion across Amrita, IIT Madras, and IIT Guwahati, complemented by society leadership in IEEE, CAMHI, and DREAM.
             </p>
 
             <div className="space-y-6">
               {EDUCATION_DATA.map((edu, idx) => (
                 <div
                   key={idx}
-                  className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-indigo-500/30 transition shadow-lg relative group"
+                  className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-indigo-500/30 transition shadow-lg relative group"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider block mb-1">
-                        {edu.institution}
-                      </span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-mono text-indigo-400 font-semibold uppercase tracking-wider">
+                          {edu.institution}
+                        </span>
+                        {edu.campus && (
+                          <span className="text-[10px] font-mono text-slate-500">
+                            • {edu.campus}
+                          </span>
+                        )}
+                      </div>
                       <h3 className="text-base font-bold text-white group-hover:text-indigo-300 transition">
                         {edu.degree}
                       </h3>
                     </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800/60 font-semibold shrink-0">
+                      {edu.badge}
+                    </span>
                   </div>
 
-                  <p className="mt-2 text-xs text-gray-300">
+                  {edu.grade && (
+                    <div className="mt-2 text-xs font-mono text-amber-300 bg-amber-950/40 border border-amber-800/40 px-2.5 py-1 rounded-lg">
+                      {edu.grade}
+                    </div>
+                  )}
+
+                  <p className="mt-2.5 text-xs text-gray-300">
                     <strong className="text-gray-400">Curriculum Scope:</strong> {edu.specialization}
                   </p>
 
-                  <div className="mt-3 flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-800/80">
-                    <span className="font-mono text-emerald-400">{edu.status}</span>
-                  </div>
+                  {/* Activities & Societies */}
+                  {edu.activities && edu.activities.length > 0 && (
+                    <div className="mt-3 flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-800/80">
+                      <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
+                        <Users className="w-3.5 h-3.5 text-sky-400" />
+                        Societies:
+                      </span>
+                      {edu.activities.map((act) => (
+                        <span
+                          key={act}
+                          className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-sky-950/60 border border-sky-800/50 text-sky-300 font-bold"
+                        >
+                          {act}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="mt-3 space-y-1">
                     {edu.highlights.map((h, i) => (
@@ -69,17 +98,17 @@ export const EducationAndCertifications: React.FC = () => {
             </div>
           </div>
 
-          {/* Column 2: Validated Certifications & Honors */}
+          {/* Column 2: Validated Certifications & Licenses */}
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono mb-3">
               <Award className="w-3.5 h-3.5" />
-              <span>AUTHENTICATED CREDENTIALS</span>
+              <span>VERIFIED LICENSES & CERTIFICATIONS (11 ISSUED)</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Certifications & <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Honors</span>
+              Licenses & <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Credentials</span>
             </h2>
             <p className="mt-2 text-gray-400 text-sm mb-8">
-              Verified certifications from premier national institutes, industrial platforms, and international engineering bodies.
+              Verified certifications from Oracle, Udemy, NPTEL, Infosys, and IIT Guwahati.
             </p>
 
             <div className="space-y-4">
@@ -90,12 +119,20 @@ export const EducationAndCertifications: React.FC = () => {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/50 text-emerald-400 font-bold">
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${
+                        cert.issuer === 'ORACLE' 
+                          ? 'bg-rose-950/70 border border-rose-800/50 text-rose-300'
+                          : cert.issuer === 'Udemy'
+                          ? 'bg-purple-950/70 border border-purple-800/50 text-purple-300'
+                          : 'bg-emerald-950/60 border border-emerald-800/50 text-emerald-400'
+                      }`}>
                         {cert.issuer}
                       </span>
-                      <span className="text-[10px] font-mono text-slate-400">
-                        {cert.type}
-                      </span>
+                      {cert.issueDate && (
+                        <span className="text-[10px] font-mono text-slate-400">
+                          {cert.issueDate}
+                        </span>
+                      )}
                     </div>
                     <h3 className="text-sm font-semibold text-white group-hover:text-emerald-300 transition">
                       {cert.title}
@@ -114,10 +151,10 @@ export const EducationAndCertifications: React.FC = () => {
               ))}
             </div>
 
-            {/* IEEE Network Callout */}
+            {/* Oracle & IEEE Callout */}
             <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-blue-950/40 via-sky-950/30 to-slate-900/50 border border-blue-500/20 text-xs text-gray-300">
-              <span className="font-semibold text-sky-400 block mb-1">Global IEEE Engineering Node</span>
-              Active IEEE Student Member engaging with technical standards, signal communications, and embedded processing societies.
+              <span className="font-semibold text-sky-400 block mb-1">Oracle Database & IEEE Webmaster Accreditation</span>
+              Holding Oracle Developer Foundations accreditation and appointed Webmaster directing web infrastructures for IEEE Amrita Chennai Student Branch.
             </div>
 
           </div>

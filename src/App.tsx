@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { InteractiveBannerCard } from './components/InteractiveBannerCard';
+import { ExperienceSection } from './components/ExperienceSection';
 import { CompetitiveProfiles } from './components/CompetitiveProfiles';
 import { ProjectsSection } from './components/ProjectsSection';
 import { InteractiveTerminal } from './components/InteractiveTerminal';
@@ -36,16 +37,19 @@ export function App() {
         {/* Section 1: 3D WebGL Hero & Multi-degree Identity */}
         <HeroSection />
 
-        {/* Section 2: Interactive High-Res Brand Card (Replaces blurry image poster) */}
+        {/* Section 2: Interactive High-Res Brand Card */}
         <InteractiveBannerCard />
 
-        {/* Section 3: Competitive Programming Hub (LeetCode, Codeforces, AtCoder, HackerRank) */}
+        {/* Section 3: Professional Experience (IEEE Webmaster, CodeAlpha) */}
+        <ExperienceSection />
+
+        {/* Section 4: Competitive Programming Hub (LeetCode, Codeforces, AtCoder, HackerRank) */}
         <CompetitiveProfiles />
 
-        {/* Section 4: Projects Showcase (All 9+ real projects including Canopy, BLE, OS LinUCB) */}
+        {/* Section 5: Projects Showcase (Canopy, BLE, OS LinUCB, Graph Rec, Pharma C) */}
         <ProjectsSection />
 
-        {/* Section 5: Cyber UNIX Mainframe Terminal */}
+        {/* Section 6: Cyber UNIX Mainframe Terminal */}
         <section id="terminal" className="py-20 relative">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-xl mx-auto mb-10">
@@ -65,13 +69,13 @@ export function App() {
           </div>
         </section>
 
-        {/* Section 6: Academic Foundation & Certifications */}
+        {/* Section 7: Academic Foundation & Certifications (Oracle, Udemy, NPTEL, IEEE, CAMHI, DREAM) */}
         <EducationAndCertifications />
 
-        {/* Section 7: Execution Roadmap & Mainframe Specs */}
+        {/* Section 8: Execution Roadmap & Mainframe Specs */}
         <RoadmapAndSpecs />
 
-        {/* Section 8: Contact & Direct Uplink */}
+        {/* Section 9: Contact & Direct Uplink */}
         <ContactSection />
 
       </main>
@@ -81,7 +85,7 @@ export function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-sky-400" />
-            <span>&copy; 2026 Priyanraj J • All Systems Nominal</span>
+            <span>&copy; 2026 Priyanraj. J • All Systems Nominal</span>
           </div>
 
           <div className="text-center md:text-right text-slate-500">

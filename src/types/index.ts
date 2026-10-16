@@ -11,13 +11,24 @@ export interface Project {
   demoUrl?: string;
 }
 
+export interface ExperienceItem {
+  id: string;
+  role: string;
+  organization: string;
+  type: string;
+  duration: string;
+  location: string;
+  description: string;
+  skills: string[];
+}
+
 export interface Certification {
   id: string;
   title: string;
   issuer: string;
-  credentialUrl?: string;
+  issueDate?: string;
   skills: string[];
-  type: 'Course' | 'Certification' | 'Affiliation';
+  type: 'Professional' | 'Course' | 'Certification' | 'Affiliation';
 }
 
 export interface RoadmapItem {
@@ -33,6 +44,9 @@ export interface EducationItem {
   institution: string;
   campus?: string;
   specialization: string;
+  duration: string;
+  grade?: string;
+  activities?: string[];
   status: string;
   badge: string;
   highlights: string[];

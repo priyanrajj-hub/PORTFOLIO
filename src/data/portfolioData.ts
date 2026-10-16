@@ -1,16 +1,20 @@
-import type { Project, Certification, RoadmapItem, EducationItem, CodingProfile } from '../types';
+import type { Project, Certification, RoadmapItem, EducationItem, CodingProfile, ExperienceItem } from '../types';
 
 export const PERSONAL_INFO = {
-  name: 'Priyanraj J',
+  name: 'Priyanraj. J',
+  headline: 'B.Tech CCE @ Amrita Vishwa Vidyapeetham | BS Data Science @ IIT Madras | BS DSAI @ IIT Guwahati | AI Research | Machine Learning | Python | Open Source | IEEE | Investor',
   title: 'AI & Data Science Enthusiast | Systems Software Engineer',
   institutionPrimary: 'Amrita Vishwa Vidyapeetham',
   campus: 'Chennai Campus',
   department: 'Computer and Communication Engineering (CCE)',
   rollNumber: 'CH.EN.U4CCE25020',
-  location: 'Tamil Nadu, India',
-  targetHorizon: '2025 – 2029 (First Year)',
-  bio: 'First-year engineering undergraduate concurrently enrolled in triple-degree tracks across Amrita Vishwa Vidyapeetham, IIT Madras, and IIT Guwahati. Focused on high-performance C/C++ systems, AI process scheduling (LinUCB Bandits), BLE proximity platforms, and satellite vegetation monitoring.',
-  quote: '"Exploring multiple domains and building a strong interdisciplinary foundation before specializing."',
+  location: 'Tiruvallur, Tamil Nadu, India',
+  connections: '500+ connections',
+  targetHorizon: '2025 – 2029',
+  currentRole: 'Webmaster @ IEEE Amrita Chennai',
+  isOpenToWork: true,
+  bio: 'Second Year Engineering Undergraduate pursuing concurrent multi-degree specialization across Amrita Vishwa Vidyapeetham, IIT Madras, and IIT Guwahati. Active Webmaster at IEEE Amrita Chennai and active contributor to CAMHI & DREAM societies.',
+  quote: '"Learning relentlessly. Building consistently. Growing every day."',
   links: {
     github: 'https://github.com/priyanrajj-hub',
     linkedin: 'https://www.linkedin.com/in/priyanraj',
@@ -23,18 +27,41 @@ export const PERSONAL_INFO = {
     hackerrank: 'https://hackerrank.com/priyanraj',
   },
   stats: [
-    { label: 'Degree Tracks', value: '3 Active' },
-    { label: 'Public Repos', value: '18+' },
-    { label: 'CP Solved', value: '150+' },
-    { label: 'IEEE Global', value: 'Active Member' },
+    { label: 'Degree Programs', value: '3 Active' },
+    { label: 'LinkedIn Network', value: '500+' },
+    { label: 'Verified Licenses', value: '11 Issued' },
+    { label: 'Active Projects', value: '18+ Repos' },
   ],
   specs: [
     { label: 'Hardware Rig', value: 'ASUS TUF Gaming Laptop' },
     { label: 'CPU Architecture', value: 'Intel Core i7 High-Performance' },
     { label: 'GPU Accelerator', value: 'NVIDIA GeForce RTX 5060' },
-    { label: 'Local Coordinate', value: 'Tamil Nadu, India (UTC +5:30)' },
+    { label: 'Node Coordinate', value: 'Tiruvallur, Tamil Nadu (UTC +5:30)' },
   ],
 };
+
+export const EXPERIENCE_DATA: ExperienceItem[] = [
+  {
+    id: 'exp-ieee-webmaster',
+    role: 'Webmaster',
+    organization: 'IEEE Amrita Chennai',
+    type: 'Part-time',
+    duration: 'Jul 2026 – Present',
+    location: 'Chennai Campus, Tamil Nadu, India',
+    description: 'Leading digital architecture, portal deployments, technical infrastructure, and event dissemination for the IEEE Student Branch at Amrita Chennai.',
+    skills: ['Web Architecture', 'Technical Systems', 'Full Stack Development', 'IEEE Standards', 'Git/GitHub'],
+  },
+  {
+    id: 'exp-codealpha',
+    role: 'Python Developer Intern',
+    organization: 'CodeAlpha',
+    type: 'Internship',
+    duration: 'Jun 2026 – Jul 2026',
+    location: 'Remote',
+    description: 'Engineered intent-normalized conversational rule engines, input normalization pipelines, and environment-driven configurations.',
+    skills: ['Python 3', 'NLP Preprocessing', 'Rule-Based Intent Engines', 'Clean Architecture'],
+  },
+];
 
 export const CODING_PROFILES: CodingProfile[] = [
   {
@@ -69,39 +96,104 @@ export const CODING_PROFILES: CodingProfile[] = [
 
 export const EDUCATION_DATA: EducationItem[] = [
   {
-    degree: 'B.Tech in Computer & Communication Engineering (CCE)',
+    degree: 'B.Tech in Computer and Communication Engineering (CCE)',
     institution: 'Amrita Vishwa Vidyapeetham',
     campus: 'Chennai Campus',
-    specialization: 'Low-level Systems, Computer Architecture, Data Structures, Signal & Network Security',
-    status: '2025 – 2029 • First Year Undergrad',
-    badge: 'Primary Full-Time Degree',
+    duration: 'Jul 2025 – Jul 2029',
+    grade: 'II nd year @ AMRITA VISHWA VIDYAPEETHAM CHENNAI CAMPUS',
+    activities: ['IEEE (Webmaster)', 'CAMHI', 'DREAM'],
+    specialization: 'Computer & Communication Engineering, C Programming, Low-Level Systems, Telemetry',
+    status: 'In Progress • II nd Year',
+    badge: 'Primary Engineering Degree',
     highlights: [
       'Roll Number: CH.EN.U4CCE25020',
-      'Active IEEE Student Branch Engineering Member',
-      'Research Expo & Capstone Participant (Friend Recommendation Engine & OS LinUCB scheduling)',
+      'Elected Webmaster of IEEE Amrita Chennai Student Branch',
+      'Active leadership in CAMHI and DREAM technical societies',
+      'Competed in B.Tech Research Expo 23 (Graph-theoretic Friend Recommendation) & Capstone OS',
     ],
   },
   {
     degree: 'BS in Data Science and Applications',
-    institution: 'IIT Madras',
-    specialization: 'Rigorous Mathematical Statistics, Computational Modeling, Distributed Big Data Systems',
-    status: 'Active Concurrent Track',
+    institution: 'Indian Institute of Technology, Madras',
+    duration: '2025 – Present',
+    specialization: 'Rigorous Mathematical Foundations, Computational Statistics, Machine Learning',
+    status: 'Active Concurrent Degree',
     badge: 'IIT Madras Online Track',
     highlights: [
-      'Foundational Linear Algebra & Calculus for Data Science',
-      'Python Algorithmic Computing & Numerical Methods',
+      'Computational Thinking & Python Numerical Computing',
+      'Linear Algebra, Multivariate Calculus & Discrete Mathematical Structures',
     ],
   },
   {
     degree: 'BS in Data Science and Artificial Intelligence (DSAI)',
-    institution: 'IIT Guwahati',
+    institution: 'Indian Institute of Technology, Guwahati',
+    duration: 'Sep 2025 – Present',
     specialization: 'Neural Network Architectures, Deep Learning Foundations, AI Ethics & Algorithmic Optimization',
-    status: 'Active Concurrent Track',
+    status: 'Active Concurrent Degree',
     badge: 'IIT Guwahati Core Track',
     highlights: [
       'BS DSAI Intensive Core Technical Orientation Completed',
-      'Exploring Neuromorphic Computing & TinyML Edge Devices',
+      'Exploration of Neuromorphic Computing & TinyML Edge Hardware',
     ],
+  },
+];
+
+export const CERTIFICATIONS_DATA: Certification[] = [
+  {
+    id: 'cert-oracle',
+    title: 'Databases for Developers: Foundations',
+    issuer: 'ORACLE',
+    issueDate: 'Issued Aug 2026',
+    skills: ['Oracle SQL', 'Relational Database Schema Design', 'Query Optimization', 'Data Integrity'],
+    type: 'Professional',
+  },
+  {
+    id: 'cert-automotive',
+    title: 'Basics of Automotive Electronics',
+    issuer: 'Udemy',
+    issueDate: 'Issued 2026',
+    skills: ['Automotive Electronics', 'CAN Bus / Embedded Sensor Interfaces', 'ECU Principles'],
+    type: 'Course',
+  },
+  {
+    id: 'cert-nptel-py',
+    title: 'The Joy of Computing Using Python — Core Track',
+    issuer: 'NPTEL Framework',
+    issueDate: 'Validated Credential',
+    skills: ['Python 3 Core', 'Algorithmic Problem Solving', 'Computational Logic'],
+    type: 'Certification',
+  },
+  {
+    id: 'cert-nptel-eng',
+    title: 'English Language for Competitive Exams — Advanced Module',
+    issuer: 'NPTEL Framework',
+    issueDate: 'Validated Credential',
+    skills: ['Technical Documentation', 'Verbal Reasoning', 'Professional Communication'],
+    type: 'Course',
+  },
+  {
+    id: 'cert-infosys',
+    title: 'Computational Problem Solving & Algorithmic Optimization',
+    issuer: 'Infosys Platform',
+    issueDate: 'Validated Credential',
+    skills: ['Data Structures', 'Time Complexity Analysis', 'Greedy & Dynamic Paradigms'],
+    type: 'Certification',
+  },
+  {
+    id: 'cert-iitg',
+    title: 'BS DSAI Intensive Core Technical Orientation',
+    issuer: 'IIT Guwahati',
+    issueDate: 'Sep 2025',
+    skills: ['Data Science Foundations', 'AI Ethics', 'Mathematical Foundations of AI'],
+    type: 'Course',
+  },
+  {
+    id: 'cert-ieee',
+    title: 'Webmaster & Active Global Engineering Network Member',
+    issuer: 'IEEE Global / IEEE Amrita Chennai',
+    issueDate: 'Active Tenure',
+    skills: ['IEEE Standards', 'Web Architecture', 'Engineering Community Leadership'],
+    type: 'Affiliation',
   },
 ];
 
@@ -205,44 +297,6 @@ export const PROJECTS_DATA: Project[] = [
     metrics: ['Automated GitHub CI Pipeline', 'High-Constraint Solver'],
     status: 'Production',
     githubUrl: 'https://github.com/priyanrajj-hub/MAOM-PROJECT-2-ADM',
-  },
-];
-
-export const CERTIFICATIONS_DATA: Certification[] = [
-  {
-    id: 'cert-1',
-    title: 'The Joy of Computing Using Python — Core Track',
-    issuer: 'NPTEL Framework',
-    skills: ['Python 3 Core', 'Algorithmic Problem Solving', 'Computational Logic'],
-    type: 'Certification',
-  },
-  {
-    id: 'cert-2',
-    title: 'English Language for Competitive Exams — Advanced Module',
-    issuer: 'NPTEL Framework',
-    skills: ['Technical Documentation', 'Verbal Reasoning', 'Professional Communication'],
-    type: 'Course',
-  },
-  {
-    id: 'cert-3',
-    title: 'Computational Problem Solving & Algorithmic Optimization',
-    issuer: 'Infosys Platform',
-    skills: ['Data Structures', 'Time Complexity Analysis', 'Greedy & Dynamic Paradigms'],
-    type: 'Certification',
-  },
-  {
-    id: 'cert-4',
-    title: 'BS DSAI Intensive Core Technical Orientation',
-    issuer: 'IIT Guwahati',
-    skills: ['Data Science Foundations', 'AI Ethics', 'Mathematical Foundations of AI'],
-    type: 'Course',
-  },
-  {
-    id: 'cert-5',
-    title: 'Active Global Research Engineering Network Member',
-    issuer: 'IEEE Global Node',
-    skills: ['IEEE Standards', 'Hardware Research', 'Global Technical Publications'],
-    type: 'Affiliation',
   },
 ];
 
