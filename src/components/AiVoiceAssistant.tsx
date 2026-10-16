@@ -18,9 +18,10 @@ import {
 } from 'lucide-react';
 import { JARVIS_SYSTEM_DATASET, getGroundedFallbackResponse } from '../data/jarvisDataset';
 
-// User-provided Gemini API key (supports Gemini_API_key from Vercel)
+// User-provided Gemini API key (supports Gemini_API_key and GEMINI_API_KEY from Vercel)
 const getApiKey = () => {
-  const envKey = (import.meta as any).env?.Gemini_API_key || (import.meta as any).env?.VITE_GEMINI_API_KEY || (import.meta as any).env?.VITE_API_KEY;
+  const env = (import.meta as any).env;
+  const envKey = env?.Gemini_API_key || env?.GEMINI_API_KEY || env?.VITE_GEMINI_API_KEY || env?.VITE_API_KEY;
   if (envKey) return envKey;
 
   try {
@@ -183,42 +184,62 @@ CURRENT CONTEXT & INSTRUCTIONS:
 
     try {
       const systemPrompt = buildSystemContext(selectedLanguage.name);
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${getApiKey()}`;
-      
-      const payload = {
-        systemInstruction: {
-          parts: [{ text: systemPrompt }]
-        },
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              { text: query }
-            ]
+      let aiReply = '';
+
+      // 1. Check if hosted on Vercel with /api/chat serverless route
+      try {
+        const vercelRes = await fetch('./api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, systemPrompt, language: selectedLanguage.code })
+        });
+        if (vercelRes.ok) {
+          const vData = await vercelRes.json();
+          if (vData?.reply) {
+            aiReply = vData.reply;
           }
-        ],
-        generationConfig: {
-          thinkingConfig: { thinkingBudget: 0 },
-          temperature: 0.7,
-          maxOutputTokens: 2048
         }
-      };
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Gemini status: ${response.status}`);
+      } catch {
+        // Fall through to client API or local grounded engine
       }
 
-      const data = await response.json();
-      const aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
+      // 2. Direct client Google Gemini 2.0 Flash call if API key exists
       if (!aiReply) {
-        throw new Error("Empty candidate received");
+        const apiKey = getApiKey();
+        if (apiKey) {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+          const payload = {
+            systemInstruction: {
+              parts: [{ text: systemPrompt }]
+            },
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: query }]
+              }
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 2048
+            }
+          };
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          }
+        }
+      }
+
+      // 3. Multi-tier grounded knowledge engine fallback (instant, adblocker-proof)
+      if (!aiReply) {
+        aiReply = getGroundedFallbackResponse(query, selectedLanguage.code);
       }
 
       setMessages(prev => [...prev, { sender: 'jarvis', text: aiReply }]);
@@ -255,8 +276,8 @@ CURRENT CONTEXT & INSTRUCTIONS:
 
   return (
     <>
-      {/* Floating Stark Industries Arc Reactor Trigger */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
+      {/* Floating Stark Arc Reactor Trigger with Gold Theme */}
+      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5">
         
         {/* Quick Voice Briefing Button */}
         <button
@@ -264,41 +285,42 @@ CURRENT CONTEXT & INSTRUCTIONS:
           className={`flex items-center gap-2 px-3.5 py-2.5 rounded-full shadow-2xl transition-all duration-300 font-mono text-xs border ${
             isSpeaking 
               ? 'bg-rose-500 text-white border-rose-400 animate-pulse' 
-              : 'bg-slate-900/90 hover:bg-slate-800 text-cyan-300 border-cyan-500/40 backdrop-blur-md'
+              : 'bg-[#10121a]/95 hover:bg-[#1c2030] text-amber-300 border-amber-400/35 backdrop-blur-md shadow-lg shadow-black/60'
           }`}
           title="Play J.A.R.V.I.S. voice briefing in selected language"
+          aria-label="Play voice briefing"
         >
-          {isSpeaking ? <Pause className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-cyan-400" />}
-          <span className="hidden sm:inline">{isSpeaking ? 'Pause Audio' : `Voice Briefing (${selectedLanguage.nativeName})`}</span>
+          {isSpeaking ? <Pause className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
+          <span className="hidden sm:inline font-semibold">{isSpeaking ? 'Pause Audio' : `Voice Briefing (${selectedLanguage.nativeName})`}</span>
         </button>
 
         {/* J.A.R.V.I.S. Arc Reactor Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative p-2.5 rounded-full bg-slate-950 border-2 border-cyan-400 shadow-[0_0_25px_rgba(56,189,248,0.5)] transition-transform hover:scale-110 group"
+          className="relative p-2 rounded-full bg-[#07080d] border-2 border-amber-400 shadow-[0_0_25px_rgba(255,183,3,0.35)] transition-all hover:scale-110 group cursor-pointer"
           aria-label="Toggle J.A.R.V.I.S. Stark AI Assistant"
           title="Open J.A.R.V.I.S. Stark AI Assistant"
         >
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-black flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-black flex items-center justify-center">
             <img
               src="./jarvis-core.png"
-              alt="J.A.R.V.I.S. Core"
+              alt="J.A.R.V.I.S. Arc Reactor Core"
               className="w-full h-full object-cover animate-spin group-hover:scale-110 transition-transform"
               style={{ animationDuration: '20s' }}
             />
           </div>
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-950 animate-pulse"></span>
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#07080d] animate-pulse"></span>
         </button>
       </div>
 
-      {/* J.A.R.V.I.S. Holographic Drawer Modal */}
+      {/* J.A.R.V.I.S. Holographic Drawer Modal with Gold/Obsidian Theme */}
       {isOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-[94vw] sm:w-[460px] max-h-[640px] rounded-3xl bg-slate-950/95 border-2 border-cyan-500/40 shadow-[0_0_60px_rgba(56,189,248,0.25)] flex flex-col overflow-hidden backdrop-blur-2xl">
+        <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-[94vw] sm:w-[460px] max-h-[640px] rounded-3xl bg-[#07080d]/95 border-2 border-amber-400/35 shadow-[0_0_60px_rgba(255,183,3,0.18)] flex flex-col overflow-hidden backdrop-blur-2xl">
           
           {/* Stark Industries HUD Header */}
-          <div className="px-5 py-4 bg-gradient-to-r from-slate-900/95 via-cyan-950/50 to-slate-900/95 border-b border-cyan-500/30 flex items-center justify-between">
+          <div className="px-5 py-4 bg-gradient-to-r from-[#10121a]/95 via-[#1a1816]/70 to-[#10121a]/95 border-b border-amber-400/25 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border-2 border-cyan-400 p-0.5 shadow-[0_0_15px_rgba(56,189,248,0.6)] overflow-hidden bg-black">
+              <div className="w-10 h-10 rounded-full border-2 border-amber-400 p-0.5 shadow-[0_0_15px_rgba(255,183,3,0.5)] overflow-hidden bg-black">
                 <img
                   src="./jarvis-core.png"
                   alt="J.A.R.V.I.S. Core"
@@ -308,10 +330,10 @@ CURRENT CONTEXT & INSTRUCTIONS:
               </div>
               <div>
                 <h4 className="text-sm font-black text-white font-mono tracking-wider flex items-center gap-1.5">
-                  J.A.R.V.I.S. <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-950 border border-cyan-700/60 text-cyan-300">MARK-85</span>
+                  J.A.R.V.I.S. <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-400/40 text-amber-300 font-bold">MARK-85</span>
                 </h4>
-                <p className="text-[10px] font-mono text-cyan-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                <p className="text-[10px] font-mono text-amber-400 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                   STARK AI PROTOCOL • ONLINE
                 </p>
               </div>
@@ -323,18 +345,20 @@ CURRENT CONTEXT & INSTRUCTIONS:
                   if (voiceEnabled) stopSpeaking();
                   setVoiceEnabled(!voiceEnabled);
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                className="p-1.5 rounded-lg text-[#9a9aa8] hover:text-[#f4f1ea] hover:bg-[#141722] transition"
                 title={voiceEnabled ? 'Mute AI voice' : 'Enable AI voice'}
+                aria-label="Toggle voice"
               >
-                {voiceEnabled ? <Volume2 className="w-4 h-4 text-cyan-400" /> : <VolumeX className="w-4 h-4 text-rose-400" />}
+                {voiceEnabled ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4 text-rose-400" />}
               </button>
               <button
                 onClick={() => {
                   stopSpeaking();
                   setIsOpen(false);
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                className="p-1.5 rounded-lg text-[#9a9aa8] hover:text-white hover:bg-[#141722] transition"
                 title="Close J.A.R.V.I.S."
+                aria-label="Close J.A.R.V.I.S."
               >
                 <X className="w-4 h-4" />
               </button>
@@ -342,9 +366,9 @@ CURRENT CONTEXT & INSTRUCTIONS:
           </div>
 
           {/* Language Selector Bar */}
-          <div className="px-4 py-2 bg-slate-900/70 border-b border-cyan-500/20 flex items-center justify-between text-xs">
-            <span className="text-slate-400 font-mono flex items-center gap-1.5 text-[11px]">
-              <Languages className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="px-4 py-2 bg-[#10121a]/70 border-b border-white/5 flex items-center justify-between text-xs">
+            <span className="text-[#9a9aa8] font-mono flex items-center gap-1.5 text-[11px]">
+              <Languages className="w-3.5 h-3.5 text-amber-400" />
               Language:
             </span>
             <select
@@ -353,7 +377,7 @@ CURRENT CONTEXT & INSTRUCTIONS:
                 const found = SUPPORTED_LANGUAGES.find(l => l.code === e.target.value);
                 if (found) setSelectedLanguage(found);
               }}
-              className="bg-slate-900 text-cyan-300 font-mono text-xs px-2.5 py-1 rounded-lg border border-cyan-800/60 outline-none focus:border-cyan-500 cursor-pointer"
+              className="bg-[#141722] text-amber-300 font-mono text-xs px-2.5 py-1 rounded-lg border border-amber-400/30 outline-none focus:border-amber-400 cursor-pointer"
             >
               {SUPPORTED_LANGUAGES.map(lang => (
                 <option key={lang.code} value={lang.code}>
@@ -364,7 +388,7 @@ CURRENT CONTEXT & INSTRUCTIONS:
           </div>
 
           {/* Quick Questions Chips */}
-          <div className="px-4 py-2 bg-slate-900/40 border-b border-cyan-500/20 flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono text-slate-300">
+          <div className="px-4 py-2 bg-[#10121a]/40 border-b border-white/5 flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono text-[#9a9aa8]">
             {[
               'Say about this guy',
               'Who is Priyanraj?',
@@ -377,7 +401,7 @@ CURRENT CONTEXT & INSTRUCTIONS:
                 key={q}
                 onClick={() => handleSend(q)}
                 disabled={loading}
-                className="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-950 hover:text-cyan-300 whitespace-nowrap border border-slate-700/80 transition"
+                className="px-2.5 py-1 rounded bg-[#141722] hover:bg-amber-500/20 hover:text-amber-300 hover:border-amber-400/40 whitespace-nowrap border border-white/8 transition"
               >
                 {q}
               </button>
@@ -394,19 +418,20 @@ CURRENT CONTEXT & INSTRUCTIONS:
                 <div
                   className={`max-w-[88%] rounded-2xl p-3 leading-relaxed ${
                     m.sender === 'user'
-                      ? 'bg-sky-600/95 text-white rounded-tr-none'
-                      : 'bg-slate-900/95 text-cyan-100 border border-cyan-500/30 rounded-tl-none shadow-[0_0_15px_rgba(56,189,248,0.08)]'
+                      ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none shadow-md shadow-amber-500/10'
+                      : 'bg-[#10121a] text-[#f4f1ea] border border-white/10 rounded-tl-none shadow-[0_0_20px_rgba(0,0,0,0.5)]'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className={`text-[10px] font-bold ${m.sender === 'user' ? 'text-sky-200' : 'text-cyan-400'}`}>
+                    <span className={`text-[10px] font-bold ${m.sender === 'user' ? 'text-slate-950' : 'text-amber-400'}`}>
                       {m.sender === 'user' ? 'YOU:' : 'J.A.R.V.I.S.:'}
                     </span>
                     {m.sender === 'jarvis' && (
                       <button
                         onClick={() => speakText(m.text, selectedLanguage.speechCode)}
-                        className="text-slate-400 hover:text-cyan-300 p-0.5"
+                        className="text-[#9a9aa8] hover:text-amber-400 p-0.5"
                         title="Read aloud"
+                        aria-label="Read text aloud"
                       >
                         <Volume2 className="w-3 h-3" />
                       </button>
@@ -418,8 +443,8 @@ CURRENT CONTEXT & INSTRUCTIONS:
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-slate-900 text-cyan-300 border border-cyan-500/30 rounded-2xl p-3 flex items-center gap-2">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+                <div className="bg-[#10121a] text-amber-300 border border-amber-400/25 rounded-2xl p-3 flex items-center gap-2">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
                   <span>J.A.R.V.I.S. is synthesizing telemetry in {selectedLanguage.nativeName}...</span>
                 </div>
               </div>
@@ -427,14 +452,14 @@ CURRENT CONTEXT & INSTRUCTIONS:
           </div>
 
           {/* Input Box with Microphone Voice Input */}
-          <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 bg-slate-900/90 border-t border-cyan-500/30 flex items-center gap-2">
+          <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 bg-[#10121a]/95 border-t border-amber-400/20 flex items-center gap-2">
             <input
               type="text"
               value={inputMessage}
               disabled={loading}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder={`Ask in ${selectedLanguage.nativeName} (e.g. "say about this guy")...`}
-              className="flex-1 px-3.5 py-2 rounded-xl bg-slate-950 border border-cyan-800/60 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono"
+              className="flex-1 px-3.5 py-2 rounded-xl bg-[#07080d] border border-white/10 text-xs text-[#f4f1ea] placeholder-[#6b6b7a] focus:outline-none focus:border-amber-400 font-mono"
             />
 
             {/* Voice Input Button */}
@@ -444,9 +469,10 @@ CURRENT CONTEXT & INSTRUCTIONS:
               className={`p-2 rounded-xl border transition ${
                 isListening
                   ? 'bg-rose-500 text-white border-rose-400 animate-pulse'
-                  : 'bg-slate-950 text-cyan-400 border-cyan-800/60 hover:bg-slate-900'
+                  : 'bg-[#141722] text-amber-400 border-white/10 hover:border-amber-400/40'
               }`}
               title={isListening ? "Listening... Click to stop" : "Speak to J.A.R.V.I.S."}
+              aria-label="Microphone speech input"
             >
               {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
             </button>
@@ -455,7 +481,8 @@ CURRENT CONTEXT & INSTRUCTIONS:
             <button
               type="submit"
               disabled={loading || !inputMessage.trim()}
-              className="p-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold transition shadow-md disabled:opacity-50"
+              className="p-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 font-bold transition shadow-md disabled:opacity-50"
+              aria-label="Send message"
             >
               <Send className="w-4 h-4" />
             </button>

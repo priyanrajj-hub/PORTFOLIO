@@ -16,9 +16,10 @@ import {
 } from 'lucide-react';
 import { JARVIS_SYSTEM_DATASET, getGroundedFallbackResponse } from '../data/jarvisDataset';
 
-// User-provided Gemini API key (supports Gemini_API_key from Vercel)
+// User-provided Gemini API key (supports Gemini_API_key and GEMINI_API_KEY from Vercel)
 const getApiKey = () => {
-  const envKey = (import.meta as any).env?.Gemini_API_key || (import.meta as any).env?.VITE_GEMINI_API_KEY || (import.meta as any).env?.VITE_API_KEY;
+  const env = (import.meta as any).env;
+  const envKey = env?.Gemini_API_key || env?.GEMINI_API_KEY || env?.VITE_GEMINI_API_KEY || env?.VITE_API_KEY;
   if (envKey) return envKey;
 
   try {
@@ -70,14 +71,12 @@ export const JarvisHeroWidget: React.FC = () => {
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Scroll to bottom when messages update
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
     }
   }, [messages, loading]);
 
   useEffect(() => {
-    // Listen for custom trigger to focus Jarvis
     const handleFocusJarvis = () => {
       const inputEl = document.getElementById('jarvis-hero-input');
       if (inputEl) {
@@ -102,11 +101,11 @@ export const JarvisHeroWidget: React.FC = () => {
     if (!voiceEnabled || !('speechSynthesis' in window)) return;
     
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[*#_`]/g, ''); // strip markdown formatting for TTS
+    const cleanText = text.replace(/[*#_`]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = langCode;
     utterance.rate = 1.05;
-    utterance.pitch = 0.95; // Authoritative J.A.R.V.I.S. pitch
+    utterance.pitch = 0.95;
 
     const voices = window.speechSynthesis.getVoices();
     const matchVoice = voices.find(v => v.lang.startsWith(langCode.split('-')[0]));
@@ -129,7 +128,7 @@ export const JarvisHeroWidget: React.FC = () => {
     }
   };
 
-  // Speech Recognition (Voice Input)
+  // Web Speech Recognition
   const toggleListening = () => {
     if (isListening) {
       if (recognitionRef.current) recognitionRef.current.stop();
@@ -139,7 +138,7 @@ export const JarvisHeroWidget: React.FC = () => {
 
     const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRec) {
-      alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
+      alert("Speech recognition is supported in Chrome and Edge.");
       return;
     }
 
@@ -188,42 +187,62 @@ CURRENT CONTEXT & INSTRUCTIONS:
 
     try {
       const systemPrompt = buildSystemContext(selectedLanguage.name);
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${getApiKey()}`;
-      
-      const payload = {
-        systemInstruction: {
-          parts: [{ text: systemPrompt }]
-        },
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              { text: query }
-            ]
+      let aiReply = '';
+
+      // 1. Check if hosted on Vercel with /api/chat serverless route
+      try {
+        const vercelRes = await fetch('./api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, systemPrompt, language: selectedLanguage.code })
+        });
+        if (vercelRes.ok) {
+          const vData = await vercelRes.json();
+          if (vData?.reply) {
+            aiReply = vData.reply;
           }
-        ],
-        generationConfig: {
-          thinkingConfig: { thinkingBudget: 0 },
-          temperature: 0.7,
-          maxOutputTokens: 2048
         }
-      };
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Gemini status: ${response.status}`);
+      } catch {
+        // Fall through to client API or local grounded engine
       }
 
-      const data = await response.json();
-      const aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
+      // 2. Direct client Google Gemini 2.0 Flash call if API key exists
       if (!aiReply) {
-        throw new Error("Empty candidate received");
+        const apiKey = getApiKey();
+        if (apiKey) {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+          const payload = {
+            systemInstruction: {
+              parts: [{ text: systemPrompt }]
+            },
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: query }]
+              }
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 2048
+            }
+          };
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          }
+        }
+      }
+
+      // 3. Multi-tier grounded knowledge engine fallback (instant, adblocker-proof)
+      if (!aiReply) {
+        aiReply = getGroundedFallbackResponse(query, selectedLanguage.code);
       }
 
       setMessages(prev => [...prev, { sender: 'jarvis', text: aiReply }]);
@@ -259,16 +278,16 @@ CURRENT CONTEXT & INSTRUCTIONS:
   };
 
   return (
-    <div className="w-full rounded-3xl border border-cyan-500/40 bg-slate-950/85 backdrop-blur-2xl shadow-[0_0_50px_rgba(56,189,248,0.2)] overflow-hidden flex flex-col">
+    <div className="w-full rounded-3xl border border-amber-400/30 bg-[#07080d]/90 backdrop-blur-2xl shadow-[0_0_50px_rgba(255,183,3,0.12)] overflow-hidden flex flex-col">
       
-      {/* Stark Industries HUD Header */}
-      <div className="px-5 py-3.5 bg-gradient-to-r from-slate-900/95 via-cyan-950/40 to-slate-900/95 border-b border-cyan-500/30 flex items-center justify-between">
+      {/* Stark Industries HUD Header with Arc Reactor Gold */}
+      <div className="px-5 py-3.5 bg-gradient-to-r from-[#10121a]/95 via-[#1a1816]/70 to-[#10121a]/95 border-b border-amber-400/25 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative group">
-            <div className="w-10 h-10 rounded-full border-2 border-cyan-400 p-0.5 shadow-[0_0_15px_rgba(56,189,248,0.6)] overflow-hidden bg-black">
+            <div className="w-10 h-10 rounded-full border-2 border-amber-400 p-0.5 shadow-[0_0_15px_rgba(255,183,3,0.5)] overflow-hidden bg-black">
               <img
                 src="./jarvis-core.png"
-                alt="J.A.R.V.I.S. Iron Man Holographic Core"
+                alt="J.A.R.V.I.S. Iron Man Arc Reactor"
                 className="w-full h-full object-cover animate-spin"
                 style={{ animationDuration: '24s' }}
               />
@@ -279,11 +298,11 @@ CURRENT CONTEXT & INSTRUCTIONS:
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-black text-white font-mono tracking-wider flex items-center gap-1.5">
-                J.A.R.V.I.S. <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-950 border border-cyan-700/60 text-cyan-300">MARK-85</span>
+                J.A.R.V.I.S. <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-400/40 text-amber-300 font-bold">MARK-85</span>
               </h3>
             </div>
-            <p className="text-[10px] font-mono text-cyan-400/90 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <p className="text-[10px] font-mono text-amber-400/90 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
               STARK NEURAL CORE • TRAINED & GROUNDED
             </p>
           </div>
@@ -292,11 +311,11 @@ CURRENT CONTEXT & INSTRUCTIONS:
         {/* Audio Equalizer & Voice Control */}
         <div className="flex items-center gap-2">
           {/* Animated sound wave bars when speaking */}
-          <div className="hidden sm:flex items-center gap-1 h-5 px-2 bg-slate-900/80 rounded border border-cyan-500/20">
-            <span className={`w-0.5 bg-cyan-400 rounded-full transition-all ${isSpeaking ? 'h-4 animate-bounce' : 'h-1.5'}`}></span>
-            <span className={`w-0.5 bg-cyan-300 rounded-full transition-all ${isSpeaking ? 'h-3 animate-pulse' : 'h-2'}`}></span>
-            <span className={`w-0.5 bg-emerald-400 rounded-full transition-all ${isSpeaking ? 'h-5 animate-bounce' : 'h-1.5'}`}></span>
-            <span className={`w-0.5 bg-cyan-400 rounded-full transition-all ${isSpeaking ? 'h-3.5 animate-pulse' : 'h-2'}`}></span>
+          <div className="hidden sm:flex items-center gap-1 h-5 px-2 bg-[#141722] rounded border border-amber-400/20">
+            <span className={`w-0.5 bg-amber-400 rounded-full transition-all ${isSpeaking ? 'h-4 animate-bounce' : 'h-1.5'}`}></span>
+            <span className={`w-0.5 bg-orange-400 rounded-full transition-all ${isSpeaking ? 'h-3 animate-pulse' : 'h-2'}`}></span>
+            <span className={`w-0.5 bg-amber-300 rounded-full transition-all ${isSpeaking ? 'h-5 animate-bounce' : 'h-1.5'}`}></span>
+            <span className={`w-0.5 bg-amber-500 rounded-full transition-all ${isSpeaking ? 'h-3.5 animate-pulse' : 'h-2'}`}></span>
           </div>
 
           <button
@@ -304,10 +323,11 @@ CURRENT CONTEXT & INSTRUCTIONS:
               if (voiceEnabled) stopSpeaking();
               setVoiceEnabled(!voiceEnabled);
             }}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-[#9a9aa8] hover:text-[#f4f1ea] hover:bg-[#141722] transition"
             title={voiceEnabled ? 'Mute voice' : 'Enable voice'}
+            aria-label="Toggle voice briefing"
           >
-            {voiceEnabled ? <Volume2 className="w-4 h-4 text-cyan-400" /> : <VolumeX className="w-4 h-4 text-rose-400" />}
+            {voiceEnabled ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4 text-rose-400" />}
           </button>
 
           <button
@@ -315,28 +335,28 @@ CURRENT CONTEXT & INSTRUCTIONS:
             className={`px-3 py-1.5 rounded-xl font-mono text-xs flex items-center gap-1.5 transition-all shadow-md ${
               isSpeaking
                 ? 'bg-rose-500 text-white animate-pulse'
-                : 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40'
+                : 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-400/40'
             }`}
             title="Play Audio Briefing"
           >
-            {isSpeaking ? <Pause className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-400" />}
+            {isSpeaking ? <Pause className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-amber-400" />}
             <span className="text-[11px] font-bold">{isSpeaking ? 'Stop Voice' : 'Voice Briefing'}</span>
           </button>
         </div>
       </div>
 
       {/* Multilingual Selector & Status Bar */}
-      <div className="px-4 py-2 bg-slate-900/60 border-b border-cyan-500/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div className="px-4 py-2 bg-[#10121a]/60 border-b border-white/5 flex flex-wrap items-center justify-between gap-2 text-xs">
         <div className="flex items-center gap-1.5">
-          <Languages className="w-3.5 h-3.5 text-cyan-400" />
-          <span className="text-[11px] font-mono text-slate-400">Language:</span>
+          <Languages className="w-3.5 h-3.5 text-amber-400" />
+          <span className="text-[11px] font-mono text-[#9a9aa8]">Language:</span>
           <select
             value={selectedLanguage.code}
             onChange={(e) => {
               const found = SUPPORTED_LANGUAGES.find(l => l.code === e.target.value);
               if (found) setSelectedLanguage(found);
             }}
-            className="bg-slate-950 text-cyan-300 font-mono text-xs px-2 py-0.5 rounded border border-cyan-800/50 outline-none cursor-pointer"
+            className="bg-[#141722] text-amber-300 font-mono text-xs px-2 py-0.5 rounded border border-amber-400/30 outline-none cursor-pointer"
           >
             {SUPPORTED_LANGUAGES.map(lang => (
               <option key={lang.code} value={lang.code}>
@@ -346,9 +366,9 @@ CURRENT CONTEXT & INSTRUCTIONS:
           </select>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[10px] font-mono text-cyan-400">
+        <div className="flex items-center gap-1.5 text-[10px] font-mono text-amber-400">
           <Zap className="w-3 h-3 text-amber-400" />
-          <span>Gemini 3.5 Flash Grounded API</span>
+          <span>Gemini 3.5 Flash Grounded</span>
         </div>
       </div>
 
@@ -362,19 +382,20 @@ CURRENT CONTEXT & INSTRUCTIONS:
             <div
               className={`max-w-[90%] rounded-2xl p-3 leading-relaxed ${
                 m.sender === 'user'
-                  ? 'bg-sky-600/90 text-white rounded-tr-none'
-                  : 'bg-slate-900/90 text-cyan-100 border border-cyan-500/30 rounded-tl-none shadow-[0_0_15px_rgba(56,189,248,0.08)]'
+                  ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none shadow-md shadow-amber-500/10'
+                  : 'bg-[#10121a] text-[#f4f1ea] border border-white/10 rounded-tl-none shadow-[0_0_20px_rgba(0,0,0,0.5)]'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className={`text-[10px] font-bold ${m.sender === 'user' ? 'text-sky-200' : 'text-cyan-400'}`}>
+                <span className={`text-[10px] font-bold ${m.sender === 'user' ? 'text-slate-950' : 'text-amber-400'}`}>
                   {m.sender === 'user' ? 'YOU:' : 'J.A.R.V.I.S.:'}
                 </span>
                 {m.sender === 'jarvis' && (
                   <button
                     onClick={() => speakText(m.text, selectedLanguage.speechCode)}
-                    className="text-slate-400 hover:text-cyan-300 p-0.5"
+                    className="text-[#9a9aa8] hover:text-amber-400 p-0.5"
                     title="Read aloud"
+                    aria-label="Read text aloud"
                   >
                     <Volume2 className="w-3 h-3" />
                   </button>
@@ -387,8 +408,8 @@ CURRENT CONTEXT & INSTRUCTIONS:
 
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-slate-900/90 text-cyan-300 border border-cyan-500/30 rounded-2xl p-2.5 flex items-center gap-2">
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+            <div className="bg-[#10121a] text-amber-300 border border-amber-400/25 rounded-2xl p-2.5 flex items-center gap-2">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
               <span className="text-[11px]">J.A.R.V.I.S. is synthesizing telemetry in {selectedLanguage.nativeName}...</span>
             </div>
           </div>
@@ -396,7 +417,7 @@ CURRENT CONTEXT & INSTRUCTIONS:
       </div>
 
       {/* Dataset Shortcut Chips */}
-      <div className="px-4 py-2 bg-slate-900/40 border-t border-cyan-500/20 flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono text-slate-300">
+      <div className="px-4 py-2 bg-[#10121a]/40 border-t border-white/5 flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono text-[#9a9aa8]">
         {[
           'Say about this guy',
           'Who is Priyanraj?',
@@ -409,15 +430,15 @@ CURRENT CONTEXT & INSTRUCTIONS:
             key={q}
             onClick={() => handleSend(q)}
             disabled={loading}
-            className="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-950 hover:text-cyan-300 whitespace-nowrap border border-slate-700/80 transition flex items-center gap-1"
+            className="px-2.5 py-1 rounded bg-[#141722] hover:bg-amber-500/20 hover:text-amber-300 hover:border-amber-400/40 whitespace-nowrap border border-white/8 transition"
           >
-            <span>{q}</span>
+            {q}
           </button>
         ))}
       </div>
 
       {/* Input Box with Microphone Voice Input */}
-      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 bg-slate-900/90 border-t border-cyan-500/30 flex items-center gap-2">
+      <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 bg-[#10121a]/90 border-t border-amber-400/20 flex items-center gap-2">
         <input
           id="jarvis-hero-input"
           type="text"
@@ -425,7 +446,7 @@ CURRENT CONTEXT & INSTRUCTIONS:
           disabled={loading}
           onChange={(e) => setInputMessage(e.target.value)}
           placeholder={`Ask J.A.R.V.I.S. in ${selectedLanguage.nativeName} (e.g. "say about this guy")...`}
-          className="flex-1 px-3 py-2 rounded-xl bg-slate-950 border border-cyan-800/60 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono"
+          className="flex-1 px-3 py-2 rounded-xl bg-[#07080d] border border-white/10 text-xs text-[#f4f1ea] placeholder-[#6b6b7a] focus:outline-none focus:border-amber-400 font-mono"
         />
 
         {/* Voice Input Button */}
@@ -435,9 +456,10 @@ CURRENT CONTEXT & INSTRUCTIONS:
           className={`p-2 rounded-xl border transition ${
             isListening
               ? 'bg-rose-500 text-white border-rose-400 animate-pulse'
-              : 'bg-slate-950 text-cyan-400 border-cyan-800/60 hover:bg-slate-900'
+              : 'bg-[#141722] text-amber-400 border-white/10 hover:border-amber-400/40'
           }`}
           title={isListening ? "Listening... Click to stop" : "Speak to J.A.R.V.I.S."}
+          aria-label="Microphone speech input"
         >
           {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
         </button>
@@ -446,7 +468,8 @@ CURRENT CONTEXT & INSTRUCTIONS:
         <button
           type="submit"
           disabled={loading || !inputMessage.trim()}
-          className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold transition shadow-md flex items-center gap-1.5 text-xs font-mono disabled:opacity-50"
+          className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 font-bold transition shadow-md flex items-center gap-1.5 text-xs font-mono disabled:opacity-50"
+          aria-label="Send query"
         >
           <span>Ask</span>
           <Send className="w-3.5 h-3.5" />

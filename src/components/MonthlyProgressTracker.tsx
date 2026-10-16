@@ -108,20 +108,20 @@ export const MonthlyProgressTracker: React.FC = () => {
   }, []);
 
   return (
-    <section id="progress" className="py-20 relative bg-slate-950/80 border-t border-b border-slate-900">
+    <section id="progress" className="py-20 relative bg-[#07080d]/80 border-t border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono mb-3">
-              <TrendingUp className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-mono mb-3 shadow-sm">
+              <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
               <span>REAL-TIME AUDIT LOG & MONTHLY TELEMETRY</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">
-              Autonomous <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">Monthly Progress Engine</span>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-[#f4f1ea]">
+              Autonomous <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-200 bg-clip-text text-transparent">Monthly Progress Engine</span>
             </h2>
-            <p className="mt-3 text-gray-400 max-w-2xl text-sm md:text-base">
+            <p className="mt-3 text-[#9a9aa8] max-w-2xl text-sm md:text-base leading-relaxed">
               Synchronized monthly velocity audits detailing codebase pushes, hackathon completions, and academic milestones updated automatically.
             </p>
           </div>
@@ -130,9 +130,9 @@ export const MonthlyProgressTracker: React.FC = () => {
             <button
               onClick={fetchLiveTelemetry}
               disabled={syncing}
-              className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono text-emerald-400 hover:bg-slate-800 transition flex items-center gap-2 shadow-lg"
+              className="px-4 py-2 rounded-xl bg-[#141722] border border-white/10 text-xs font-mono text-amber-300 hover:bg-[#1c2030] hover:border-amber-400/40 transition flex items-center gap-2 shadow-lg"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${syncing ? 'animate-spin' : ''}`} />
               <span>Sync Telemetry (Active: {liveEventCount} Pushes)</span>
             </button>
           </div>
@@ -145,43 +145,43 @@ export const MonthlyProgressTracker: React.FC = () => {
               key={idx}
               className={`p-6 rounded-2xl border transition-all duration-300 flex flex-col justify-between backdrop-blur-sm ${
                 item.status === 'In Progress'
-                  ? 'bg-gradient-to-br from-slate-900/90 via-slate-950 to-slate-900/90 border-emerald-500/40 shadow-xl shadow-emerald-500/10'
-                  : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700'
+                  ? 'bg-[#10121a]/95 border-amber-400/35 shadow-xl shadow-amber-500/10'
+                  : 'bg-[#10121a]/80 border-white/8 hover:border-white/20'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                    <Calendar className="w-3.5 h-3.5 text-amber-400" />
                     {item.month}
                   </span>
                   <span
                     className={`text-[10px] font-mono px-2 py-0.5 rounded-full uppercase font-bold ${
                       item.status === 'In Progress'
-                        ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/50 animate-pulse'
-                        : 'bg-slate-800 text-slate-300 border border-slate-700'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-400/40 animate-pulse'
+                        : 'bg-white/10 text-[#9a9aa8] border border-white/5'
                     }`}
                   >
                     {item.status}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-2">
+                <h3 className="text-lg font-bold text-[#f4f1ea] mb-2">
                   {item.focus}
                 </h3>
 
-                <p className="text-xs text-gray-300 leading-relaxed mb-4">
+                <p className="text-xs text-[#9a9aa8] leading-relaxed mb-4">
                   {item.summary}
                 </p>
 
                 {/* Key Pushes / Highlights */}
-                <div className="space-y-1.5 pt-3 border-t border-slate-800/80">
-                  <span className="text-[11px] font-mono text-gray-400 uppercase tracking-wider block mb-1">
+                <div className="space-y-1.5 pt-3 border-t border-white/5">
+                  <span className="text-[11px] font-mono text-[#9a9aa8] uppercase tracking-wider block mb-1">
                     Verified Repository Checkpoints:
                   </span>
                   {item.keyCommits.map((c, cIdx) => (
-                    <div key={cIdx} className="flex items-start gap-2 text-xs text-slate-300">
-                      <GitCommit className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div key={cIdx} className="flex items-start gap-2 text-xs text-[#f4f1ea]/90 font-mono">
+                      <GitCommit className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
                       <span>{c}</span>
                     </div>
                   ))}
@@ -189,11 +189,11 @@ export const MonthlyProgressTracker: React.FC = () => {
               </div>
 
               {/* Metrics Badge Row */}
-              <div className="mt-6 pt-3 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div className="mt-6 pt-3 border-t border-white/5 grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {item.metrics.map((m, mIdx) => (
-                  <div key={mIdx} className="p-2 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <span className="text-[10px] font-mono text-slate-400 block">{m.label}</span>
-                    <span className="text-xs font-bold text-emerald-300 font-mono">{m.value}</span>
+                  <div key={mIdx} className="p-2 rounded-lg bg-[#07080d]/80 border border-white/5">
+                    <span className="text-[10px] font-mono text-[#6b6b7a] block">{m.label}</span>
+                    <span className="text-xs font-bold text-amber-300 font-mono">{m.value}</span>
                   </div>
                 ))}
               </div>
@@ -203,7 +203,7 @@ export const MonthlyProgressTracker: React.FC = () => {
         </div>
 
         {/* Real-time GitHub Activity Notification */}
-        <div className="mt-8 p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-gray-400">
+        <div className="mt-8 p-4 rounded-2xl bg-[#10121a]/90 border border-white/8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#9a9aa8]">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
             <span>Live telemetry connected to GitHub API • Last checked: {lastSyncTime}</span>
@@ -212,7 +212,7 @@ export const MonthlyProgressTracker: React.FC = () => {
             href="https://github.com/priyanrajj-hub"
             target="_blank"
             rel="noreferrer"
-            className="text-sky-400 hover:underline flex items-center gap-1 font-semibold"
+            className="text-amber-400 hover:underline flex items-center gap-1 font-semibold"
           >
             <span>Inspect @priyanrajj-hub Commits on GitHub</span>
             <span>↗</span>
