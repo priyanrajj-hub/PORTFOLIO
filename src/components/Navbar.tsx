@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { 
   Menu, 
   X, 
-  Mail, 
-  Cpu, 
-  Sparkles 
+  Sparkles,
+  Bot
 } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, InstagramIcon } from './BrandIcons';
 import { PERSONAL_INFO } from '../data/portfolioData';
-
 
 export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -24,10 +22,11 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: 'Core Identity', href: '#hero' },
+    { name: 'Experience', href: '#experience' },
     { name: 'Projects', href: '#projects' },
-    { name: 'Terminal', href: '#terminal' },
+    { name: 'Progress Engine', href: '#progress' },
+    { name: 'Competitive', href: '#competitive' },
     { name: 'Education', href: '#education' },
-    { name: 'Roadmap & Specs', href: '#roadmap' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -61,7 +60,7 @@ export const Navbar: React.FC = () => {
               <a
                 key={link.name}
                 href={link.href}
-                className="px-3.5 py-1.5 rounded-xl text-xs font-medium text-gray-300 hover:text-white hover:bg-slate-800/80 transition"
+                className="px-3 py-1.5 rounded-xl text-xs font-medium text-gray-300 hover:text-white hover:bg-slate-800/80 transition"
               >
                 {link.name}
               </a>

@@ -3,12 +3,14 @@ import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { InteractiveBannerCard } from './components/InteractiveBannerCard';
 import { ExperienceSection } from './components/ExperienceSection';
+import { MonthlyProgressTracker } from './components/MonthlyProgressTracker';
 import { CompetitiveProfiles } from './components/CompetitiveProfiles';
 import { ProjectsSection } from './components/ProjectsSection';
 import { InteractiveTerminal } from './components/InteractiveTerminal';
 import { EducationAndCertifications } from './components/EducationAndCertifications';
 import { RoadmapAndSpecs } from './components/RoadmapAndSpecs';
 import { ContactSection } from './components/ContactSection';
+import { AiVoiceAssistant } from './components/AiVoiceAssistant';
 import { Terminal, Shield, ArrowUp } from 'lucide-react';
 
 export function App() {
@@ -43,13 +45,16 @@ export function App() {
         {/* Section 3: Professional Experience (IEEE Webmaster, CodeAlpha) */}
         <ExperienceSection />
 
-        {/* Section 4: Competitive Programming Hub (LeetCode, Codeforces, AtCoder, HackerRank) */}
+        {/* Section 4: Autonomous Monthly Progress Tracker (GitHub Live Telemetry) */}
+        <MonthlyProgressTracker />
+
+        {/* Section 5: Competitive Programming Hub (LeetCode, Codeforces, AtCoder, HackerRank) */}
         <CompetitiveProfiles />
 
-        {/* Section 5: Projects Showcase (Canopy, BLE, OS LinUCB, Graph Rec, Pharma C) */}
+        {/* Section 6: Projects Showcase (Canopy, BLE, OS LinUCB, Graph Rec, Pharma C) */}
         <ProjectsSection />
 
-        {/* Section 6: Cyber UNIX Mainframe Terminal */}
+        {/* Section 7: Cyber UNIX Mainframe Terminal */}
         <section id="terminal" className="py-20 relative">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-xl mx-auto mb-10">
@@ -69,16 +74,19 @@ export function App() {
           </div>
         </section>
 
-        {/* Section 7: Academic Foundation & Certifications (Oracle, Udemy, NPTEL, IEEE, CAMHI, DREAM) */}
+        {/* Section 8: Academic Foundation, Hackathons & All 11 Licenses */}
         <EducationAndCertifications />
 
-        {/* Section 8: Execution Roadmap & Mainframe Specs */}
+        {/* Section 9: Execution Roadmap & Mainframe Specs */}
         <RoadmapAndSpecs />
 
-        {/* Section 9: Contact & Direct Uplink */}
+        {/* Section 10: Contact & Direct Uplink */}
         <ContactSection />
 
       </main>
+
+      {/* Interactive AI Voice & Knowledge Assistant */}
+      <AiVoiceAssistant />
 
       {/* Footer */}
       <footer className="py-10 bg-slate-950 border-t border-slate-900 text-xs font-mono text-gray-400 relative z-10">
