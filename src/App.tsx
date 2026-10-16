@@ -1,13 +1,14 @@
 import React from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
+import { InteractiveBannerCard } from './components/InteractiveBannerCard';
+import { CompetitiveProfiles } from './components/CompetitiveProfiles';
 import { ProjectsSection } from './components/ProjectsSection';
 import { InteractiveTerminal } from './components/InteractiveTerminal';
 import { EducationAndCertifications } from './components/EducationAndCertifications';
 import { RoadmapAndSpecs } from './components/RoadmapAndSpecs';
 import { ContactSection } from './components/ContactSection';
 import { Terminal, Shield, ArrowUp } from 'lucide-react';
-import { PERSONAL_INFO } from './data/portfolioData';
 
 export function App() {
   const scrollToTop = () => {
@@ -32,13 +33,19 @@ export function App() {
       {/* Main Content Sections */}
       <main className="relative z-10">
         
-        {/* Section 1: 3D Hero & Multi-degree Identity */}
+        {/* Section 1: 3D WebGL Hero & Multi-degree Identity */}
         <HeroSection />
 
-        {/* Section 2: Projects Showcase */}
+        {/* Section 2: Interactive High-Res Brand Card (Replaces blurry image poster) */}
+        <InteractiveBannerCard />
+
+        {/* Section 3: Competitive Programming Hub (LeetCode, Codeforces, AtCoder, HackerRank) */}
+        <CompetitiveProfiles />
+
+        {/* Section 4: Projects Showcase (All 9+ real projects including Canopy, BLE, OS LinUCB) */}
         <ProjectsSection />
 
-        {/* Section 3: Cyber UNIX Mainframe Terminal */}
+        {/* Section 5: Cyber UNIX Mainframe Terminal */}
         <section id="terminal" className="py-20 relative">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-xl mx-auto mb-10">
@@ -58,26 +65,13 @@ export function App() {
           </div>
         </section>
 
-        {/* Brand Banner Exhibition */}
-        <section className="py-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl overflow-hidden border border-slate-800 shadow-2xl relative group">
-            <img
-              src="./priyanrajport.png?v=2"
-              alt="Priyanraj J Multi-Institutional Brand Presentation Poster"
-              className="w-full h-auto object-cover opacity-95 group-hover:opacity-100 transition-opacity duration-300"
-              loading="eager"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none"></div>
-          </div>
-        </section>
-
-        {/* Section 4: Academic Foundation & Certifications */}
+        {/* Section 6: Academic Foundation & Certifications */}
         <EducationAndCertifications />
 
-        {/* Section 5: Execution Roadmap & Mainframe Specs */}
+        {/* Section 7: Execution Roadmap & Mainframe Specs */}
         <RoadmapAndSpecs />
 
-        {/* Section 6: Contact & Direct Uplink */}
+        {/* Section 8: Contact & Direct Uplink */}
         <ContactSection />
 
       </main>
@@ -91,7 +85,7 @@ export function App() {
           </div>
 
           <div className="text-center md:text-right text-slate-500">
-            Powered by Vite, React 19, Three.js, and Tailwind CSS • Hosted on GitHub Pages
+            Engineered with React 19, TypeScript, Three.js & Tailwind CSS
           </div>
 
           <button

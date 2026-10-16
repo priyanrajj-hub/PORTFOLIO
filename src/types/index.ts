@@ -2,7 +2,7 @@ export interface Project {
   id: string;
   tag: string;
   title: string;
-  category: 'AI / ML' | 'Embedded / IoT' | 'Software Systems';
+  category: 'AI / ML' | 'Embedded / IoT' | 'Software Systems' | 'Data Structures';
   description: string;
   technologies: string[];
   metrics: string[];
@@ -31,7 +31,17 @@ export interface RoadmapItem {
 export interface EducationItem {
   degree: string;
   institution: string;
+  campus?: string;
   specialization: string;
   status: string;
+  badge: string;
   highlights: string[];
+}
+
+export interface CodingProfile {
+  platform: string;
+  handle: string;
+  url: string;
+  color: string;
+  badge: string;
 }

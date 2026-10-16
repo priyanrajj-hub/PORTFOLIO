@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { 
   Terminal, 
-  Cpu, 
-  HelpCircle, 
-  RotateCcw, 
-  ExternalLink,
-  ChevronRight 
+  RotateCcw
 } from 'lucide-react';
-import { PERSONAL_INFO, PROJECTS_DATA, CERTIFICATIONS_DATA } from '../data/portfolioData';
+import { PERSONAL_INFO, PROJECTS_DATA, CODING_PROFILES } from '../data/portfolioData';
 
 interface TerminalOutput {
   command: string;
@@ -42,8 +38,9 @@ export const InteractiveTerminal: React.FC = () => {
         res = (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs py-1">
             <div><span className="text-cyan-400 font-mono">whoami</span> - Display detailed user credentials</div>
-            <div><span className="text-cyan-400 font-mono">projects</span> - Query active engineering nodes</div>
+            <div><span className="text-cyan-400 font-mono">projects</span> - Query active engineering nodes & repos</div>
             <div><span className="text-cyan-400 font-mono">skills</span> - Output technical tool stack</div>
+            <div><span className="text-cyan-400 font-mono">cp</span> - Competitive coding profiles</div>
             <div><span className="text-cyan-400 font-mono">education</span> - Institutional degree tracks</div>
             <div><span className="text-cyan-400 font-mono">specs</span> - Display workstation hardware stats</div>
             <div><span className="text-cyan-400 font-mono">contact</span> - Retrieve secure communication links</div>
@@ -56,6 +53,7 @@ export const InteractiveTerminal: React.FC = () => {
         res = (
           <div className="space-y-1 text-sm text-gray-200">
             <p><strong>Name:</strong> {PERSONAL_INFO.name}</p>
+            <p><strong>Role:</strong> {PERSONAL_INFO.title}</p>
             <p><strong>Affiliations:</strong> Amrita CCE + IIT Madras (Data Science) + IIT Guwahati (DSAI)</p>
             <p><strong>Directive:</strong> {PERSONAL_INFO.bio}</p>
           </div>
@@ -69,6 +67,23 @@ export const InteractiveTerminal: React.FC = () => {
               <div key={p.id} className="text-xs border-l-2 border-sky-500 pl-2">
                 <span className="text-amber-300 font-bold">[{p.tag}]</span> <span className="text-white font-semibold">{p.title}</span>
                 <p className="text-gray-400">{p.technologies.join(' • ')}</p>
+                {p.demoUrl && <p className="text-emerald-400">Demo: {p.demoUrl}</p>}
+              </div>
+            ))}
+          </div>
+        );
+        break;
+
+      case 'cp':
+        res = (
+          <div className="space-y-1.5 py-1 text-xs">
+            {CODING_PROFILES.map((c) => (
+              <div key={c.platform} className="flex items-center gap-2">
+                <span className="text-amber-300 font-bold">{c.platform}:</span>
+                <a href={c.url} target="_blank" rel="noreferrer" className="text-sky-400 underline font-mono">
+                  @{c.handle}
+                </a>
+                <span className="text-gray-400">({c.badge})</span>
               </div>
             ))}
           </div>
@@ -79,9 +94,9 @@ export const InteractiveTerminal: React.FC = () => {
         res = (
           <div className="text-xs space-y-1.5 py-1 text-gray-300">
             <p><span className="text-purple-400 font-semibold">[Languages]:</span> C, C++, Python, TypeScript, SQL, Assembly Basics</p>
-            <p><span className="text-sky-400 font-semibold">[AI / Data]:</span> NumPy, Pandas, OpenCV, Scikit-Learn, Neuromorphic AI</p>
-            <p><span className="text-emerald-400 font-semibold">[Embedded / IoT]:</span> Arduino, ESP32, Ultrasonic Arrays, Telemetry, I2C / SPI</p>
-            <p><span className="text-pink-400 font-semibold">[Tools]:</span> Git, GitHub Pages, Linux Bash, VS Code, Vite</p>
+            <p><span className="text-sky-400 font-semibold">[AI / Data]:</span> LinUCB Bandits, NumPy, Pandas, OpenCV, Satellite Multispectral NDVI</p>
+            <p><span className="text-emerald-400 font-semibold">[Embedded / Systems]:</span> BLE 5.0, Arduino, ESP32, Ultrasonic Arrays, MicroSD Logging</p>
+            <p><span className="text-pink-400 font-semibold">[Tools]:</span> Git, GitHub Actions, Linux Bash, Vite, VS Code</p>
           </div>
         );
         break;
@@ -204,17 +219,10 @@ export const InteractiveTerminal: React.FC = () => {
       {/* Quick Interactive Command Pills */}
       <div className="px-4 py-2 bg-slate-900/60 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto text-[11px] font-mono text-slate-400">
         <span className="text-slate-500">Quick run:</span>
-        {['whoami', 'projects', 'skills', 'education', 'specs', 'contact', 'clear'].map((c) => (
+        {['whoami', 'projects', 'cp', 'skills', 'education', 'specs', 'contact', 'clear'].map((c) => (
           <button
             key={c}
-            onClick={() => {
-              setInputVal(c);
-              // Trigger directly
-              setTimeout(() => {
-                const dummyEvent = { preventDefault: () => {} } as React.FormEvent;
-                // handle direct run
-              }, 50);
-            }}
+            onClick={() => setInputVal(c)}
             className="px-2 py-0.5 bg-slate-800 hover:bg-sky-950 hover:text-sky-300 hover:border-sky-500 border border-slate-700 rounded transition whitespace-nowrap"
           >
             {c}
