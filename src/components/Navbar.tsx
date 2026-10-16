@@ -22,7 +22,14 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: 'Core Identity', href: '#hero' },
-    { name: 'AI Voice Assistant', href: '#hero', onClick: () => window.dispatchEvent(new CustomEvent('open-ai-chat')) },
+    { 
+      name: 'J.A.R.V.I.S. AI', 
+      href: '#hero', 
+      onClick: () => {
+        window.dispatchEvent(new CustomEvent('focus-jarvis'));
+        window.dispatchEvent(new CustomEvent('open-ai-chat'));
+      } 
+    },
     { name: 'Experience', href: '#experience' },
     { name: 'Projects', href: '#projects' },
     { name: 'Progress Engine', href: '#progress' },
