@@ -22,13 +22,21 @@ export interface ExperienceItem {
   skills: string[];
 }
 
+export interface HackathonItem {
+  name: string;
+  organizer: string;
+  description: string;
+  status: string;
+}
+
 export interface Certification {
   id: string;
   title: string;
   issuer: string;
+  credentialId?: string;
   issueDate?: string;
   skills: string[];
-  type: 'Professional' | 'Course' | 'Certification' | 'Affiliation';
+  type: 'Cloud / AI' | 'Database' | 'Systems' | 'Hackathon' | 'Certification';
 }
 
 export interface RoadmapItem {

@@ -2,19 +2,68 @@ import React from 'react';
 import { 
   GraduationCap, 
   Award, 
-  Calendar, 
   CheckCircle2,
   BookmarkCheck,
-  ShieldCheck,
-  Users
+  Users,
+  Trophy,
+  Flame,
+  Shield,
+  Layers,
+  Sparkles
 } from 'lucide-react';
-import { EDUCATION_DATA, CERTIFICATIONS_DATA } from '../data/portfolioData';
+import { EDUCATION_DATA, CERTIFICATIONS_DATA, HACKATHONS_DATA } from '../data/portfolioData';
 
 export const EducationAndCertifications: React.FC = () => {
   return (
     <section id="education" className="py-20 relative bg-slate-950/60 border-t border-b border-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        {/* Hackathon Exhibition Strip */}
+        <div className="mb-20">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-mono mb-2">
+                <Flame className="w-3.5 h-3.5" />
+                <span>COMPETITIVE HACKATHONS & ARENAS</span>
+              </div>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Hackathon <span className="bg-gradient-to-r from-rose-400 to-amber-400 bg-clip-text text-transparent">Participation Credentials</span>
+              </h2>
+            </div>
+            <span className="text-xs font-mono text-slate-400 mt-2 sm:mt-0">
+              Verified on LinkedIn Licenses & Event Certifications
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {HACKATHONS_DATA.map((h, i) => (
+              <div
+                key={i}
+                className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-rose-500/40 transition flex flex-col justify-between group shadow-lg"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Trophy className="w-4 h-4 text-amber-400" />
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-950/70 border border-rose-800/40 text-rose-300 font-bold">
+                      {h.status}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-bold text-white group-hover:text-rose-300 transition">
+                    {h.name}
+                  </h3>
+                  <p className="text-[11px] font-mono text-slate-400 mt-1">
+                    {h.organizer}
+                  </p>
+                  <p className="text-xs text-gray-300 mt-2.5 line-clamp-3">
+                    {h.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Dual Column: Academic Foundation & Verified 11 Licenses */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           
           {/* Column 1: Multi-Institutional Education */}
@@ -98,20 +147,20 @@ export const EducationAndCertifications: React.FC = () => {
             </div>
           </div>
 
-          {/* Column 2: Validated Certifications & Licenses */}
+          {/* Column 2: All 11 Verified Licenses & Credentials */}
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono mb-3">
               <Award className="w-3.5 h-3.5" />
-              <span>VERIFIED LICENSES & CERTIFICATIONS (11 ISSUED)</span>
+              <span>OFFICIAL LICENSES & CERTIFICATIONS</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Licenses & <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Credentials</span>
+              Verified <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Credentials</span>
             </h2>
             <p className="mt-2 text-gray-400 text-sm mb-8">
-              Verified certifications from Oracle, Udemy, NPTEL, Infosys, and IIT Guwahati.
+              Full index of authenticated credentials across Google Cloud, Oracle, Infosys, Udemy, NPTEL, and IEEE.
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-3.5 max-h-[640px] overflow-y-auto pr-1">
               {CERTIFICATIONS_DATA.map((cert) => (
                 <div
                   key={cert.id}
@@ -120,8 +169,12 @@ export const EducationAndCertifications: React.FC = () => {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${
-                        cert.issuer === 'ORACLE' 
+                        cert.issuer.includes('Google')
+                          ? 'bg-blue-950/80 border border-blue-700/60 text-blue-300'
+                          : cert.issuer === 'ORACLE' 
                           ? 'bg-rose-950/70 border border-rose-800/50 text-rose-300'
+                          : cert.issuer.includes('Infosys')
+                          ? 'bg-indigo-950/70 border border-indigo-800/50 text-indigo-300'
                           : cert.issuer === 'Udemy'
                           ? 'bg-purple-950/70 border border-purple-800/50 text-purple-300'
                           : 'bg-emerald-950/60 border border-emerald-800/50 text-emerald-400'
@@ -131,6 +184,11 @@ export const EducationAndCertifications: React.FC = () => {
                       {cert.issueDate && (
                         <span className="text-[10px] font-mono text-slate-400">
                           {cert.issueDate}
+                        </span>
+                      )}
+                      {cert.credentialId && (
+                        <span className="text-[10px] font-mono text-sky-400">
+                          ID: {cert.credentialId.slice(0, 10)}...
                         </span>
                       )}
                     </div>
@@ -151,10 +209,10 @@ export const EducationAndCertifications: React.FC = () => {
               ))}
             </div>
 
-            {/* Oracle & IEEE Callout */}
+            {/* IEEE Circuits & Systems Society Callout */}
             <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-blue-950/40 via-sky-950/30 to-slate-900/50 border border-blue-500/20 text-xs text-gray-300">
-              <span className="font-semibold text-sky-400 block mb-1">Oracle Database & IEEE Webmaster Accreditation</span>
-              Holding Oracle Developer Foundations accreditation and appointed Webmaster directing web infrastructures for IEEE Amrita Chennai Student Branch.
+              <span className="font-semibold text-sky-400 block mb-1">IEEE Member • IEEE CAS (Circuits and Systems Society)</span>
+              Active IEEE Student Branch Webmaster with verified membership in the IEEE Circuits and Systems Society (CAS).
             </div>
 
           </div>

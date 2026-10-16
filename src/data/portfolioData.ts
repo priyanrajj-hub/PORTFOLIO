@@ -1,4 +1,4 @@
-import type { Project, Certification, RoadmapItem, EducationItem, CodingProfile, ExperienceItem } from '../types';
+import type { Project, Certification, RoadmapItem, EducationItem, CodingProfile, ExperienceItem, HackathonItem } from '../types';
 
 export const PERSONAL_INFO = {
   name: 'Priyanraj. J',
@@ -29,7 +29,7 @@ export const PERSONAL_INFO = {
   stats: [
     { label: 'Degree Programs', value: '3 Active' },
     { label: 'LinkedIn Network', value: '500+' },
-    { label: 'Verified Licenses', value: '11 Issued' },
+    { label: 'Verified Licenses', value: '11 Licenses' },
     { label: 'Active Projects', value: '18+ Repos' },
   ],
   specs: [
@@ -48,7 +48,7 @@ export const EXPERIENCE_DATA: ExperienceItem[] = [
     type: 'Part-time',
     duration: 'Jul 2026 – Present',
     location: 'Chennai Campus, Tamil Nadu, India',
-    description: 'Leading digital architecture, portal deployments, technical infrastructure, and event dissemination for the IEEE Student Branch at Amrita Chennai.',
+    description: 'Directing digital architectures, portal deployments, technical infrastructure, and event management for the IEEE Student Branch at Amrita Chennai.',
     skills: ['Web Architecture', 'Technical Systems', 'Full Stack Development', 'IEEE Standards', 'Git/GitHub'],
   },
   {
@@ -60,6 +60,110 @@ export const EXPERIENCE_DATA: ExperienceItem[] = [
     location: 'Remote',
     description: 'Engineered intent-normalized conversational rule engines, input normalization pipelines, and environment-driven configurations.',
     skills: ['Python 3', 'NLP Preprocessing', 'Rule-Based Intent Engines', 'Clean Architecture'],
+  },
+];
+
+export const HACKATHONS_DATA: HackathonItem[] = [
+  {
+    name: 'SYSTEM SIEGE HACKATHON',
+    organizer: 'Competitive Technical Arena',
+    description: 'Advanced cybersecurity, low-level systems defense, and architectural fault testing.',
+    status: 'Verified Participant',
+  },
+  {
+    name: 'ETHOS HACKATHON',
+    organizer: 'National Engineering Platform',
+    description: 'Innovative software prototyping, rapid MVP building, and collaborative engineering under high-time constraints.',
+    status: 'Verified Participant',
+  },
+  {
+    name: 'FEDEX SMART HACKATHON',
+    organizer: 'FedEx Global Logistics',
+    description: 'Intelligent logistics routing, automated dispatch heuristics, and IoT telemetry validation.',
+    status: 'Verified Participant',
+  },
+  {
+    name: 'MEDHA SPRINT & QUIZ',
+    organizer: 'Amrita Vishwa Vidyapeetham & Unstop',
+    description: 'Algorithmic speed contest and technical conceptual problem solving sprint.',
+    status: 'Verified Participant',
+  },
+];
+
+export const CERTIFICATIONS_DATA: Certification[] = [
+  {
+    id: 'cert-google-genai',
+    title: 'Introduction to Generative AI',
+    issuer: 'Google Cloud Skills Boost',
+    issueDate: 'Issued Jun 2026',
+    credentialId: '24926260',
+    skills: ['Generative AI', 'Large Language Models (LLMs)', 'Google Cloud', 'Deep Learning'],
+    type: 'Cloud / AI',
+  },
+  {
+    id: 'cert-oracle',
+    title: 'Databases for Developers: Foundations',
+    issuer: 'ORACLE',
+    issueDate: 'Issued Aug 2026',
+    skills: ['Oracle SQL', 'Relational Schema Architecture', 'Query Optimization', 'Data Integrity'],
+    type: 'Database',
+  },
+  {
+    id: 'cert-automotive',
+    title: 'Basics of Automotive Electronics',
+    issuer: 'Udemy',
+    issueDate: 'Issued 2026',
+    skills: ['Automotive Electronics', 'CAN Bus Communication', 'ECU & Sensor Interfacing'],
+    type: 'Systems',
+  },
+  {
+    id: 'cert-be10x',
+    title: 'AI Tools Workshop',
+    issuer: 'Be10x',
+    issueDate: 'Issued May 2026',
+    credentialId: '0270772f-3809-4400-b29b-1e1c61cd09971350694',
+    skills: ['Generative AI Productivity', 'Prompt Engineering', 'AI Automation Pipelines'],
+    type: 'Cloud / AI',
+  },
+  {
+    id: 'cert-infosys-springboard',
+    title: 'Infosys Springboard Certification in C & Problem Solving',
+    issuer: 'Infosys Springboard',
+    issueDate: 'Issued Mar 2026',
+    skills: ['C (Programming Language)', 'Computational Problem Solving', 'Algorithmic Optimization'],
+    type: 'Systems',
+  },
+  {
+    id: 'cert-nptel-os',
+    title: 'Introduction to Operating Systems',
+    issuer: 'NPTEL Framework',
+    issueDate: 'Validated Credential',
+    skills: ['Process Scheduling', 'Virtual Memory', 'Deadlock Avoidance', 'Kernel Architecture'],
+    type: 'Systems',
+  },
+  {
+    id: 'cert-nptel-py',
+    title: 'The Joy of Computing Using Python',
+    issuer: 'NPTEL Framework',
+    issueDate: 'Validated Credential',
+    skills: ['Python 3 Core', 'Algorithmic Problem Solving', 'Computational Logic'],
+    type: 'Certification',
+  },
+  {
+    id: 'cert-nptel-eng',
+    title: 'English Language for Competitive Exam',
+    issuer: 'NPTEL Framework',
+    issueDate: 'Validated Credential',
+    skills: ['Technical Documentation', 'Verbal Reasoning', 'Professional Communication'],
+    type: 'Certification',
+  },
+  {
+    id: 'cert-ieee-membership',
+    title: 'IEEE Member & IEEE CAS (Circuits and Systems Society)',
+    issuer: 'IEEE Global',
+    issueDate: 'Active 2026',
+    skills: ['IEEE Standards', 'Circuits & Systems Society (CAS)', 'Signal Processing'],
+    type: 'Systems',
   },
 ];
 
@@ -135,65 +239,6 @@ export const EDUCATION_DATA: EducationItem[] = [
       'BS DSAI Intensive Core Technical Orientation Completed',
       'Exploration of Neuromorphic Computing & TinyML Edge Hardware',
     ],
-  },
-];
-
-export const CERTIFICATIONS_DATA: Certification[] = [
-  {
-    id: 'cert-oracle',
-    title: 'Databases for Developers: Foundations',
-    issuer: 'ORACLE',
-    issueDate: 'Issued Aug 2026',
-    skills: ['Oracle SQL', 'Relational Database Schema Design', 'Query Optimization', 'Data Integrity'],
-    type: 'Professional',
-  },
-  {
-    id: 'cert-automotive',
-    title: 'Basics of Automotive Electronics',
-    issuer: 'Udemy',
-    issueDate: 'Issued 2026',
-    skills: ['Automotive Electronics', 'CAN Bus / Embedded Sensor Interfaces', 'ECU Principles'],
-    type: 'Course',
-  },
-  {
-    id: 'cert-nptel-py',
-    title: 'The Joy of Computing Using Python — Core Track',
-    issuer: 'NPTEL Framework',
-    issueDate: 'Validated Credential',
-    skills: ['Python 3 Core', 'Algorithmic Problem Solving', 'Computational Logic'],
-    type: 'Certification',
-  },
-  {
-    id: 'cert-nptel-eng',
-    title: 'English Language for Competitive Exams — Advanced Module',
-    issuer: 'NPTEL Framework',
-    issueDate: 'Validated Credential',
-    skills: ['Technical Documentation', 'Verbal Reasoning', 'Professional Communication'],
-    type: 'Course',
-  },
-  {
-    id: 'cert-infosys',
-    title: 'Computational Problem Solving & Algorithmic Optimization',
-    issuer: 'Infosys Platform',
-    issueDate: 'Validated Credential',
-    skills: ['Data Structures', 'Time Complexity Analysis', 'Greedy & Dynamic Paradigms'],
-    type: 'Certification',
-  },
-  {
-    id: 'cert-iitg',
-    title: 'BS DSAI Intensive Core Technical Orientation',
-    issuer: 'IIT Guwahati',
-    issueDate: 'Sep 2025',
-    skills: ['Data Science Foundations', 'AI Ethics', 'Mathematical Foundations of AI'],
-    type: 'Course',
-  },
-  {
-    id: 'cert-ieee',
-    title: 'Webmaster & Active Global Engineering Network Member',
-    issuer: 'IEEE Global / IEEE Amrita Chennai',
-    issueDate: 'Active Tenure',
-    skills: ['IEEE Standards', 'Web Architecture', 'Engineering Community Leadership'],
-    type: 'Affiliation',
   },
 ];
 
