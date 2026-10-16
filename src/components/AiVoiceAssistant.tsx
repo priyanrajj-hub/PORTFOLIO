@@ -1,3 +1,4 @@
+// src/components/AiVoiceAssistant.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Bot, 
@@ -5,12 +6,14 @@ import {
   X, 
   Volume2, 
   VolumeX, 
+  Square,
   Mic, 
   MicOff, 
   Trash2,
-  Sliders
+  Info
 } from 'lucide-react';
 import { getGroundedFallbackResponse } from '../data/jarvisDataset';
+import { VOICE_PERSONAS, type PersonaId } from '../data/voices';
 
 interface Message {
   sender: 'jarvis' | 'user';
@@ -26,7 +29,7 @@ interface LanguageOption {
 }
 
 const SUPPORTED_LANGUAGES: LanguageOption[] = [
-  { code: 'en', name: 'English', speechCode: 'en-US' },
+  { code: 'en', name: 'English', speechCode: 'en-GB' },
   { code: 'ta', name: 'Tamil', speechCode: 'ta-IN' },
   { code: 'hi', name: 'Hindi', speechCode: 'hi-IN' },
   { code: 'te', name: 'Telugu', speechCode: 'te-IN' },
@@ -43,21 +46,44 @@ const SUGGESTED_CHIPS = [
   'How can I contact him?'
 ];
 
+// Simple deterministic hash for speech audio caching
+function getAudioCacheKey(text: string, persona: string, lang: string): string {
+  let hash = 0;
+  const str = `${persona}:${lang}:${text.trim()}`;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return `tts_${hash}`;
+}
+
 export const AiVoiceAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(true);
-  const [isListening, setIsListening] = useState(false);
-  const [voicePersona, setVoicePersona] = useState<'aizen' | 'jarvis'>('aizen'); // User requested Aizen / JARVIS voice
+  const [currentSpokenText, setCurrentSpokenText] = useState('');
+  
+  // Voice output is OFF by default per autoplay rules
+  const [voiceEnabled, setVoiceEnabled] = useState<boolean>(() => {
+    const saved = localStorage.getItem('jarvis_voice_enabled');
+    return saved ? saved === 'true' : false;
+  });
+
+  const [voicePersona, setVoicePersona] = useState<PersonaId>(() => {
+    const saved = localStorage.getItem('jarvis_persona') as PersonaId;
+    return saved === 'sosuke' ? 'sosuke' : 'jarvis';
+  });
+
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageOption>(SUPPORTED_LANGUAGES[0]);
+  const [isListening, setIsListening] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [noticeMessage, setNoticeMessage] = useState<string | null>(null);
 
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState<Message[]>(() => [
     {
       sender: 'jarvis',
-      text: "Greetings. I am J.A.R.V.I.S., operating with the calculated composure of Sōsuke Aizen and the loyalty of Stark Industries. How may I enlighten you regarding Mr. Priyanraj J's systems and research?",
+      text: VOICE_PERSONAS[voicePersona].greetingText,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -66,6 +92,37 @@ export const AiVoiceAssistant: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
   const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const memoryAudioCache = useRef<Map<string, string>>(new Map());
+
+  // Initialize HTMLAudioElement for high-quality server-side TTS playback
+  useEffect(() => {
+    const audio = new Audio();
+    audio.onplay = () => setIsSpeaking(true);
+    audio.onended = () => {
+      setIsSpeaking(false);
+      setCurrentSpokenText('');
+    };
+    audio.onerror = () => {
+      setIsSpeaking(false);
+      setCurrentSpokenText('');
+    };
+    audioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audio.src = '';
+    };
+  }, []);
+
+  // Save voice settings to localStorage
+  useEffect(() => {
+    localStorage.setItem('jarvis_persona', voicePersona);
+  }, [voicePersona]);
+
+  useEffect(() => {
+    localStorage.setItem('jarvis_voice_enabled', String(voiceEnabled));
+  }, [voiceEnabled]);
 
   // Auto-scroll chat to latest message
   useEffect(() => {
@@ -74,7 +131,20 @@ export const AiVoiceAssistant: React.FC = () => {
     }
   }, [messages, loading]);
 
-  // Global Keyboard shortcuts: '/' opens chat, 'Escape' closes chat
+  // Stop any active audio / speech
+  const stopSpeaking = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+    setCurrentSpokenText('');
+  };
+
+  // Keyboard shortcut handlers ('/' opens, 'Escape' closes)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === '/' && !isOpen && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
@@ -92,21 +162,12 @@ export const AiVoiceAssistant: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('open-ai-chat', handleCustomOpen);
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
+      stopSpeaking();
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
     };
   }, [isOpen]);
-
-  const stopSpeaking = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
-  };
 
   // Focus input when opened
   useEffect(() => {
@@ -117,50 +178,132 @@ export const AiVoiceAssistant: React.FC = () => {
     }
   }, [isOpen]);
 
-  // Speech Synthesis with Aizen & Original J.A.R.V.I.S. persona voice tuning
-  const speakText = (text: string, langCode: string) => {
-    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+  // Browser SpeechSynthesis fallback
+  const speakWithBrowserFallback = (cleanText: string, persona: PersonaId, langCode: string) => {
+    if (!('speechSynthesis' in window) || !voiceEnabled) return;
 
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[*#_`]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = langCode;
+    const personaConfig = VOICE_PERSONAS[persona];
+    const fallback = personaConfig.browserFallback;
 
-    // Apply voice persona settings
-    if (voicePersona === 'aizen') {
-      // Sōsuke Aizen: deep, calm, hypnotic, measured aristocratic cadence
-      utterance.pitch = 0.82;
-      utterance.rate = 0.90;
-    } else {
-      // Original J.A.R.V.I.S.: crisp, articulate, slightly faster British wit
-      utterance.pitch = 0.94;
-      utterance.rate = 1.02;
-    }
+    utterance.rate = fallback.rate;
+    utterance.pitch = fallback.pitch;
+    utterance.lang = langCode === 'en' ? 'en-GB' : langCode;
 
     const voices = window.speechSynthesis.getVoices();
-    // Prefer British English, deep male voices or natural voices
-    const matchVoice = voices.find(v => 
-      v.name.includes('UK English Male') || 
-      v.name.includes('George') || 
-      v.name.includes('Daniel') || 
-      v.name.includes('Alex') || 
-      v.name.includes('Oliver') ||
-      (v.lang.startsWith(langCode.split('-')[0]) && v.name.toLowerCase().includes('male'))
-    ) || voices.find(v => v.lang.startsWith(langCode.split('-')[0]));
+    const matchedVoice = voices.find(v => 
+      fallback.preferredVoiceSubstrings.some(sub => v.name.includes(sub))
+    ) || voices.find(v => v.lang.startsWith(langCode));
 
-    if (matchVoice) {
-      utterance.voice = matchVoice;
+    if (matchedVoice) {
+      utterance.voice = matchedVoice;
     }
 
     utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setCurrentSpokenText('');
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setCurrentSpokenText('');
+    };
 
     speechSynthRef.current = utterance;
     window.speechSynthesis.speak(utterance);
   };
 
-  // Web Speech Microphone Recognition
+  // Primary High-Fidelity Speech Engine (Server-side /api/tts + in-memory cache)
+  const playSpeech = async (text: string, persona: PersonaId, langCode: string) => {
+    if (!voiceEnabled) return;
+
+    stopSpeaking();
+    setCurrentSpokenText(text);
+
+    const cleanText = text
+      .replace(/https?:\/\/\S+/g, 'link')
+      .replace(/[*#_`~>[\]()]/g, '')
+      .trim();
+
+    if (!cleanText) return;
+
+    const cacheKey = getAudioCacheKey(cleanText, persona, langCode);
+
+    // 1. Check in-memory audio cache
+    if (memoryAudioCache.current.has(cacheKey)) {
+      const cachedUrl = memoryAudioCache.current.get(cacheKey)!;
+      if (audioRef.current) {
+        audioRef.current.src = cachedUrl;
+        try {
+          await audioRef.current.play();
+          return;
+        } catch {
+          // Fall through to re-synthesizing if blob expired
+        }
+      }
+    }
+
+    // 2. Call serverless /api/tts endpoint
+    try {
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: cleanText.slice(0, 600),
+          persona,
+          language: langCode
+        })
+      });
+
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && (contentType.includes('audio') || contentType.includes('mpeg') || contentType.includes('wav'))) {
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        memoryAudioCache.current.set(cacheKey, blobUrl);
+
+        if (audioRef.current && voiceEnabled) {
+          audioRef.current.src = blobUrl;
+          await audioRef.current.play();
+          return;
+        }
+      } else {
+        const json = await res.json().catch(() => ({}));
+        if (json.notice) {
+          setNoticeMessage(json.notice);
+          setTimeout(() => setNoticeMessage(null), 4000);
+        }
+      }
+    } catch {
+      // Serverless TTS unavailable, continue to browser fallback
+    }
+
+    // 3. Fallback to browser Web Speech API
+    speakWithBrowserFallback(cleanText, persona, langCode);
+  };
+
+  // Change voice persona & update greeting if at start
+  const handlePersonaChange = (newPersona: PersonaId) => {
+    if (newPersona === voicePersona) return;
+    setVoicePersona(newPersona);
+    stopSpeaking();
+
+    // If chat only contains the initial greeting, update it to the new persona greeting
+    if (messages.length <= 1) {
+      setMessages([
+        {
+          sender: 'jarvis',
+          text: VOICE_PERSONAS[newPersona].greetingText,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+      if (voiceEnabled) {
+        playSpeech(VOICE_PERSONAS[newPersona].greetingText, newPersona, selectedLanguage.code);
+      }
+    }
+  };
+
+  // Web Speech Microphone Input
   const toggleListening = () => {
     if (isListening) {
       if (recognitionRef.current) recognitionRef.current.stop();
@@ -215,13 +358,14 @@ export const AiVoiceAssistant: React.FC = () => {
     try {
       let aiReply = '';
 
-      // 1. Primary secure call to /api/chat serverless route
+      // 1. Primary call to /api/chat serverless route
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: query,
+            persona: voicePersona,
             history: messages.slice(-8).map(m => ({
               role: m.sender === 'user' ? 'user' : 'model',
               text: m.text
@@ -237,10 +381,10 @@ export const AiVoiceAssistant: React.FC = () => {
           }
         } else if (res.status === 429) {
           const errData = await res.json();
-          aiReply = errData.error || "Rate limit reached. Please allow J.A.R.V.I.S. a 60-second recharge period.";
+          aiReply = errData.error || "Rate limit reached. Please allow the system a brief 60-second cooling period.";
         }
       } catch (netErr) {
-        console.warn("Direct /api/chat unreachable, activating offline intelligence node:", netErr);
+        console.warn("Direct /api/chat unreachable, activating grounded intelligence node:", netErr);
       }
 
       // 2. Offline / Grounded Dataset Fallback
@@ -256,7 +400,7 @@ export const AiVoiceAssistant: React.FC = () => {
       setMessages(prev => [...prev, botMsg]);
 
       if (voiceEnabled) {
-        speakText(aiReply, selectedLanguage.speechCode);
+        playSpeech(aiReply, voicePersona, selectedLanguage.code);
       }
     } catch (_err: unknown) {
       const fallback = getGroundedFallbackResponse(query, selectedLanguage.code);
@@ -270,7 +414,7 @@ export const AiVoiceAssistant: React.FC = () => {
         }
       ]);
       if (voiceEnabled) {
-        speakText(fallback, selectedLanguage.speechCode);
+        playSpeech(fallback, voicePersona, selectedLanguage.code);
       }
     } finally {
       setLoading(false);
@@ -282,7 +426,7 @@ export const AiVoiceAssistant: React.FC = () => {
     setMessages([
       {
         sender: 'jarvis',
-        text: "Neural memory buffer reset. How may I assist you further, Sir?",
+        text: VOICE_PERSONAS[voicePersona].greetingText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
@@ -290,11 +434,17 @@ export const AiVoiceAssistant: React.FC = () => {
 
   return (
     <>
-      {/* Floating Arc Reactor Launcher Button at bottom-right (Section 8.1) */}
+      {/* Floating Arc Reactor Launcher Button at bottom-right */}
       {!isOpen && (
         <div className="fixed bottom-6 right-6 z-40">
           <button
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setIsOpen(true);
+              // Pre-cache greeting audio on first open if voice is enabled
+              if (voiceEnabled && messages.length > 0) {
+                playSpeech(messages[0].text, voicePersona, selectedLanguage.code);
+              }
+            }}
             className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#10121a]/95 hover:bg-[#171a25] border border-[#ffb703]/40 text-[#ffb703] shadow-2xl shadow-[#ffb703]/20 backdrop-blur-xl transition-all duration-300 transform hover:scale-105 focus:outline-none"
             aria-label="Open J.A.R.V.I.S. AI Assistant (Shortcut: /)"
             title="Open J.A.R.V.I.S. (Press /)"
@@ -308,7 +458,17 @@ export const AiVoiceAssistant: React.FC = () => {
             <span className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white/[0.08] text-[10px] font-mono text-[#9a9aa8]">
               /
             </span>
-            <span className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse" />
+
+            {/* Speaking / Active Indicator */}
+            {isSpeaking ? (
+              <div className="flex items-center gap-0.5" aria-hidden="true">
+                <span className="w-1 bg-[#ffb703] rounded-full animate-wave-1" />
+                <span className="w-1 bg-[#ffb703] rounded-full animate-wave-2" />
+                <span className="w-1 bg-[#ffb703] rounded-full animate-wave-3" />
+              </div>
+            ) : (
+              <span className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse" />
+            )}
           </button>
         </div>
       )}
@@ -319,70 +479,151 @@ export const AiVoiceAssistant: React.FC = () => {
           role="dialog"
           aria-modal="true"
           aria-label="J.A.R.V.I.S. AI Chat"
-          className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[440px] sm:h-[640px] z-50 flex flex-col bg-[#07080d] sm:bg-[#10121a]/95 sm:backdrop-blur-2xl border sm:border-white/[0.12] sm:rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[450px] sm:h-[640px] z-50 flex flex-col bg-[#07080d] sm:bg-[#10121a]/95 sm:backdrop-blur-2xl border sm:border-white/[0.12] sm:rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         >
+          {/* Accessible Screen Reader Speech Captions */}
+          <div aria-live="polite" className="sr-only">
+            {isSpeaking && currentSpokenText ? `Speaking: ${currentSpokenText}` : ''}
+          </div>
+
           {/* Header */}
-          <div className="p-4 border-b border-white/[0.08] bg-[#10121a] flex items-center justify-between gap-2 shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#ffb703] via-[#ff6b35] to-[#ffb703] flex items-center justify-center shadow-lg shadow-[#ffb703]/25 shrink-0">
-                <Bot className="w-5 h-5 text-[#07080d]" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-heading font-bold text-sm text-[#f4f1ea]">
-                    J.A.R.V.I.S.
-                  </h3>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[#34d399]/15 text-[#34d399]">
-                    Online
+          <div className="p-3.5 border-b border-white/[0.08] bg-[#10121a] flex flex-col gap-2.5 shrink-0">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-[#ffb703] via-[#ff6b35] to-[#ffb703] flex items-center justify-center shadow-md shadow-[#ffb703]/25 shrink-0">
+                  <Bot className="w-4 h-4 text-[#07080d]" />
+                  {isSpeaking && (
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#34d399] border-2 border-[#10121a] animate-ping" />
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="font-heading font-bold text-sm text-[#f4f1ea]">
+                      J.A.R.V.I.S.
+                    </h3>
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-[#34d399]/15 text-[#34d399]">
+                      Online
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono text-[#9a9aa8] block">
+                    {VOICE_PERSONAS[voicePersona].tagline}
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-[#9a9aa8] block">
-                  Persona: {voicePersona === 'aizen' ? 'Sōsuke Aizen' : 'Classic Stark AI'}
-                </span>
+              </div>
+
+              {/* Actions: Stop, Voice Toggle, Clear, Close */}
+              <div className="flex items-center gap-1">
+                {/* Stop Speech Button (visible when speaking) */}
+                {isSpeaking && (
+                  <button
+                    onClick={stopSpeaking}
+                    className="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition flex items-center gap-1"
+                    title="Stop Audio Playback"
+                    aria-label="Stop speaking"
+                  >
+                    <Square className="w-3.5 h-3.5 fill-current" />
+                    <span className="text-[10px] font-mono font-bold">Stop</span>
+                  </button>
+                )}
+
+                {/* Voice Enable/Mute Toggle */}
+                <button
+                  onClick={() => {
+                    const next = !voiceEnabled;
+                    setVoiceEnabled(next);
+                    if (!next) {
+                      stopSpeaking();
+                    } else if (messages.length > 0) {
+                      playSpeech(messages[messages.length - 1].text, voicePersona, selectedLanguage.code);
+                    }
+                  }}
+                  className={`p-2 rounded-lg transition ${
+                    voiceEnabled 
+                      ? 'text-[#ffb703] hover:bg-white/[0.06]' 
+                      : 'text-[#6b6b7a] hover:bg-white/[0.06]'
+                  }`}
+                  title={voiceEnabled ? 'Mute Speech Output' : 'Enable Speech Output'}
+                  aria-label={voiceEnabled ? 'Mute speech output' : 'Enable speech output'}
+                  aria-pressed={voiceEnabled}
+                >
+                  {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </button>
+
+                {/* Clear Chat */}
+                <button
+                  onClick={clearChat}
+                  className="p-2 rounded-lg text-[#9a9aa8] hover:text-[#ff6b35] hover:bg-white/[0.06] transition"
+                  title="Clear Conversation Buffer"
+                  aria-label="Clear chat"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+
+                {/* Close Dialog */}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 rounded-lg text-[#9a9aa8] hover:text-[#f4f1ea] hover:bg-white/[0.06] transition"
+                  title="Close Assistant (ESC)"
+                  aria-label="Close dialog"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
             </div>
 
-            {/* Actions: Persona Toggle, Mute, Clear, Close */}
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setVoicePersona(p => p === 'aizen' ? 'jarvis' : 'aizen')}
-                className="p-2 rounded-lg text-[#9a9aa8] hover:text-[#ffb703] hover:bg-white/[0.06] transition text-xs font-mono"
-                title={`Toggle Persona (Current: ${voicePersona === 'aizen' ? 'Aizen Voice' : 'JARVIS Voice'})`}
-                aria-label="Toggle AI Persona"
-              >
-                <Sliders className="w-4 h-4" />
-              </button>
+            {/* Persona Switcher Chips (Requirement 4) */}
+            <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/[0.06]">
+              <div className="flex items-center gap-1.5 p-0.5 rounded-lg bg-[#07080d]/80 border border-white/[0.06]">
+                <button
+                  type="button"
+                  onClick={() => handlePersonaChange('jarvis')}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-all ${
+                    voicePersona === 'jarvis'
+                      ? 'bg-[#ffb703] text-[#07080d] font-bold shadow-sm'
+                      : 'text-[#9a9aa8] hover:text-[#f4f1ea]'
+                  }`}
+                  aria-pressed={voicePersona === 'jarvis'}
+                  aria-label="Select J.A.R.V.I.S. Classic persona"
+                >
+                  J.A.R.V.I.S. Classic
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePersonaChange('sosuke')}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-mono transition-all ${
+                    voicePersona === 'sosuke'
+                      ? 'bg-[#ff6b35] text-[#07080d] font-bold shadow-sm'
+                      : 'text-[#9a9aa8] hover:text-[#f4f1ea]'
+                  }`}
+                  aria-pressed={voicePersona === 'sosuke'}
+                  aria-label="Select Sōsuke Mode persona"
+                >
+                  Sōsuke Mode
+                </button>
+              </div>
 
-              <button
-                onClick={() => setVoiceEnabled(!voiceEnabled)}
-                className={`p-2 rounded-lg transition ${
-                  voiceEnabled ? 'text-[#ffb703] hover:bg-white/[0.06]' : 'text-[#6b6b7a] hover:bg-white/[0.06]'
-                }`}
-                title={voiceEnabled ? 'Mute Speech Output' : 'Unmute Speech Output'}
-                aria-label={voiceEnabled ? 'Mute voice' : 'Unmute voice'}
-              >
-                {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              </button>
-
-              <button
-                onClick={clearChat}
-                className="p-2 rounded-lg text-[#9a9aa8] hover:text-[#ff6b35] hover:bg-white/[0.06] transition"
-                title="Clear Chat History"
-                aria-label="Clear chat"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-2 rounded-lg text-[#9a9aa8] hover:text-[#f4f1ea] hover:bg-white/[0.06] transition"
-                title="Close J.A.R.V.I.S. (ESC)"
-                aria-label="Close dialog"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              {/* Waveform Animation when speaking */}
+              {isSpeaking && (
+                <div className="flex items-center gap-1 h-3.5 px-2 bg-amber-500/10 rounded-full border border-amber-500/20" aria-hidden="true">
+                  <span className="w-0.5 bg-[#ffb703] rounded-full animate-wave-1" />
+                  <span className="w-0.5 bg-[#ffb703] rounded-full animate-wave-2" />
+                  <span className="w-0.5 bg-[#ffb703] rounded-full animate-wave-3" />
+                  <span className="w-0.5 bg-[#ffb703] rounded-full animate-wave-4" />
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Non-blocking Notice Banner */}
+          {noticeMessage && (
+            <div className="px-3.5 py-1.5 bg-[#ffb703]/10 border-b border-[#ffb703]/20 text-[#ffb703] text-[11px] font-mono flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Info className="w-3.5 h-3.5 shrink-0" />
+                {noticeMessage}
+              </span>
+              <button onClick={() => setNoticeMessage(null)} className="text-[#9a9aa8] hover:text-white">✕</button>
+            </div>
+          )}
 
           {/* Error Banner */}
           {errorMessage && (
@@ -405,7 +646,7 @@ export const AiVoiceAssistant: React.FC = () => {
               >
                 <div className="flex items-center gap-1.5 mb-1 px-1">
                   <span className="text-[10px] text-[#9a9aa8]">
-                    {m.sender === 'user' ? 'You' : 'J.A.R.V.I.S.'}
+                    {m.sender === 'user' ? 'You' : VOICE_PERSONAS[voicePersona].name}
                   </span>
                   <span className="text-[9px] text-[#6b6b7a]">
                     {m.timestamp}
@@ -413,13 +654,26 @@ export const AiVoiceAssistant: React.FC = () => {
                 </div>
 
                 <div
-                  className={`p-3 rounded-2xl max-w-[85%] leading-relaxed ${
+                  className={`group relative p-3 rounded-2xl max-w-[85%] leading-relaxed ${
                     m.sender === 'user'
                       ? 'bg-[#ffb703] text-[#07080d] font-medium rounded-tr-none shadow-md'
                       : 'bg-[#171a25] text-[#f4f1ea] border border-white/[0.08] rounded-tl-none shadow-sm'
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{m.text}</p>
+                  
+                  {/* Replay voice button for bot messages */}
+                  {m.sender === 'jarvis' && voiceEnabled && (
+                    <button
+                      onClick={() => playSpeech(m.text, voicePersona, selectedLanguage.code)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 text-[10px] font-mono text-[#ffb703] flex items-center gap-1 hover:underline"
+                      aria-label="Replay audio for this message"
+                      title="Replay message audio"
+                    >
+                      <Volume2 className="w-3 h-3" />
+                      <span>Replay</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -434,7 +688,7 @@ export const AiVoiceAssistant: React.FC = () => {
             )}
           </div>
 
-          {/* Suggested Question Chips (Section 8.2) */}
+          {/* Suggested Question Chips */}
           <div className="px-4 py-2 border-t border-white/[0.06] bg-[#07080d]/60 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
             {SUGGESTED_CHIPS.map((chip, cIdx) => (
               <button
@@ -450,29 +704,29 @@ export const AiVoiceAssistant: React.FC = () => {
 
           {/* Input & Voice Controls Footer */}
           <div className="p-3 border-t border-white/[0.08] bg-[#10121a] shrink-0">
-            <div className="flex items-center gap-2 mb-2">
-              {/* Language Selector (8 languages preserved) */}
-              <select
-                value={selectedLanguage.code}
-                onChange={(e) => {
-                  const found = SUPPORTED_LANGUAGES.find(l => l.code === e.target.value);
-                  if (found) setSelectedLanguage(found);
-                }}
-                className="px-2 py-1 rounded-md bg-[#171a25] border border-white/[0.08] text-[11px] font-mono text-[#9a9aa8] focus:outline-none focus:border-[#ffb703]"
-                aria-label="Language Selector"
-              >
-                {SUPPORTED_LANGUAGES.map(lang => (
-                  <option key={lang.code} value={lang.code}>{lang.name}</option>
-                ))}
-              </select>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              {/* Language Selector */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-mono text-[#6b6b7a]">Lang:</span>
+                <select
+                  value={selectedLanguage.code}
+                  onChange={(e) => {
+                    const found = SUPPORTED_LANGUAGES.find(l => l.code === e.target.value);
+                    if (found) setSelectedLanguage(found);
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-[#171a25] border border-white/[0.08] text-[11px] font-mono text-[#9a9aa8] focus:outline-none focus:border-[#ffb703]"
+                  aria-label="Language Selector"
+                >
+                  {SUPPORTED_LANGUAGES.map(lang => (
+                    <option key={lang.code} value={lang.code}>{lang.name}</option>
+                  ))}
+                </select>
+              </div>
 
-              {/* Persona Pill Indicator */}
-              <button
-                onClick={() => setVoicePersona(p => p === 'aizen' ? 'jarvis' : 'aizen')}
-                className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#171a25] border border-white/[0.08] text-[#ffb703] hover:border-[#ffb703]/40 transition"
-              >
-                Voice: {voicePersona === 'aizen' ? 'Aizen' : 'J.A.R.V.I.S.'}
-              </button>
+              {/* Status Note */}
+              <span className="text-[10px] font-mono text-[#6b6b7a]">
+                {voiceEnabled ? 'Voice: Active' : 'Voice: Muted'}
+              </span>
             </div>
 
             <form

@@ -69,11 +69,13 @@ flowchart TD
 - Graceful CSS skeleton and static WebGL fallback for low-power or `prefers-reduced-motion` environments.
 - Rollup `manualChunks` code-splitting keeps initial page bundle lightweight (~140 KB).
 
-### 4. 🤖 J.A.R.V.I.S. AI Voice Assistant (Sōsuke Aizen Tuning)
-- Custom persona combining classic J.A.R.V.I.S. precision with the calm, aristocratic cadence of anime character Sōsuke Aizen (tuned pitch: `0.82`, rate: `0.90`).
-- Speech-to-text mic input via Web Speech API with toggleable speech synthesis output.
-- Offline grounded dataset fallback ensuring instant responses even under network dropouts.
-- Quick suggested prompt chips, message timestamps, and floating launcher trigger.
+### 4. 🎙️ Dual Selectable Voice Personas (Licensed Stock Presets)
+- **Persona A: "J.A.R.V.I.S. Classic"**: Calm, polite, dry-witted British butler AI with a measured pace, low pitch, and clear technical diction.
+- **Persona B: "Sōsuke Mode"**: Composed, philosophical, quietly commanding AI with an unhurried, silky delivery and soft confident poise.
+- **Server-Side TTS Endpoint (`/api/tts.ts`)**: Generates licensed audio with in-memory caching and per-IP abuse rate limits (30 req/min).
+- **Audio Playback Engine**: `<audio>` element with queueing, visual speaking waveform, stop button, and non-blocking browser fallback.
+- **Autoplay Compliance**: Audio is muted by default and never autoplays before user interaction.
+- **Offline Grounded Fallback**: Instant responses with language-appropriate fallback speech synthesis if network is unavailable.
 
 ### 5. 💻 Interactive Shell Emulator (`priyanraj@mainframe`)
 - Zsh-style shell featuring:
@@ -92,11 +94,30 @@ flowchart TD
 
 ---
 
+## 🎙️ Voice Architecture & Legal Disclaimers
+
+### Legal & Ethical Adherence
+- **Zero Likeness Cloning**: No voice cloning tools, no uploaded reference samples of copyrighted audio, and no training on actor audio.
+- **Licensed Stock Presets**: All audio is synthesized strictly via commercial stock voice presets provided by Google Cloud Text-to-Speech / Gemini and ElevenLabs.
+- **Stylistic Homages**: The personas (**"J.A.R.V.I.S. Classic"** and **"Sōsuke Mode"**) are original creative homages crafted through prompt engineering, cadence tuning, and speech rate/pitch modulation. They do not claim affiliation with or representation of any commercial film, studio, or anime intellectual property.
+
+### Supported TTS Providers & Voice Presets
+1. **Google Cloud Text-to-Speech / Gemini 2.0 Audio (Default)**:
+   - **J.A.R.V.I.S. Classic**: Preset `en-GB-Neural2-B` (or Gemini `Puck`) — speaking rate `1.0`, pitch `-1.0` (calm British diction).
+   - **Sōsuke Mode**: Preset `en-GB-Neural2-D` (or Gemini `Charon`) — speaking rate `0.88`, pitch `-3.5` (low, deliberate baritone).
+2. **ElevenLabs (Optional High-Fidelity Neural TTS)**:
+   - Enabled automatically when `ELEVENLABS_API_KEY` is present.
+   - **J.A.R.V.I.S. Classic**: Stock commercial voice `JBFqnCBsd6RMkjVDRZzb` ("George") or configured via `VOICE_ID_JARVIS`.
+   - **Sōsuke Mode**: Stock commercial voice `nPczCjzI2devNBz1zQrb` ("Brian") or configured via `VOICE_ID_SOSUKE`.
+
+---
+
 ## 📁 Repository Structure
 
 ```
 ├── api/
-│   └── chat.ts                 # Serverless Gemini proxy with rate-limiting
+│   ├── chat.ts                 # Serverless Gemini proxy with rate-limiting
+│   └── tts.ts                  # Serverless Text-to-Speech proxy (Google/ElevenLabs)
 ├── public/
 │   ├── favicon.svg             # Arc Reactor Gold vector icon
 │   ├── jarvis-core.png         # Fallback core visual
@@ -107,7 +128,7 @@ flowchart TD
 │   └── sitemap.xml             # Sitemap specification
 ├── src/
 │   ├── components/
-│   │   ├── AiVoiceAssistant.tsx        # Floating AI voice assistant
+│   │   ├── AiVoiceAssistant.tsx        # Floating AI assistant with dual personas
 │   │   ├── BrandIcons.tsx              # Clean SVG icons
 │   │   ├── CertificatesSection.tsx     # 11 licenses & hackathons
 │   │   ├── CompetitiveProfiles.tsx     # LeetCode, Codeforces, AtCoder
@@ -128,7 +149,8 @@ flowchart TD
 │   │   ├── jarvisDataset.ts            # Grounded knowledge base
 │   │   ├── portfolioData.ts            # Unified developer profile
 │   │   ├── projects.ts                 # 9 verified engineering projects
-│   │   └── skills.ts                   # Categorized technical skills
+│   │   ├── skills.ts                   # Categorized technical skills
+│   │   └── voices.ts                   # Licensed stock voice configurations & presets
 │   ├── theme.ts                        # Shared palette constants
 │   ├── index.css                       # Tailwind CSS v4 theme tokens
 │   ├── App.tsx                         # Root component
@@ -136,6 +158,7 @@ flowchart TD
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml                      # Automated lint, typecheck & build
+
 │       └── deploy.yml                  # GitHub Pages deployment pipeline
 ├── vercel.json                         # Vercel SPA routing & serverless config
 ├── vite.config.ts                      # Manual chunk splitting & build setup
@@ -188,9 +211,16 @@ npm run build     # Compile optimized production bundle
 ### Deploying to Vercel (Recommended)
 1. Fork or push your code to GitHub.
 2. Import the project into [Vercel](https://vercel.com).
-3. Set the Environment Variable:
-   - `GEMINI_API_KEY`: Your Google Gemini API Key.
-4. Vercel automatically deploys the frontend and the `/api/chat` serverless function.
+3. Set the Environment Variables under **Project Settings > Environment Variables**:
+
+| Variable | Required | Description |
+|---|---|---|
+| `GEMINI_API_KEY` | **Required** | Google Gemini API Key (used for `/api/chat` and server-side TTS synthesis) |
+| `ELEVENLABS_API_KEY` | Optional | ElevenLabs API Key for neural stock voice synthesis |
+| `VOICE_ID_JARVIS` | Optional | Custom ElevenLabs voice ID for J.A.R.V.I.S. Classic (default: `JBFqnCBsd6RMkjVDRZzb` / "George") |
+| `VOICE_ID_SOSUKE` | Optional | Custom ElevenLabs voice ID for Sōsuke Mode (default: `nPczCjzI2devNBz1zQrb` / "Brian") |
+
+4. Vercel automatically deploys the frontend and both `/api/chat` and `/api/tts` serverless functions.
 
 ---
 

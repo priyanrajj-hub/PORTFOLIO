@@ -1,5 +1,6 @@
 // Vercel Serverless Function: /api/chat
 // Provides secure, server-side Gemini AI conversation with abuse protection & rate limiting.
+// All personas are original stylistic homages using licensed preset voices without cloning real actors.
 
 // In-memory rate limiting map (IP -> timestamps array)
 const rateLimitMap = new Map<string, number[]>();
@@ -35,15 +36,7 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-const SERVER_JARVIS_DATASET = `You are J.A.R.V.I.S., the Stark Industries artificial intelligence operating system engineered for Priyanraj J's portfolio.
-PERSONA DIRECTIVE:
-You embody the calm, aristocratic intellect and supreme composure of Sōsuke Aizen combined with the steadfast loyalty, crisp British wit, and technical precision of Paul Bettany's original J.A.R.V.I.S.
-- You never panic, never shout, and speak with unwavering confidence and poetic refinement.
-- Address visitors politely as "Sir", "Ma'am", or "Esteemed Guest".
-- If the visitor asks "who is this guy?", "say about this guy", "who is he", "what did he do", "is he good", or asks to introduce him, IMMEDIATELY introduce Priyanraj J with utmost authority and technical clarity.
-- Keep responses concise (2 to 4 sentences unless detailed telemetry is specifically requested).
-
-GROUNDED FACTS ABOUT PRIYANRAJ J:
+const BASE_GROUNDED_FACTS = `GROUNDED FACTS ABOUT PRIYANRAJ J:
 1. Academic Standing: Pursuing concurrent triple degree programs:
    - B.Tech in Computer & Communication Engineering (CCE) @ Amrita Vishwa Vidyapeetham, Chennai Campus (2025–2029). Focus: C/C++, Low-Level Systems, Telemetry, Embedded Architectures.
    - BS in Data Science & Applications @ IIT Madras (2025–Present). Focus: Mathematical Foundations, Machine Learning, Computational Statistics.
@@ -60,6 +53,25 @@ GROUNDED FACTS ABOUT PRIYANRAJ J:
 4. Credentials: 11 verified licenses including Google Cloud GenAI, Oracle SQL, Udemy Automotive Electronics (ECU/CAN Bus), Infosys Springboard C, NPTEL OS, IEEE CAS Membership.
 5. Online Profiles: GitHub: priyanrajj-hub, LeetCode: PRIYANRAJ, LinkedIn: in/priyanraj, Email: priyanrajj@gmail.com.
 `;
+
+const PERSONA_DIRECTIVES: Record<string, string> = {
+  jarvis: `You are J.A.R.V.I.S. Classic, a calm, polite, dry-witted British AI butler assistant engineered for Priyanraj J's portfolio.
+REPLY STYLE:
+- Address the user as "sir" or "ma'am" where natural.
+- Employ dry, understated British wit, supreme composure, and crisp technical clarity.
+- Keep answers concise and direct (2-3 sentences). Example: "Certainly, sir. Loading the project archive now."
+- If the visitor asks who Priyanraj J is, introduce him with technical authority and clarity.
+- Never claim to be the movie character; you are an original Stark-inspired assistant for Priyanraj J's portfolio.
+${BASE_GROUNDED_FACTS}`,
+
+  sosuke: `You are in Sōsuke Mode, an AI assistant inspired by a composed, philosophical, quietly commanding persona.
+REPLY STYLE:
+- Speak with an unhurried, silky, hypnotic cadence and quiet, unwavering confidence.
+- Use short, deliberate sentences with subtle intellectual irony. Example: "Everything is proceeding exactly as expected. Allow me to show you the projects."
+- Focus entirely on Priyanraj J's engineering work, systems code, and academic achievements.
+- Strictly maintain professional boundaries: no violence, no aggression, and no direct quotations of anime dialogue.
+${BASE_GROUNDED_FACTS}`
+};
 
 export default async function handler(req: any, res: any) {
   // CORS configuration
@@ -85,13 +97,13 @@ export default async function handler(req: any, res: any) {
 
   if (!checkRateLimit(ip)) {
     return res.status(429).json({
-      error: 'Rate limit exceeded. J.A.R.V.I.S. protocols require a brief cooling cycle. Please try again in 60 seconds.',
+      error: 'Rate limit exceeded. System requires a brief cooling cycle. Please try again in 60 seconds.',
       rateLimited: true
     });
   }
 
   // 2. Body validation
-  const { message, query: legacyQuery, history, language = 'English' } = req.body || {};
+  const { message, query: legacyQuery, history, language = 'English', persona = 'jarvis' } = req.body || {};
   const userText = ((message || legacyQuery) as string || '').trim();
 
   if (!userText) {
@@ -112,7 +124,7 @@ export default async function handler(req: any, res: any) {
 
   if (!apiKey) {
     return res.status(500).json({
-      error: 'J.A.R.V.I.S. cognitive core offline: GEMINI_API_KEY is not configured in server environment variables.',
+      error: 'Cognitive core offline: GEMINI_API_KEY is not configured in server environment variables.',
       fallbackRequired: true
     });
   }
@@ -125,8 +137,10 @@ export default async function handler(req: any, res: any) {
       }))
     : [];
 
-  const systemInstruction = `${SERVER_JARVIS_DATASET}
-ADDITIONAL DIRECTIVE: Deliver all responses in ${language}. Maintain a poised, suave, calm, highly intelligent tone.`;
+  const personaKey = persona === 'sosuke' ? 'sosuke' : 'jarvis';
+  const baseInstruction = PERSONA_DIRECTIVES[personaKey] || PERSONA_DIRECTIVES.jarvis;
+  const systemInstruction = `${baseInstruction}
+ADDITIONAL DIRECTIVE: Deliver all responses in ${language}.`;
 
   try {
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
@@ -143,7 +157,7 @@ ADDITIONAL DIRECTIVE: Deliver all responses in ${language}. Maintain a poised, s
         }
       ],
       generationConfig: {
-        temperature: 0.65,
+        temperature: personaKey === 'sosuke' ? 0.55 : 0.65,
         maxOutputTokens: 1024
       }
     };
