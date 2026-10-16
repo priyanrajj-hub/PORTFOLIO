@@ -16,7 +16,7 @@ import {
   Maximize2,
   ChevronDown
 } from 'lucide-react';
-import { JARVIS_SYSTEM_DATASET } from '../data/jarvisDataset';
+import { JARVIS_SYSTEM_DATASET, getGroundedFallbackResponse } from '../data/jarvisDataset';
 
 // User-provided Gemini API key (supports Gemini_API_key from Vercel)
 const getApiKey = () => {
@@ -227,15 +227,7 @@ CURRENT CONTEXT & INSTRUCTIONS:
       }
     } catch (err) {
       console.warn("Falling back to local grounded knowledge engine:", err);
-      
-      let fallback = `Allow me to introduce Mr. Priyanraj J (UID: CH.EN.U4CCE25020), Sir.\n\nPriyanraj is an exceptional 2nd-year engineering scholar concurrently pursuing a triple academic track:\n• B.Tech in Computer & Communication Engineering @ Amrita Vishwa Vidyapeetham, Chennai\n• BS in Data Science & Applications @ IIT Madras\n• BS in Data Science & Artificial Intelligence @ IIT Guwahati\n\nHe serves as the elected Webmaster for IEEE Amrita Chennai Student Branch and has engineered landmark systems including Canopy (global satellite NDVI vegetation monitoring live on Vercel), AI-DAX Lite (OS LinUCB bandit process scheduler), and hardware BLE proximity attendance platforms. He holds 11 verified credentials including Oracle and Google Cloud Generative AI.`;
-
-      if (selectedLanguage.code === 'ta') {
-        fallback = `பிரியன்ராஜ் ஜெ பற்றிய முழுமையான அறிக்கை, ஐயா:\n\nபிரியன்ராஜ் அவர்கள் ஒரே நேரத்தில் மூன்று முன்னணி நிறுவனங்களில் பொறியியல் மற்றும் தரவு அறிவியல் பயிலும் ஆற்றல்மிக்க ஆய்வாளர்:\n• அம்ரிதா விஸ்வ வித்யாபீடத்தில் சிசிஇ பி.டெக்\n• ஐஐடி மெட்ராஸில் தரவு அறிவியல் பி.எஸ்\n• ஐஐடி குவஹாட்டியில் ஏஐ பி.எஸ்\n\nஅவர் ஐஇஇஇ அம்ரிதா சென்னையின் வெப்மாஸ்டராகப் பொறுப்பு வகிக்கிறார். கேனோபி செயற்கைக்கோள் தாவர ஆரோக்கியக் கண்காணிப்பு தளம் மற்றும் ஏஐ-டிஏஎக்ஸ் லைட் ஓஎஸ் திட்டங்களை வெற்றிகரமாக உருவாக்கியுள்ளார்.`;
-      } else if (selectedLanguage.code === 'hi') {
-        fallback = `प्रियनराज जे का आधिकारिक परिचय, सर:\n\nप्रियनराज एक असाधारण द्वितीय वर्ष के इंजीनियरिंग शोधकर्ता हैं जो एक साथ तीन प्रतिष्ठित डिग्रियों का अध्ययन कर रहे हैं:\n• अमृता विश्व विद्यापीठम से बी.टेक (सीसीई)\n• आईआईटी मद्रास से बीएस (डेटा साइंस)\n• आईआईटी गुवाहाटी से बीएस (डेटा साइंस एवं एआई)\n\nवह आईईईई अमृता चेन्नई के आधिकारिक वेबमास्टर हैं और उन्होंने कैनोपी (उपग्रह वनस्पति स्वास्थ्य मॉनिटर) तथा एआई-डीएएक्स लाइट (लिनयूसीबी ओएस शेड्यूलर) जैसे उन्नत सिस्टम्स का निर्माण किया है।`;
-      }
-
+      const fallback = getGroundedFallbackResponse(query, selectedLanguage.code);
       setMessages(prev => [...prev, { sender: 'jarvis', text: fallback }]);
       if (voiceEnabled) {
         speakText(fallback, selectedLanguage.speechCode);
