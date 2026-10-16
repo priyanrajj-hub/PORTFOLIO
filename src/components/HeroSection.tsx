@@ -148,9 +148,10 @@ export const HeroSection: React.FC = () => {
               </a>
 
               <a
-                href="./resume.pdf"
+                href="/resume.pdf?v=20261016"
                 target="_blank"
                 rel="noopener noreferrer"
+                download="Priyanraj_J_Resume.pdf"
                 className="px-6 py-3 rounded-full bg-[#10121a] hover:bg-[#171a25] text-[#f4f1ea] border border-white/[0.12] hover:border-[#ffb703]/40 font-mono text-sm flex items-center gap-2 transition-transform hover:-translate-y-0.5"
               >
                 <FileText className="w-4 h-4 text-[#ffb703]" />

@@ -6,6 +6,7 @@
 [![Three.js](https://img.shields.io/badge/Three.js-WebGL_3D-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
+[![Resume](https://img.shields.io/badge/Resume-PDF-orange?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](public/resume.pdf)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 > *"AI and embedded-systems engineer building secure, intelligent systems."*
@@ -226,6 +227,7 @@ npm run build     # Compile optimized production bundle
 
 ## 📬 Contact & Coordinates
 
+- **Resume**: [Priyanraj_J_Resume.pdf](public/resume.pdf)
 - **Email**: [priyanrajj@gmail.com](mailto:priyanrajj@gmail.com)
 - **LinkedIn**: [linkedin.com/in/priyanraj](https://www.linkedin.com/in/priyanraj)
 - **GitHub**: [github.com/priyanrajj-hub](https://github.com/priyanrajj-hub)

@@ -13,7 +13,7 @@ import { InteractiveTerminal } from './components/InteractiveTerminal';
 import { RoadmapAndSpecs } from './components/RoadmapAndSpecs';
 import { ContactSection } from './components/ContactSection';
 import { AiVoiceAssistant } from './components/AiVoiceAssistant';
-import { Terminal, Shield, ArrowUp, Mail, Code2 } from 'lucide-react';
+import { Terminal, Shield, ArrowUp, Mail, Code2, FileText } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, InstagramIcon } from './components/BrandIcons';
 import { PERSONAL_INFO } from './data/portfolioData';
 
@@ -188,6 +188,18 @@ export function App() {
                 aria-label="Send Email"
               >
                 <Mail className="w-4 h-4" />
+              </a>
+              <a
+                href="/resume.pdf?v=20261016"
+                target="_blank"
+                rel="noopener noreferrer"
+                download="Priyanraj_J_Resume.pdf"
+                className="px-3 py-2 rounded-xl bg-[#10121a] hover:bg-[#171a25] text-[#9a9aa8] hover:text-[#ffb703] border border-white/[0.08] hover:border-[#ffb703]/40 transition flex items-center gap-1.5 text-xs font-mono"
+                aria-label="Download Resume PDF"
+                title="Download Resume (PDF)"
+              >
+                <FileText className="w-4 h-4 text-[#ffb703]" />
+                <span className="hidden sm:inline">Resume</span>
               </a>
             </div>
 

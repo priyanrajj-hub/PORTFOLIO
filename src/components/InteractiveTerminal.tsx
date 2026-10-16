@@ -255,7 +255,7 @@ export const InteractiveTerminal: React.FC = () => {
       }
 
       case 'resume':
-        window.open('./resume.pdf', '_blank');
+        window.open('/resume.pdf?v=20261016', '_blank');
         res = (
           <div className="text-xs font-mono py-1 text-emerald-400">
             ✔ Opening Priyanraj_Resume.pdf in a new browser tab...
