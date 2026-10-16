@@ -3,18 +3,17 @@
 @theme {
   --color-bg: #07080d;
   --color-surface: #10121a;
-  --color-surface-card: #141722;
-  --color-surface-hover: #1c2030;
-  --color-surface-subtle: #0d0f15;
-  --color-line: rgba(255, 255, 255, 0.08);
-  --color-line-gold: rgba(255, 183, 3, 0.22);
+  --color-surface-2: #171a25;
+  --color-line: rgb(255 255 255 / 0.08);
   --color-accent: #ffb703;
-  --color-accent-hover: #ffc42e;
-  --color-accent-copper: #ff6b35;
-  --color-accent-cyan: #38bdf8;
+  --color-accent-2: #ff6b35;
   --color-ink: #f4f1ea;
-  --color-ink-muted: #9a9aa8;
-  --color-ink-dim: #6b6b7a;
+  --color-ink-dim: #9a9aa8;
+  --color-success: #34d399;
+
+  --font-heading: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 @layer base {
@@ -24,9 +23,9 @@
   }
 
   body {
-    background-color: #07080d;
-    color: #f4f1ea;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    background-color: var(--color-bg, #07080d);
+    color: var(--color-ink, #f4f1ea);
+    font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
     margin: 0;
     padding: 0;
@@ -34,42 +33,49 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Accessible focus indicators */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  code, kbd, samp, pre, .font-mono {
+    font-family: var(--font-mono), monospace;
+  }
+
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  /* Accessible focus-visible ring */
   :focus-visible {
-    outline: 2px solid #ffb703;
+    outline: 2px solid var(--color-accent, #ffb703);
     outline-offset: 2px;
   }
 }
 
-/* Stark Industries Glassmorphism & Surface Utilities */
-.stark-panel {
-  background: rgba(16, 18, 26, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7);
+/* Glass Card & Surface Styles */
+.glass-panel {
+  background: rgba(16, 18, 26, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-line, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
 }
 
-.stark-panel-gold {
-  background: rgba(20, 23, 34, 0.85);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 183, 3, 0.28);
-  box-shadow: 0 0 35px rgba(255, 183, 3, 0.12), inset 0 0 20px rgba(255, 183, 3, 0.04);
+.glass-card {
+  background: var(--color-surface, #10121a);
+  border: 1px solid var(--color-line, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.stark-card {
-  background: #141722;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.stark-card:hover {
-  border-color: rgba(255, 183, 3, 0.35);
+.glass-card:hover {
+  border-color: rgba(255, 183, 3, 0.4);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 183, 3, 0.08);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 183, 3, 0.08);
 }
 
-/* Custom Sleek Scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
@@ -78,20 +84,20 @@
   background: #07080d;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f2333;
+  background: #171a25;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #ffb703;
 }
 
-/* Stark Arc Reactor Rotating Animations */
+/* Arc Reactor Pulse */
 @keyframes arcPulse {
   0%, 100% {
-    filter: drop-shadow(0 0 12px rgba(255, 183, 3, 0.45));
+    filter: drop-shadow(0 0 10px rgba(255, 183, 3, 0.4));
   }
   50% {
-    filter: drop-shadow(0 0 24px rgba(255, 107, 53, 0.65));
+    filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.6));
   }
 }
 
@@ -99,12 +105,15 @@
   animation: arcPulse 4s ease-in-out infinite;
 }
 
-/* Respect reduced motion */
+/* Prefers Reduced Motion Global Enforcement */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *, ::before, ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .arc-glow {
+    animation: none !important;
   }
 }

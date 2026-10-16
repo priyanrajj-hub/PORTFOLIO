@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://priyanrajj-hub.github.io/PORTFOLIO/sitemap.xml

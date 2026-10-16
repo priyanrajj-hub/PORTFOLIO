@@ -2,6 +2,7 @@ import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Stars } from '@react-three/drei';
 import * as THREE from 'three';
+import { THEME } from '../theme';
 
 // Stark Arc Reactor Quantum Core Geometry
 function QuantumCore({ reducedMotion }: { reducedMotion: boolean }) {
@@ -37,9 +38,9 @@ function QuantumCore({ reducedMotion }: { reducedMotion: boolean }) {
         <mesh ref={outerMesh}>
           <icosahedronGeometry args={[2.2, 1]} />
           <meshStandardMaterial
-            color="#ffb703"
+            color={THEME.accent}
             wireframe
-            emissive="#ff9e00"
+            emissive={THEME.accent}
             emissiveIntensity={0.65}
             roughness={0.2}
             metalness={0.9}
@@ -50,8 +51,8 @@ function QuantumCore({ reducedMotion }: { reducedMotion: boolean }) {
         <mesh ref={innerMesh}>
           <octahedronGeometry args={[1.2, 0]} />
           <meshStandardMaterial
-            color="#ff6b35"
-            emissive="#e85d04"
+            color={THEME.accent2}
+            emissive={THEME.accent2}
             emissiveIntensity={0.85}
             roughness={0.15}
             metalness={0.85}
@@ -62,13 +63,13 @@ function QuantumCore({ reducedMotion }: { reducedMotion: boolean }) {
         {/* Orbiting Gyroscope Ring 1 (Gold) */}
         <mesh ref={ring1}>
           <torusGeometry args={[3.0, 0.035, 16, 100]} />
-          <meshBasicMaterial color="#ffb703" />
+          <meshBasicMaterial color={THEME.accent} />
         </mesh>
 
-        {/* Orbiting Gyroscope Ring 2 (Cyber Cyan Accents) */}
+        {/* Orbiting Gyroscope Ring 2 (Copper/Plasma Accent) */}
         <mesh ref={ring2}>
           <torusGeometry args={[3.45, 0.02, 16, 100]} />
-          <meshBasicMaterial color="#38bdf8" />
+          <meshBasicMaterial color={THEME.accent2} />
         </mesh>
       </group>
     </Float>
@@ -105,7 +106,7 @@ function ParticleField({ count = 200, reducedMotion }: { count?: number; reduced
       </bufferGeometry>
       <pointsMaterial
         size={0.065}
-        color="#ffb703"
+        color={THEME.accent}
         sizeAttenuation
         transparent
         opacity={0.65}
@@ -114,22 +115,50 @@ function ParticleField({ count = 200, reducedMotion }: { count?: number; reduced
   );
 }
 
+function checkWebGLSupport(): boolean {
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+  } catch {
+    return false;
+  }
+}
+
 export const Hero3DCanvas: React.FC<{ className?: string }> = ({ className = 'min-h-[220px] max-h-[260px]' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [hasWebGL, setHasWebGL] = useState(true);
+  const [particleCount, setParticleCount] = useState(180);
 
   useEffect(() => {
-    // Check reduced motion preference
+    // 1. Check WebGL support
+    setHasWebGL(checkWebGLSupport());
+
+    // 2. Check reduced motion preference
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReducedMotion(mediaQuery.matches);
     const handleMotionChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handleMotionChange);
 
-    // Pause rendering when canvas is scrolled off-screen
+    // 3. Adapt particle count for low-end / mobile hardware
+    const isLowPower = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || window.innerWidth < 768;
+    setParticleCount(isLowPower ? 50 : 180);
+
+    // 4. Pause rendering when tab is hidden or canvas scrolled out of view
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsVisible(false);
+      } else if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setIsVisible(rect.top < window.innerHeight && rect.bottom > 0);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+        setIsVisible(entry.isIntersecting && !document.hidden);
       },
       { threshold: 0.05 }
     );
@@ -140,9 +169,26 @@ export const Hero3DCanvas: React.FC<{ className?: string }> = ({ className = 'mi
 
     return () => {
       mediaQuery.removeEventListener('change', handleMotionChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       observer.disconnect();
     };
   }, []);
+
+  // Static Fallback for reduced motion or no WebGL
+  if (!hasWebGL || reducedMotion) {
+    return (
+      <div ref={containerRef} className={`w-full h-full flex items-center justify-center p-4 relative ${className}`}>
+        <img
+          src="./jarvis-core.png"
+          alt="J.A.R.V.I.S. Arc Reactor Hologram Core"
+          className="w-48 h-48 object-contain arc-glow rounded-full opacity-90"
+          width="192"
+          height="192"
+          loading="eager"
+        />
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className={`w-full h-full relative pointer-events-auto ${className}`}>
@@ -150,21 +196,21 @@ export const Hero3DCanvas: React.FC<{ className?: string }> = ({ className = 'mi
         <Canvas
           camera={{ position: [0, 0, 7.5], fov: 45 }}
           gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-          dpr={[1, 1.5]} // Capped at 1.5 for optimal 60fps performance on mobile & high-DPI displays
+          dpr={[1, 1.5]}
         >
           <ambientLight intensity={0.6} />
-          <pointLight position={[10, 10, 10]} intensity={1.8} color="#ffb703" />
-          <pointLight position={[-10, -10, -10]} intensity={1.2} color="#ff6b35" />
+          <pointLight position={[10, 10, 10]} intensity={1.8} color={THEME.accent} />
+          <pointLight position={[-10, -10, -10]} intensity={1.2} color={THEME.accent2} />
           <directionalLight position={[0, 5, 5]} intensity={1} color="#ffffff" />
           
-          <Stars radius={45} depth={40} count={reducedMotion ? 400 : 1000} factor={3} saturation={0.4} fade speed={reducedMotion ? 0 : 1} />
-          <ParticleField count={reducedMotion ? 60 : 200} reducedMotion={reducedMotion} />
-          <QuantumCore reducedMotion={reducedMotion} />
+          <Stars radius={45} depth={40} count={particleCount * 4} factor={3} saturation={0.4} fade speed={1} />
+          <ParticleField count={particleCount} reducedMotion={false} />
+          <QuantumCore reducedMotion={false} />
         </Canvas>
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-[#07080d]/60">
           <div className="w-16 h-16 rounded-full border border-amber-400/20 flex items-center justify-center text-xs font-mono text-[#9a9aa8]">
-            PAUSED
+            STANDBY
           </div>
         </div>
       )}

@@ -14,17 +14,16 @@ PRIYANRAJ J - OFFICIAL DATASET & VERIFIED FACTS:
 
 1. IDENTITY & CONTACT:
 - Full Legal Name: Priyanraj J
-- Institutional UID / Roll Number: CH.EN.U4CCE25020
-- Academic Standing: 2nd Year Undergraduate Engineering Scholar (2025–2029)
+- Academic Standing: 2nd Year Undergraduate Engineering Scholar (CCE 2025–2029)
 - Base Location: Tiruvallur, Tamil Nadu, India (UTC +5:30)
 - Primary Email: priyanrajj@gmail.com
-- WhatsApp / Mobile: +91 78100 12708
+- Direct Uplink: WhatsApp & LinkedIn channels
 - Official GitHub: https://github.com/priyanrajj-hub
 - LinkedIn: https://www.linkedin.com/in/priyanraj
 - Instagram: @priyanraj.j
 - LeetCode: https://leetcode.com/PRIYANRAJ
 - Codeforces: https://codeforces.com/profile/user_733863963
-- Hardware Rig: ASUS TUF Gaming, Intel Core i7 High-Performance 13th Gen, NVIDIA GeForce RTX 5060, 32GB High-Speed RAM, 1TB NVMe SSD.
+- Hardware Rig: ASUS TUF Workstation, Intel Core i7 HX Series, Dedicated GPU, 32GB High-Speed RAM.
 
 2. TRIPLE ACADEMIC DEGREE TRACK (CONCURRENT SPECIALIZATION):
 Priyanraj is concurrently pursuing three rigorous academic programs across premier Indian institutions:
@@ -104,7 +103,7 @@ Priyanraj is concurrently pursuing three rigorous academic programs across premi
 BEHAVIORAL RULES:
 - If asked in Tamil (தமிழ்), Hindi (हिन्दी), Telugu (తెలుగు), Spanish, French, German, Japanese, or any language, answer fluently in that language without losing the J.A.R.V.I.S. persona.
 - Keep answers confident, thorough, and highly articulate.
-- Always provide specific facts from the dataset (e.g. project names, technologies, roll number, institutions) rather than vague generalities.
+- Always provide specific facts from the dataset (e.g. project names, technologies, academic tracks, institutions) rather than vague generalities.
 - NEVER truncate your sentences. Provide complete, satisfying, and beautifully structured responses.
 `;
 
@@ -127,9 +126,9 @@ export function getGroundedFallbackResponse(query: string, langCode: string = 'e
   // 2. Education & Degrees Query
   if (q.includes('degree') || q.includes('education') || q.includes('college') || q.includes('iit') || q.includes('amrita') || q.includes('study') || q.includes('triple')) {
     if (langCode === 'ta') {
-      return `பிரியன்ராஜ் அவர்களின் கல்வித் தகுதிகள், ஐயா:\n\nஅவர் ஒரே நேரத்தில் மூன்று முன்னணி நிறுவனங்களில் தீவிர படிப்புகளை பயின்று வருகிறார்:\n1. பி.டெக் - கணினி மற்றும் தொடர்பியல் பொறியியல் (CCE) @ அம்ரிதா விஸ்வ வித்யாபீடம், சென்னை (பதிவு எண்: CH.EN.U4CCE25020, 2025–2029).\n2. பி.எஸ் - தரவு அறிவியல் மற்றும் பயன்பாடுகள் @ ஐஐடி மெட்ராஸ்.\n3. பி.எஸ் - தரவு அறிவியல் மற்றும் செயற்கை நுண்ணறிவு (DSAI) @ ஐஐடி குவஹாட்டி.`;
+      return `பிரியன்ராஜ் அவர்களின் கல்வித் தகுதிகள், ஐயா:\n\nஅவர் ஒரே நேரத்தில் மூன்று முன்னணி நிறுவனங்களில் தீவிர படிப்புகளை பயின்று வருகிறார்:\n1. பி.டெக் - கணினி மற்றும் தொடர்பியல் பொறியியல் (CCE) @ அம்ரிதா விஸ்வ வித்யாபீடம், சென்னை (2025–2029).\n2. பி.எஸ் - தரவு அறிவியல் மற்றும் பயன்பாடுகள் @ ஐஐடி மெட்ராஸ்.\n3. பி.எஸ் - தரவு அறிவியல் மற்றும் செயற்கை நுண்ணறிவு (DSAI) @ ஐஐடி குவஹாட்டி.`;
     }
-    return `Accessing academic credentials for Mr. Priyanraj J (UID: CH.EN.U4CCE25020), Sir:\n\nPriyanraj is currently pursuing an elite concurrent triple-degree specialization:\n1. B.Tech in Computer & Communication Engineering (CCE) @ Amrita Vishwa Vidyapeetham, Chennai Campus (2025–2029)\n2. BS in Data Science & Applications @ Indian Institute of Technology (IIT) Madras\n3. BS in Data Science & Artificial Intelligence (DSAI) @ Indian Institute of Technology (IIT) Guwahati\n\nHis academic curriculum encompasses low-level operating systems, computational mathematics, machine learning theory, and hardware telemetry.`;
+    return `Accessing academic credentials for Mr. Priyanraj J, Sir:\n\nPriyanraj is currently pursuing an elite concurrent triple-degree specialization:\n1. B.Tech in Computer & Communication Engineering (CCE) @ Amrita Vishwa Vidyapeetham, Chennai Campus (2025–2029)\n2. BS in Data Science & Applications @ Indian Institute of Technology (IIT) Madras\n3. BS in Data Science & Artificial Intelligence (DSAI) @ Indian Institute of Technology (IIT) Guwahati\n\nHis academic curriculum encompasses low-level operating systems, computational mathematics, machine learning theory, and hardware telemetry.`;
   }
 
   // 3. Certifications & Licenses Query
@@ -143,9 +142,9 @@ export function getGroundedFallbackResponse(query: string, langCode: string = 'e
   // 4. Contact & Location Query
   if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('whatsapp') || q.includes('location') || q.includes('hire') || q.includes('reach')) {
     if (langCode === 'ta') {
-      return `தொடர்பு விவரங்கள், ஐயா:\n• மின்னஞ்சல்: priyanrajj@gmail.com\n• வாட்ஸ்அப் / மொபைல்: +91 78100 12708\n• இடம்: திருவள்ளூர் / சென்னை, தமிழ்நாடு, இந்தியா\n• லிங்க்ட்இன்: linkedin.com/in/priyanraj\n• கிட்ஹப்: github.com/priyanrajj-hub`;
+      return `தொடர்பு விவரங்கள், ஐயா:\n• மின்னஞ்சல்: priyanrajj@gmail.com\n• நேரடி தொடர்பு: வாட்ஸ்அப் மற்றும் லிங்க்ட்இன் தளம் வழியாக\n• இடம்: திருவள்ளூர் / சென்னை, தமிழ்நாடு, இந்தியா\n• லிங்க்ட்இன்: linkedin.com/in/priyanraj\n• கிட்ஹப்: github.com/priyanrajj-hub`;
     }
-    return `Direct Uplink Coordinates for Mr. Priyanraj J, Sir:\n• Primary Email: priyanrajj@gmail.com\n• WhatsApp / Phone: +91 78100 12708\n• Base Location: Tiruvallur, Tamil Nadu, India (UTC +5:30)\n• LinkedIn: https://www.linkedin.com/in/priyanraj\n• GitHub: https://github.com/priyanrajj-hub\n• Status: Open to cutting-edge AI research collaborations, systems engineering roles, and internships.`;
+    return `Direct Uplink Coordinates for Mr. Priyanraj J, Sir:\n• Primary Email: priyanrajj@gmail.com\n• Direct Messenger: WhatsApp & LinkedIn Uplink\n• Base Location: Tiruvallur, Tamil Nadu, India (UTC +5:30)\n• LinkedIn: https://www.linkedin.com/in/priyanraj\n• GitHub: https://github.com/priyanrajj-hub\n• Status: Open to cutting-edge AI research collaborations, systems engineering roles, and internships.`;
   }
 
   // 5. Competitive Coding Query
@@ -155,9 +154,9 @@ export function getGroundedFallbackResponse(query: string, langCode: string = 'e
 
   // 6. Default Identity / "Say about this guy" / Introduction Query
   if (langCode === 'ta') {
-    return `பிரியன்ராஜ் ஜெ பற்றிய முழுமையான அறிக்கை, ஐயா:\n\nபிரியன்ராஜ் அவர்கள் ஒரே நேரத்தில் மூன்று முன்னணி நிறுவனங்களில் பொறியியல் மற்றும் தரவு அறிவியல் பயிலும் ஆற்றல்மிக்க ஆய்வாளர்:\n• அம்ரிதா விஸ்வ வித்யாபீடத்தில் சிசிஇ பி.டெக் (பதிவு எண்: CH.EN.U4CCE25020)\n• ஐஐடி மெட்ராஸில் தரவு அறிவியல் பி.எஸ்\n• ஐஐடி குவஹாட்டியில் ஏஐ பி.எஸ்\n\nஅவர் ஐஇஇஇ அம்ரிதா சென்னையின் வெப்மாஸ்டராகப் பொறுப்பு வகிக்கிறார். கேனோபி செயற்கைக்கோள் தாவர ஆரோக்கியக் கண்காணிப்பு தளம் மற்றும் ஏஐ-டிஏஎக்ஸ் லைட் ஓஎஸ் திட்டங்களை வெற்றிகரமாக உருவாக்கியுள்ளார். 11 சர்வதேச சான்றிதழ்களைப் பெற்றுள்ளார்.`;
+    return `பிரியன்ராஜ் ஜெ பற்றிய முழுமையான அறிக்கை, ஐயா:\n\nபிரியன்ராஜ் அவர்கள் ஒரே நேரத்தில் மூன்று முன்னணி நிறுவனங்களில் பொறியியல் மற்றும் தரவு அறிவியல் பயிலும் ஆற்றல்மிக்க ஆய்வாளர்:\n• அம்ரிதா விஸ்வ வித்யாபீடத்தில் சிசிஇ பி.டெக் (2025–2029)\n• ஐஐடி மெட்ராஸில் தரவு அறிவியல் பி.எஸ்\n• ஐஐடி குவஹாட்டியில் ஏஐ பி.எஸ்\n\nஅவர் ஐஇஇஇ அம்ரிதா சென்னையின் வெப்மாஸ்டராகப் பொறுப்பு வகிக்கிறார். கேனோபி செயற்கைக்கோள் தாவர ஆரோக்கியக் கண்காணிப்பு தளம் மற்றும் ஏஐ-டிஏஎக்ஸ் லைட் ஓஎஸ் திட்டங்களை வெற்றிகரமாக உருவாக்கியுள்ளார். 11 சர்வதேச சான்றிதழ்களைப் பெற்றுள்ளார்.`;
   }
 
-  return `Allow me to introduce Mr. Priyanraj J (UID: CH.EN.U4CCE25020), Sir.\n\nPriyanraj is an exceptional 2nd-year engineering scholar concurrently pursuing a triple academic track:\n• B.Tech in Computer & Communication Engineering @ Amrita Vishwa Vidyapeetham, Chennai\n• BS in Data Science & Applications @ IIT Madras\n• BS in Data Science & Artificial Intelligence @ IIT Guwahati\n\nHe serves as the elected Webmaster for IEEE Amrita Chennai Student Branch and has engineered landmark systems including Canopy (global satellite NDVI vegetation monitoring live on Vercel), AI-DAX Lite (OS LinUCB bandit process scheduler), and hardware BLE proximity attendance platforms. He holds 11 verified credentials including Oracle and Google Cloud Generative AI.\n\nHe is driven, technically rigorous, and building at the intersection of AI, low-level systems, and satellite telemetry.`;
+  return `Allow me to introduce Mr. Priyanraj J, Sir.\n\nPriyanraj is an exceptional 2nd-year engineering scholar concurrently pursuing a triple academic track:\n• B.Tech in Computer & Communication Engineering @ Amrita Vishwa Vidyapeetham, Chennai\n• BS in Data Science & Applications @ IIT Madras\n• BS in Data Science & Artificial Intelligence @ IIT Guwahati\n\nHe serves as the elected Webmaster for IEEE Amrita Chennai Student Branch and has engineered landmark systems including Canopy (global satellite NDVI vegetation monitoring live on Vercel), AI-DAX Lite (OS LinUCB bandit process scheduler), and hardware BLE proximity attendance platforms. He holds 11 verified credentials including Oracle and Google Cloud Generative AI.\n\nHe is driven, technically rigorous, and building at the intersection of AI, low-level systems, and satellite telemetry.`;
 }
 

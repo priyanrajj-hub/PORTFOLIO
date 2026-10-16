@@ -144,8 +144,8 @@ export const ContactSection: React.FC = () => {
                   <ExternalLink className="w-3.5 h-3.5 text-[#9a9aa8] group-hover:text-emerald-400" />
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-[#f4f1ea] block">WhatsApp</span>
-                  <span className="text-[11px] text-[#9a9aa8] font-mono">+91 78100 12708</span>
+                  <span className="text-xs font-semibold text-[#f4f1ea] block">Message Direct</span>
+                  <span className="text-[11px] text-[#9a9aa8] font-mono">WhatsApp Uplink</span>
                 </div>
               </a>
             </div>

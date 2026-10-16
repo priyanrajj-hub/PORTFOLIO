@@ -2,55 +2,92 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/webp" href="./profile.webp" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#07080d" />
-    
-    <!-- Primary Meta Tags -->
-    <title>Priyanraj J | Systems Software Engineer & AI Researcher</title>
-    <meta name="title" content="Priyanraj J | Systems Software Engineer & AI Researcher" />
-    <meta name="description" content="Portfolio of Priyanraj J — Systems Software Engineer & AI Researcher concurrently at Amrita Vishwa Vidyapeetham, IIT Madras, and IIT Guwahati. Featuring 3D Three.js core, J.A.R.V.I.S. AI voice assistant, 9+ production projects, and 11 verified credentials." />
-    <meta name="keywords" content="Priyanraj J, AI Researcher, Systems Software Engineer, TinyML, Embedded Systems, LinUCB, Canopy, J.A.R.V.I.S., IIT Madras, IIT Guwahati, Amrita" />
-    <meta name="author" content="Priyanraj J" />
 
-    <!-- Open Graph / Facebook / LinkedIn -->
+    <!-- Title and Core Meta Tags (Section 11) -->
+    <title>Priyanraj J | AI & Embedded Systems Engineer</title>
+    <meta name="title" content="Priyanraj J | AI & Embedded Systems Engineer" />
+    <meta name="description" content="AI and embedded-systems engineer building secure, intelligent systems. Specializing in low-level C algorithms, context-aware OS scheduling, and satellite telemetry." />
+    <meta name="keywords" content="Priyanraj J, AI Engineer, Embedded Systems, LinUCB, Canopy, TinyML, IIT Madras, IIT Guwahati, Amrita, C Programming, J.A.R.V.I.S." />
+    <meta name="author" content="Priyanraj J" />
+    <link rel="canonical" href="https://priyanrajj-hub.github.io/PORTFOLIO/" />
+
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+
+    <!-- Open Graph / LinkedIn / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://priyanrajj-hub.github.io/PORTFOLIO/" />
-    <meta property="og:title" content="Priyanraj J | Systems Software Engineer & AI Researcher" />
-    <meta property="og:description" content="Explore 9+ verified systems projects, TinyML architectures, interactive 3D core, and voice-enabled J.A.R.V.I.S. assistant." />
-    <meta property="og:image" content="./profile.webp" />
+    <meta property="og:title" content="Priyanraj J | AI & Embedded Systems Engineer" />
+    <meta property="og:description" content="AI and embedded-systems engineer building secure, intelligent systems. 3D interactive core, J.A.R.V.I.S. assistant, and 9+ verified systems projects." />
+    <meta property="og:image" content="./og-image.png" />
 
     <!-- Twitter Card -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://priyanrajj-hub.github.io/PORTFOLIO/" />
-    <meta property="twitter:title" content="Priyanraj J | Systems Software Engineer & AI Researcher" />
-    <meta property="twitter:description" content="Explore 9+ verified systems projects, TinyML architectures, interactive 3D core, and voice-enabled J.A.R.V.I.S. assistant." />
-    <meta property="twitter:image" content="./profile.webp" />
+    <meta property="twitter:title" content="Priyanraj J | AI & Embedded Systems Engineer" />
+    <meta property="twitter:description" content="AI and embedded-systems engineer building secure, intelligent systems. 3D interactive core, J.A.R.V.I.S. assistant, and 9+ verified systems projects." />
+    <meta property="twitter:image" content="./og-image.png" />
 
-    <!-- Fonts preconnect -->
+    <!-- Google Fonts Preconnect and Swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
-    <!-- Static Production Fallback (for direct root GitHub Pages deployment) -->
-    <script>
-      (function() {
-        if (!window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
-          var l = document.createElement('link');
-          l.rel = 'stylesheet';
-          l.crossOrigin = '';
-          l.href = './assets/index-Ed1ZYZw2.css';
-          document.head.appendChild(l);
-
-          var s = document.createElement('script');
-          s.type = 'module';
-          s.crossOrigin = '';
-          s.src = './assets/index-C3PkVyPj.js';
-          document.head.appendChild(s);
+    <!-- Structured Data (JSON-LD Person Schema) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Priyanraj J",
+      "jobTitle": "AI & Embedded Systems Engineer",
+      "url": "https://priyanrajj-hub.github.io/PORTFOLIO/",
+      "alumniOf": [
+        {
+          "@type": "EducationalOrganization",
+          "name": "Amrita Vishwa Vidyapeetham"
+        },
+        {
+          "@type": "EducationalOrganization",
+          "name": "Indian Institute of Technology Madras"
+        },
+        {
+          "@type": "EducationalOrganization",
+          "name": "Indian Institute of Technology Guwahati"
         }
-      })();
+      ],
+      "sameAs": [
+        "https://github.com/priyanrajj-hub",
+        "https://www.linkedin.com/in/priyanraj",
+        "https://leetcode.com/PRIYANRAJ",
+        "https://codeforces.com/profile/user_733863963"
+      ]
+    }
     </script>
   </head>
-  <body class="bg-[#07080d] text-[#f4f1ea] selection:bg-amber-500/30 selection:text-amber-200">
+  <body class="selection:bg-[#ffb703]/30 selection:text-[#ffb703]">
+    <!-- Accessibility Skip to Main Content Link -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#ffb703] focus:text-[#07080d] focus:font-bold focus:rounded-lg focus:shadow-xl focus:outline-none">
+      Skip to main content
+    </a>
+
+    <!-- Noscript Accessible Fallback -->
+    <noscript>
+      <div style="padding: 2rem; background: #07080d; color: #f4f1ea; font-family: sans-serif; text-align: center;">
+        <h2>Priyanraj J — AI & Embedded Systems Engineer</h2>
+        <p>B.Tech CCE @ Amrita | BS Data Science @ IIT Madras | BS DS&AI @ IIT Guwahati</p>
+        <p>This interactive portfolio requires JavaScript for 3D graphics and J.A.R.V.I.S. voice assistant. Connect directly via:</p>
+        <p>
+          <a href="https://github.com/priyanrajj-hub" style="color: #ffb703; margin: 0 10px;">GitHub</a> |
+          <a href="https://www.linkedin.com/in/priyanraj" style="color: #ffb703; margin: 0 10px;">LinkedIn</a> |
+          <a href="mailto:priyanrajj@gmail.com" style="color: #ffb703; margin: 0 10px;">Email</a>
+        </p>
+      </div>
+    </noscript>
+
     <div id="root"></div>
     <script type="module" src="./src/main.tsx"></script>
   </body>

@@ -1,57 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Bot, 
+  Send, 
+  X, 
   Volume2, 
   VolumeX, 
-  Sparkles, 
-  X, 
-  Send, 
-  Languages, 
-  Pause,
-  Loader2,
-  Mic,
-  MicOff,
-  Zap,
-  Activity,
-  Maximize2,
-  ChevronDown
+  Mic, 
+  MicOff, 
+  Trash2,
+  Sliders
 } from 'lucide-react';
-import { JARVIS_SYSTEM_DATASET, getGroundedFallbackResponse } from '../data/jarvisDataset';
-
-// User-provided Gemini API key (supports Gemini_API_key and GEMINI_API_KEY from Vercel)
-const getApiKey = () => {
-  const env = (import.meta as any).env;
-  const envKey = env?.Gemini_API_key || env?.GEMINI_API_KEY || env?.VITE_GEMINI_API_KEY || env?.VITE_API_KEY;
-  if (envKey) return envKey;
-
-  try {
-    return atob('QVEuQWI4Uk42Sm5oalRrNVVZa3UwV0JtRjVIdUE0SlEyVzhnaDJJZHhUbXFKb0p4Y2hJVFE=');
-  } catch {
-    return '';
-  }
-};
+import { getGroundedFallbackResponse } from '../data/jarvisDataset';
 
 interface Message {
   sender: 'jarvis' | 'user';
   text: string;
+  timestamp: string;
+  error?: boolean;
 }
 
 interface LanguageOption {
   code: string;
   name: string;
-  nativeName: string;
   speechCode: string;
 }
 
 const SUPPORTED_LANGUAGES: LanguageOption[] = [
-  { code: 'en', name: 'English', nativeName: 'English', speechCode: 'en-US' },
-  { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்', speechCode: 'ta-IN' },
-  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', speechCode: 'hi-IN' },
-  { code: 'te', name: 'Telugu', nativeName: 'తెలుగు', speechCode: 'te-IN' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español', speechCode: 'es-ES' },
-  { code: 'fr', name: 'French', nativeName: 'Français', speechCode: 'fr-FR' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch', speechCode: 'de-DE' },
-  { code: 'ja', name: 'Japanese', nativeName: '日本語', speechCode: 'ja-JP' },
+  { code: 'en', name: 'English', speechCode: 'en-US' },
+  { code: 'ta', name: 'Tamil', speechCode: 'ta-IN' },
+  { code: 'hi', name: 'Hindi', speechCode: 'hi-IN' },
+  { code: 'te', name: 'Telugu', speechCode: 'te-IN' },
+  { code: 'es', name: 'Spanish', speechCode: 'es-ES' },
+  { code: 'fr', name: 'French', speechCode: 'fr-FR' },
+  { code: 'de', name: 'German', speechCode: 'de-DE' },
+  { code: 'ja', name: 'Japanese', speechCode: 'ja-JP' },
+];
+
+const SUGGESTED_CHIPS = [
+  'Who is Priyanraj?',
+  'Show projects',
+  'Tell me about the triple degrees',
+  'How can I contact him?'
 ];
 
 export const AiVoiceAssistant: React.FC = () => {
@@ -59,32 +48,50 @@ export const AiVoiceAssistant: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [isListening, setIsListening] = useState(false);
+  const [voicePersona, setVoicePersona] = useState<'aizen' | 'jarvis'>('aizen'); // User requested Aizen / JARVIS voice
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageOption>(SUPPORTED_LANGUAGES[0]);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'jarvis',
-      text: `J.A.R.V.I.S. MARK-85 online. Systems diagnostic nominal: Amrita CCE, IIT Madras DS, and IIT Guwahati DSAI nodes verified. At your service, Sir. Ask me anything regarding Priyanraj's engineering projects, degrees, or experience!`,
-    },
+      text: "Greetings. I am J.A.R.V.I.S., operating with the calculated composure of Sōsuke Aizen and the loyalty of Stark Industries. How may I enlighten you regarding Mr. Priyanraj J's systems and research?",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
   ]);
 
-  const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
-  const chatScrollRef = useRef<HTMLDivElement | null>(null);
+  const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  // Auto-scroll chat to latest message
   useEffect(() => {
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
     }
   }, [messages, loading]);
 
+  // Global Keyboard shortcuts: '/' opens chat, 'Escape' closes chat
   useEffect(() => {
-    const handleOpenAi = () => setIsOpen(true);
-    window.addEventListener('open-ai-chat', handleOpenAi);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && !isOpen && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        setIsOpen(true);
+      } else if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleCustomOpen = () => setIsOpen(true);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('open-ai-chat', handleCustomOpen);
 
     return () => {
-      window.removeEventListener('open-ai-chat', handleOpenAi);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('open-ai-chat', handleCustomOpen);
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
@@ -92,20 +99,55 @@ export const AiVoiceAssistant: React.FC = () => {
         recognitionRef.current.stop();
       }
     };
-  }, []);
+  }, [isOpen]);
 
+  const stopSpeaking = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  };
+
+  // Focus input when opened
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } else {
+      stopSpeaking();
+    }
+  }, [isOpen]);
+
+  // Speech Synthesis with Aizen & Original J.A.R.V.I.S. persona voice tuning
   const speakText = (text: string, langCode: string) => {
     if (!voiceEnabled || !('speechSynthesis' in window)) return;
-    
+
     window.speechSynthesis.cancel();
     const cleanText = text.replace(/[*#_`]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = langCode;
-    utterance.rate = 1.05;
-    utterance.pitch = 0.95;
+
+    // Apply voice persona settings
+    if (voicePersona === 'aizen') {
+      // Sōsuke Aizen: deep, calm, hypnotic, measured aristocratic cadence
+      utterance.pitch = 0.82;
+      utterance.rate = 0.90;
+    } else {
+      // Original J.A.R.V.I.S.: crisp, articulate, slightly faster British wit
+      utterance.pitch = 0.94;
+      utterance.rate = 1.02;
+    }
 
     const voices = window.speechSynthesis.getVoices();
-    const matchVoice = voices.find(v => v.lang.startsWith(langCode.split('-')[0]));
+    // Prefer British English, deep male voices or natural voices
+    const matchVoice = voices.find(v => 
+      v.name.includes('UK English Male') || 
+      v.name.includes('George') || 
+      v.name.includes('Daniel') || 
+      v.name.includes('Alex') || 
+      v.name.includes('Oliver') ||
+      (v.lang.startsWith(langCode.split('-')[0]) && v.name.toLowerCase().includes('male'))
+    ) || voices.find(v => v.lang.startsWith(langCode.split('-')[0]));
+
     if (matchVoice) {
       utterance.voice = matchVoice;
     }
@@ -118,14 +160,7 @@ export const AiVoiceAssistant: React.FC = () => {
     window.speechSynthesis.speak(utterance);
   };
 
-  const stopSpeaking = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
-  };
-
-  // Web Speech API Voice Recognition
+  // Web Speech Microphone Recognition
   const toggleListening = () => {
     if (isListening) {
       if (recognitionRef.current) recognitionRef.current.stop();
@@ -135,7 +170,8 @@ export const AiVoiceAssistant: React.FC = () => {
 
     const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRec) {
-      alert("Speech recognition is supported in Chrome and Edge.");
+      setErrorMessage("Speech recognition is supported in Chrome, Edge, and Safari.");
+      setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
 
@@ -150,7 +186,7 @@ export const AiVoiceAssistant: React.FC = () => {
       recognition.onerror = () => setIsListening(false);
 
       recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
+        const transcript = event.results?.[0]?.[0]?.transcript;
         if (transcript) {
           setInputMessage(transcript);
           handleSend(transcript);
@@ -164,92 +200,75 @@ export const AiVoiceAssistant: React.FC = () => {
     }
   };
 
-  const buildSystemContext = (targetLang: string) => {
-    return `${JARVIS_SYSTEM_DATASET}
-CURRENT CONTEXT & INSTRUCTIONS:
-- Target Language: ${targetLang}. All conversational outputs MUST be delivered in ${targetLang}.
-- Persona: J.A.R.V.I.S. (polite, intelligent, authoritative, technically exhaustive).
-- If the visitor asks "say about this guy", "who is this guy", "who is he", "tell me about him", explain Mr. Priyanraj J with utmost elegance and detail.
-`;
-  };
-
+  // Dispatch message via Vercel /api/chat with fallback
   const handleSend = async (customQuery?: string) => {
     const query = (customQuery || inputMessage).trim();
     if (!query || loading) return;
 
-    const newMessages: Message[] = [...messages, { sender: 'user', text: query }];
-    setMessages(newMessages);
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const userMsg: Message = { sender: 'user', text: query, timestamp: timeStr };
+    setMessages(prev => [...prev, userMsg]);
     setInputMessage('');
     setLoading(true);
+    setErrorMessage(null);
 
     try {
-      const systemPrompt = buildSystemContext(selectedLanguage.name);
       let aiReply = '';
 
-      // 1. Check if hosted on Vercel with /api/chat serverless route
+      // 1. Primary secure call to /api/chat serverless route
       try {
-        const vercelRes = await fetch('./api/chat', {
+        const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, systemPrompt, language: selectedLanguage.code })
+          body: JSON.stringify({
+            message: query,
+            history: messages.slice(-8).map(m => ({
+              role: m.sender === 'user' ? 'user' : 'model',
+              text: m.text
+            })),
+            language: selectedLanguage.name
+          })
         });
-        if (vercelRes.ok) {
-          const vData = await vercelRes.json();
-          if (vData?.reply) {
-            aiReply = vData.reply;
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.reply) {
+            aiReply = data.reply;
           }
+        } else if (res.status === 429) {
+          const errData = await res.json();
+          aiReply = errData.error || "Rate limit reached. Please allow J.A.R.V.I.S. a 60-second recharge period.";
         }
-      } catch {
-        // Fall through to client API or local grounded engine
+      } catch (netErr) {
+        console.warn("Direct /api/chat unreachable, activating offline intelligence node:", netErr);
       }
 
-      // 2. Direct client Google Gemini 2.0 Flash call if API key exists
-      if (!aiReply) {
-        const apiKey = getApiKey();
-        if (apiKey) {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-          const payload = {
-            systemInstruction: {
-              parts: [{ text: systemPrompt }]
-            },
-            contents: [
-              {
-                role: 'user',
-                parts: [{ text: query }]
-              }
-            ],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 2048
-            }
-          };
-
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          }
-        }
-      }
-
-      // 3. Multi-tier grounded knowledge engine fallback (instant, adblocker-proof)
+      // 2. Offline / Grounded Dataset Fallback
       if (!aiReply) {
         aiReply = getGroundedFallbackResponse(query, selectedLanguage.code);
       }
 
-      setMessages(prev => [...prev, { sender: 'jarvis', text: aiReply }]);
+      const botMsg: Message = {
+        sender: 'jarvis',
+        text: aiReply,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, botMsg]);
+
       if (voiceEnabled) {
         speakText(aiReply, selectedLanguage.speechCode);
       }
-    } catch (err) {
-      console.warn("Falling back to local grounded knowledge engine:", err);
+    } catch (_err: unknown) {
       const fallback = getGroundedFallbackResponse(query, selectedLanguage.code);
-      setMessages(prev => [...prev, { sender: 'jarvis', text: fallback }]);
+      setMessages(prev => [
+        ...prev,
+        {
+          sender: 'jarvis',
+          text: fallback,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          error: true
+        }
+      ]);
       if (voiceEnabled) {
         speakText(fallback, selectedLanguage.speechCode);
       }
@@ -258,235 +277,248 @@ CURRENT CONTEXT & INSTRUCTIONS:
     }
   };
 
-  const triggerVoiceBriefing = () => {
-    let briefingText = `J.A.R.V.I.S. protocol active. Diagnostic report for Mr. Priyanraj J: Concurrently enrolled in B.Tech CCE at Amrita Vishwa Vidyapeetham Chennai, alongside dual BS degrees in Data Science at IIT Madras and IIT Guwahati. He serves as Webmaster for the IEEE Amrita Chennai Student Branch and has engineered real-world production architectures including Canopy for satellite vegetation monitoring, the AI-DAX Lite LinUCB process scheduler, and Bluetooth proximity platforms. He possesses 11 verified licenses including Oracle and Google Cloud Generative AI. All systems operate at peak efficiency, Sir.`;
-
-    if (selectedLanguage.code === 'ta') {
-      briefingText = `ஜார்விஸ் வாய்ஸ் அறிக்கை: பிரியன்ராஜ் ஜெ அம்ரிதா விஸ்வ வித்யாபீடத்தில் சிசிஇ பி.டெக் படிப்பதுடன், ஐஐடி மெட்ராஸ் மற்றும் ஐஐடி குவஹாட்டியில் தரவு அறிவியல் படிப்புகளையும் பயின்று வருகிறார். ஐஇஇஇ அம்ரிதா சென்னையின் வெப்மாஸ்டராகப் பணியாற்றி, கேனோபி மற்றும் ஓஎஸ் திட்டங்களை வடிவமைத்துள்ளார். அனைத்து அமைப்புகளும் சிறப்பாக செயல்படுகின்றன, ஐயா.`;
-    } else if (selectedLanguage.code === 'hi') {
-      briefingText = `जार्विस वॉइस ब्रीफिंग: प्रियनराज जे अमृता विश्व विद्यापीठम चेन्नई में इंजीनियरिंग के छात्र हैं, और आईआईटी मद्रास तथा आईआईटी गुवाहाटी से बीएस डेटा साइंस की पढ़ाई कर रहे हैं। वह आईईईई अमृता चेन्नई के वेबमास्टर हैं और कैनोपी तथा ओएस शेड्यूलर जैसी वास्तविक प्रणालियों का निर्माण किया है।`;
-    }
-
-    if (isSpeaking) {
-      stopSpeaking();
-    } else {
-      speakText(briefingText, selectedLanguage.speechCode);
-    }
+  const clearChat = () => {
+    stopSpeaking();
+    setMessages([
+      {
+        sender: 'jarvis',
+        text: "Neural memory buffer reset. How may I assist you further, Sir?",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }
+    ]);
   };
 
   return (
     <>
-      {/* Floating Stark Arc Reactor Trigger with Gold Theme */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5">
-        
-        {/* Quick Voice Briefing Button */}
-        <button
-          onClick={triggerVoiceBriefing}
-          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-full shadow-2xl transition-all duration-300 font-mono text-xs border ${
-            isSpeaking 
-              ? 'bg-rose-500 text-white border-rose-400 animate-pulse' 
-              : 'bg-[#10121a]/95 hover:bg-[#1c2030] text-amber-300 border-amber-400/35 backdrop-blur-md shadow-lg shadow-black/60'
-          }`}
-          title="Play J.A.R.V.I.S. voice briefing in selected language"
-          aria-label="Play voice briefing"
-        >
-          {isSpeaking ? <Pause className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
-          <span className="hidden sm:inline font-semibold">{isSpeaking ? 'Pause Audio' : `Voice Briefing (${selectedLanguage.nativeName})`}</span>
-        </button>
+      {/* Floating Arc Reactor Launcher Button at bottom-right (Section 8.1) */}
+      {!isOpen && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#10121a]/95 hover:bg-[#171a25] border border-[#ffb703]/40 text-[#ffb703] shadow-2xl shadow-[#ffb703]/20 backdrop-blur-xl transition-all duration-300 transform hover:scale-105 focus:outline-none"
+            aria-label="Open J.A.R.V.I.S. AI Assistant (Shortcut: /)"
+            title="Open J.A.R.V.I.S. (Press /)"
+          >
+            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#ffb703] to-[#ff6b35] flex items-center justify-center p-0.5 shadow-md shadow-[#ffb703]/40">
+              <Bot className="w-4 h-4 text-[#07080d]" />
+            </div>
+            <span className="font-mono font-bold text-xs tracking-wider text-[#f4f1ea] group-hover:text-[#ffb703] transition-colors">
+              J.A.R.V.I.S.
+            </span>
+            <span className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white/[0.08] text-[10px] font-mono text-[#9a9aa8]">
+              /
+            </span>
+            <span className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse" />
+          </button>
+        </div>
+      )}
 
-        {/* J.A.R.V.I.S. Arc Reactor Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="relative p-2 rounded-full bg-[#07080d] border-2 border-amber-400 shadow-[0_0_25px_rgba(255,183,3,0.35)] transition-all hover:scale-110 group cursor-pointer"
-          aria-label="Toggle J.A.R.V.I.S. Stark AI Assistant"
-          title="Open J.A.R.V.I.S. Stark AI Assistant"
-        >
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-black flex items-center justify-center">
-            <img
-              src="./jarvis-core.png"
-              alt="J.A.R.V.I.S. Arc Reactor Core"
-              className="w-full h-full object-cover animate-spin group-hover:scale-110 transition-transform"
-              style={{ animationDuration: '20s' }}
-            />
-          </div>
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#07080d] animate-pulse"></span>
-        </button>
-      </div>
-
-      {/* J.A.R.V.I.S. Holographic Drawer Modal with Gold/Obsidian Theme */}
+      {/* Floating J.A.R.V.I.S. Dialog Panel (Desktop floating / Mobile full-screen) */}
       {isOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-[94vw] sm:w-[460px] max-h-[640px] rounded-3xl bg-[#07080d]/95 border-2 border-amber-400/35 shadow-[0_0_60px_rgba(255,183,3,0.18)] flex flex-col overflow-hidden backdrop-blur-2xl">
-          
-          {/* Stark Industries HUD Header */}
-          <div className="px-5 py-4 bg-gradient-to-r from-[#10121a]/95 via-[#1a1816]/70 to-[#10121a]/95 border-b border-amber-400/25 flex items-center justify-between">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="J.A.R.V.I.S. AI Chat"
+          className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[440px] sm:h-[640px] z-50 flex flex-col bg-[#07080d] sm:bg-[#10121a]/95 sm:backdrop-blur-2xl border sm:border-white/[0.12] sm:rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        >
+          {/* Header */}
+          <div className="p-4 border-b border-white/[0.08] bg-[#10121a] flex items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border-2 border-amber-400 p-0.5 shadow-[0_0_15px_rgba(255,183,3,0.5)] overflow-hidden bg-black">
-                <img
-                  src="./jarvis-core.png"
-                  alt="J.A.R.V.I.S. Core"
-                  className="w-full h-full object-cover animate-spin"
-                  style={{ animationDuration: '24s' }}
-                />
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#ffb703] via-[#ff6b35] to-[#ffb703] flex items-center justify-center shadow-lg shadow-[#ffb703]/25 shrink-0">
+                <Bot className="w-5 h-5 text-[#07080d]" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-white font-mono tracking-wider flex items-center gap-1.5">
-                  J.A.R.V.I.S. <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-400/40 text-amber-300 font-bold">MARK-85</span>
-                </h4>
-                <p className="text-[10px] font-mono text-amber-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                  STARK AI PROTOCOL • ONLINE
-                </p>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-heading font-bold text-sm text-[#f4f1ea]">
+                    J.A.R.V.I.S.
+                  </h3>
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[#34d399]/15 text-[#34d399]">
+                    Online
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-[#9a9aa8] block">
+                  Persona: {voicePersona === 'aizen' ? 'Sōsuke Aizen' : 'Classic Stark AI'}
+                </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            {/* Actions: Persona Toggle, Mute, Clear, Close */}
+            <div className="flex items-center gap-1">
               <button
-                onClick={() => {
-                  if (voiceEnabled) stopSpeaking();
-                  setVoiceEnabled(!voiceEnabled);
-                }}
-                className="p-1.5 rounded-lg text-[#9a9aa8] hover:text-[#f4f1ea] hover:bg-[#141722] transition"
-                title={voiceEnabled ? 'Mute AI voice' : 'Enable AI voice'}
-                aria-label="Toggle voice"
+                onClick={() => setVoicePersona(p => p === 'aizen' ? 'jarvis' : 'aizen')}
+                className="p-2 rounded-lg text-[#9a9aa8] hover:text-[#ffb703] hover:bg-white/[0.06] transition text-xs font-mono"
+                title={`Toggle Persona (Current: ${voicePersona === 'aizen' ? 'Aizen Voice' : 'JARVIS Voice'})`}
+                aria-label="Toggle AI Persona"
               >
-                {voiceEnabled ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4 text-rose-400" />}
+                <Sliders className="w-4 h-4" />
               </button>
+
               <button
-                onClick={() => {
-                  stopSpeaking();
-                  setIsOpen(false);
-                }}
-                className="p-1.5 rounded-lg text-[#9a9aa8] hover:text-white hover:bg-[#141722] transition"
-                title="Close J.A.R.V.I.S."
-                aria-label="Close J.A.R.V.I.S."
+                onClick={() => setVoiceEnabled(!voiceEnabled)}
+                className={`p-2 rounded-lg transition ${
+                  voiceEnabled ? 'text-[#ffb703] hover:bg-white/[0.06]' : 'text-[#6b6b7a] hover:bg-white/[0.06]'
+                }`}
+                title={voiceEnabled ? 'Mute Speech Output' : 'Unmute Speech Output'}
+                aria-label={voiceEnabled ? 'Mute voice' : 'Unmute voice'}
               >
-                <X className="w-4 h-4" />
+                {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              </button>
+
+              <button
+                onClick={clearChat}
+                className="p-2 rounded-lg text-[#9a9aa8] hover:text-[#ff6b35] hover:bg-white/[0.06] transition"
+                title="Clear Chat History"
+                aria-label="Clear chat"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-2 rounded-lg text-[#9a9aa8] hover:text-[#f4f1ea] hover:bg-white/[0.06] transition"
+                title="Close J.A.R.V.I.S. (ESC)"
+                aria-label="Close dialog"
+              >
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-          {/* Language Selector Bar */}
-          <div className="px-4 py-2 bg-[#10121a]/70 border-b border-white/5 flex items-center justify-between text-xs">
-            <span className="text-[#9a9aa8] font-mono flex items-center gap-1.5 text-[11px]">
-              <Languages className="w-3.5 h-3.5 text-amber-400" />
-              Language:
-            </span>
-            <select
-              value={selectedLanguage.code}
-              onChange={(e) => {
-                const found = SUPPORTED_LANGUAGES.find(l => l.code === e.target.value);
-                if (found) setSelectedLanguage(found);
-              }}
-              className="bg-[#141722] text-amber-300 font-mono text-xs px-2.5 py-1 rounded-lg border border-amber-400/30 outline-none focus:border-amber-400 cursor-pointer"
-            >
-              {SUPPORTED_LANGUAGES.map(lang => (
-                <option key={lang.code} value={lang.code}>
-                  {lang.nativeName} ({lang.name})
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* Error Banner */}
+          {errorMessage && (
+            <div className="px-4 py-2 bg-rose-500/15 border-b border-rose-500/30 text-rose-300 text-xs font-mono flex items-center justify-between">
+              <span>{errorMessage}</span>
+              <button onClick={() => setErrorMessage(null)} className="text-rose-400">✕</button>
+            </div>
+          )}
 
-          {/* Quick Questions Chips */}
-          <div className="px-4 py-2 bg-[#10121a]/40 border-b border-white/5 flex items-center gap-1.5 overflow-x-auto text-[11px] font-mono text-[#9a9aa8]">
-            {[
-              'Say about this guy',
-              'Who is Priyanraj?',
-              'Triple Degrees status',
-              'Canopy Satellite system',
-              '11 Verified Licenses',
-              'OS LinUCB Capstone'
-            ].map((q) => (
-              <button
-                key={q}
-                onClick={() => handleSend(q)}
-                disabled={loading}
-                className="px-2.5 py-1 rounded bg-[#141722] hover:bg-amber-500/20 hover:text-amber-300 hover:border-amber-400/40 whitespace-nowrap border border-white/8 transition"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-
-          {/* Chat Messages */}
-          <div ref={chatScrollRef} className="p-4 flex-1 overflow-y-auto space-y-3.5 text-xs font-mono">
+          {/* Messages Scroll Area */}
+          <div 
+            ref={chatScrollRef} 
+            className="flex-1 p-4 overflow-y-auto space-y-3 font-mono text-xs"
+            aria-live="polite"
+          >
             {messages.map((m, idx) => (
               <div
                 key={idx}
-                className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
+                <div className="flex items-center gap-1.5 mb-1 px-1">
+                  <span className="text-[10px] text-[#9a9aa8]">
+                    {m.sender === 'user' ? 'You' : 'J.A.R.V.I.S.'}
+                  </span>
+                  <span className="text-[9px] text-[#6b6b7a]">
+                    {m.timestamp}
+                  </span>
+                </div>
+
                 <div
-                  className={`max-w-[88%] rounded-2xl p-3 leading-relaxed ${
+                  className={`p-3 rounded-2xl max-w-[85%] leading-relaxed ${
                     m.sender === 'user'
-                      ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none shadow-md shadow-amber-500/10'
-                      : 'bg-[#10121a] text-[#f4f1ea] border border-white/10 rounded-tl-none shadow-[0_0_20px_rgba(0,0,0,0.5)]'
+                      ? 'bg-[#ffb703] text-[#07080d] font-medium rounded-tr-none shadow-md'
+                      : 'bg-[#171a25] text-[#f4f1ea] border border-white/[0.08] rounded-tl-none shadow-sm'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`text-[10px] font-bold ${m.sender === 'user' ? 'text-slate-950' : 'text-amber-400'}`}>
-                      {m.sender === 'user' ? 'YOU:' : 'J.A.R.V.I.S.:'}
-                    </span>
-                    {m.sender === 'jarvis' && (
-                      <button
-                        onClick={() => speakText(m.text, selectedLanguage.speechCode)}
-                        className="text-[#9a9aa8] hover:text-amber-400 p-0.5"
-                        title="Read aloud"
-                        aria-label="Read text aloud"
-                      >
-                        <Volume2 className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                  <p className="whitespace-pre-wrap leading-relaxed">{m.text}</p>
+                  <p className="whitespace-pre-wrap">{m.text}</p>
                 </div>
               </div>
             ))}
+
+            {/* Typing / Thinking Indicator */}
             {loading && (
-              <div className="flex justify-start">
-                <div className="bg-[#10121a] text-amber-300 border border-amber-400/25 rounded-2xl p-3 flex items-center gap-2">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
-                  <span>J.A.R.V.I.S. is synthesizing telemetry in {selectedLanguage.nativeName}...</span>
-                </div>
+              <div className="flex items-center gap-2 p-3 rounded-2xl bg-[#171a25] text-[#ffb703] border border-white/[0.08] max-w-[80px]">
+                <span className="w-2 h-2 rounded-full bg-[#ffb703] animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 rounded-full bg-[#ffb703] animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 rounded-full bg-[#ffb703] animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             )}
           </div>
 
-          {/* Input Box with Microphone Voice Input */}
-          <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 bg-[#10121a]/95 border-t border-amber-400/20 flex items-center gap-2">
-            <input
-              type="text"
-              value={inputMessage}
-              disabled={loading}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder={`Ask in ${selectedLanguage.nativeName} (e.g. "say about this guy")...`}
-              className="flex-1 px-3.5 py-2 rounded-xl bg-[#07080d] border border-white/10 text-xs text-[#f4f1ea] placeholder-[#6b6b7a] focus:outline-none focus:border-amber-400 font-mono"
-            />
+          {/* Suggested Question Chips (Section 8.2) */}
+          <div className="px-4 py-2 border-t border-white/[0.06] bg-[#07080d]/60 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+            {SUGGESTED_CHIPS.map((chip, cIdx) => (
+              <button
+                key={cIdx}
+                onClick={() => handleSend(chip)}
+                disabled={loading}
+                className="px-2.5 py-1 rounded-full bg-[#171a25] hover:bg-[#202535] border border-white/[0.08] hover:border-[#ffb703]/30 text-[11px] font-mono text-[#9a9aa8] hover:text-[#f4f1ea] whitespace-nowrap transition shrink-0"
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
 
-            {/* Voice Input Button */}
-            <button
-              type="button"
-              onClick={toggleListening}
-              className={`p-2 rounded-xl border transition ${
-                isListening
-                  ? 'bg-rose-500 text-white border-rose-400 animate-pulse'
-                  : 'bg-[#141722] text-amber-400 border-white/10 hover:border-amber-400/40'
-              }`}
-              title={isListening ? "Listening... Click to stop" : "Speak to J.A.R.V.I.S."}
-              aria-label="Microphone speech input"
-            >
-              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-            </button>
+          {/* Input & Voice Controls Footer */}
+          <div className="p-3 border-t border-white/[0.08] bg-[#10121a] shrink-0">
+            <div className="flex items-center gap-2 mb-2">
+              {/* Language Selector (8 languages preserved) */}
+              <select
+                value={selectedLanguage.code}
+                onChange={(e) => {
+                  const found = SUPPORTED_LANGUAGES.find(l => l.code === e.target.value);
+                  if (found) setSelectedLanguage(found);
+                }}
+                className="px-2 py-1 rounded-md bg-[#171a25] border border-white/[0.08] text-[11px] font-mono text-[#9a9aa8] focus:outline-none focus:border-[#ffb703]"
+                aria-label="Language Selector"
+              >
+                {SUPPORTED_LANGUAGES.map(lang => (
+                  <option key={lang.code} value={lang.code}>{lang.name}</option>
+                ))}
+              </select>
 
-            {/* Send Button */}
-            <button
-              type="submit"
-              disabled={loading || !inputMessage.trim()}
-              className="p-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 font-bold transition shadow-md disabled:opacity-50"
-              aria-label="Send message"
+              {/* Persona Pill Indicator */}
+              <button
+                onClick={() => setVoicePersona(p => p === 'aizen' ? 'jarvis' : 'aizen')}
+                className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#171a25] border border-white/[0.08] text-[#ffb703] hover:border-[#ffb703]/40 transition"
+              >
+                Voice: {voicePersona === 'aizen' ? 'Aizen' : 'J.A.R.V.I.S.'}
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="flex items-center gap-2"
             >
-              <Send className="w-4 h-4" />
-            </button>
-          </form>
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Ask J.A.R.V.I.S. anything..."
+                disabled={loading}
+                className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#07080d] border border-white/10 text-white placeholder-[#9a9aa8]/40 text-sm font-mono focus:outline-none focus:border-[#ffb703] transition"
+                aria-label="Ask J.A.R.V.I.S. anything"
+              />
+
+              {/* Microphone Toggle (Visible idle/listening state) */}
+              <button
+                type="button"
+                onClick={toggleListening}
+                className={`p-2.5 rounded-xl border transition ${
+                  isListening
+                    ? 'bg-rose-500/20 text-rose-400 border-rose-500 animate-pulse'
+                    : 'bg-[#171a25] text-[#ffb703] border-white/10 hover:border-[#ffb703]/40'
+                }`}
+                title={isListening ? 'Stop listening' : 'Start microphone speech input'}
+                aria-label={isListening ? 'Stop microphone' : 'Start microphone'}
+              >
+                {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              </button>
+
+              {/* Send Button */}
+              <button
+                type="submit"
+                disabled={!inputMessage.trim() || loading}
+                className="p-2.5 rounded-xl bg-[#ffb703] hover:bg-[#ffc42e] disabled:opacity-40 text-[#07080d] transition font-bold"
+                aria-label="Send message"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </form>
+          </div>
 
         </div>
       )}

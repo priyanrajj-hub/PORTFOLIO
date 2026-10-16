@@ -26,12 +26,12 @@ export const InteractiveBannerCard: React.FC = () => {
             <div className="relative group">
               <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-full overflow-hidden border-4 border-amber-400/80 shadow-[0_0_35px_rgba(255,183,3,0.3)] bg-[#07080d] p-1">
                 <img
-                  src="./profile.jpg"
+                  src="./profile.webp"
                   alt={PERSONAL_INFO.name}
                   className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = './profile.webp';
-                  }}
+                  width="208"
+                  height="208"
+                  loading="lazy"
                 />
               </div>
               <div className="absolute bottom-2 right-4 px-3 py-1 rounded-full bg-[#07080d]/90 border border-amber-400/50 text-[11px] font-mono text-emerald-400 font-bold shadow-lg flex items-center gap-1.5">

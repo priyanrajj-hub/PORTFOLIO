@@ -7,7 +7,6 @@ export const PERSONAL_INFO = {
   institutionPrimary: 'Amrita Vishwa Vidyapeetham',
   campus: 'Chennai Campus',
   department: 'Computer and Communication Engineering (CCE)',
-  rollNumber: 'CH.EN.U4CCE25020',
   location: 'Tiruvallur, Tamil Nadu, India',
   connections: '500+ connections',
   targetHorizon: '2025 – 2029',
@@ -33,9 +32,9 @@ export const PERSONAL_INFO = {
     { label: 'Active Projects', value: '18+ Repos' },
   ],
   specs: [
-    { label: 'Hardware Rig', value: 'ASUS TUF Gaming Laptop' },
-    { label: 'CPU Architecture', value: 'Intel Core i7 High-Performance' },
-    { label: 'GPU Accelerator', value: 'NVIDIA GeForce RTX 5060' },
+    { label: 'Hardware Rig', value: 'ASUS TUF Workstation' },
+    { label: 'CPU Architecture', value: 'Intel Core i7 HX Series' },
+    { label: 'GPU Accelerator', value: 'NVIDIA Dedicated GPU' },
     { label: 'Node Coordinate', value: 'Tiruvallur, Tamil Nadu (UTC +5:30)' },
   ],
 };
@@ -210,7 +209,7 @@ export const EDUCATION_DATA: EducationItem[] = [
     status: 'In Progress • II nd Year',
     badge: 'Primary Engineering Degree',
     highlights: [
-      'Roll Number: CH.EN.U4CCE25020',
+      'Undergraduate Engineering Scholar (CCE 2025–2029)',
       'Elected Webmaster of IEEE Amrita Chennai Student Branch',
       'Active leadership in CAMHI and DREAM technical societies',
       'Competed in B.Tech Research Expo 23 (Graph-theoretic Friend Recommendation) & Capstone OS',
