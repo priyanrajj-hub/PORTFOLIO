@@ -18,8 +18,11 @@ import {
 } from 'lucide-react';
 import { JARVIS_SYSTEM_DATASET } from '../data/jarvisDataset';
 
-// User-provided Gemini API key (decoded at runtime)
+// User-provided Gemini API key (supports Vercel env variable VITE_GEMINI_API_KEY with decoded fallback)
 const getApiKey = () => {
+  const envKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_API_KEY;
+  if (envKey) return envKey;
+
   try {
     return atob('QVEuQWI4Uk42Sm5oalRrNVVZa3UwV0JtRjVIdUE0SlEyVzhnaDJJZHhUbXFKb0p4Y2hJVFE=');
   } catch {
