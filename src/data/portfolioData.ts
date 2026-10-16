@@ -1,0 +1,197 @@
+import type { Project, Certification, RoadmapItem, EducationItem } from '../types';
+
+export const PERSONAL_INFO = {
+  name: 'Priyanraj J',
+  role: 'AI Researcher & Embedded Systems Engineer',
+  institutionPrimary: 'Amrita Vishwa Vidyapeetham',
+  campus: 'Chennai Campus',
+  department: 'Computer and Communication Engineering (CCE)',
+  rollNumber: 'CH.EN.U4CCE25020',
+  location: 'Tamil Nadu, India',
+  targetHorizon: '2025 – 2029',
+  bio: 'First-year undergraduate building at the intersection of Neuromorphic AI, Edge Machine Learning, and Embedded Cryptographic hardware. Currently pursuing triple-academic tracks across Amrita, IIT Madras, and IIT Guwahati to form a world-class interdisciplinary foundation.',
+  quote: '"Exploring multiple domains and building a strong interdisciplinary foundation before specializing."',
+  links: {
+    github: 'https://github.com/priyanrajj-hub',
+    linkedin: 'https://www.linkedin.com/in/priyanraj',
+    instagram: 'https://www.instagram.com/priyanraj.j', // from screenshot: @priyanraj.j
+    whatsapp: 'https://wa.me/917810012708',
+    email: 'priyanrajj@gmail.com',
+    leetcode: 'https://leetcode.com/PRIYANRAJ',
+    reddit: 'https://reddit.com/u/BatConfident4079',
+  },
+  stats: [
+    { label: 'Academic Programs', value: '3' },
+    { label: 'Active Projects', value: '18+' },
+    { label: 'LeetCode Solved', value: '100+' },
+    { label: 'System Uptime', value: '99.9%' },
+  ],
+  specs: [
+    { label: 'Hardware Rig', value: 'ASUS TUF Gaming Premium Architecture' },
+    { label: 'Processor', value: 'Intel Core i7 High-Performance HX Series' },
+    { label: 'GPU Accelerator', value: 'NVIDIA GeForce RTX 5060' },
+    { label: 'Primary Node', value: 'Tamil Nadu, India (UTC +5:30)' },
+  ],
+};
+
+export const EDUCATION_DATA: EducationItem[] = [
+  {
+    degree: 'B.Tech in Computer & Communication Engineering (CCE)',
+    institution: 'Amrita Vishwa Vidyapeetham',
+    specialization: 'Core Systems, Telecommunications, Embedded C/C++, Network Security',
+    status: '2025 – 2029 • First Year',
+    highlights: ['Focusing on Embedded Cryptography and Hardware Safe-states', 'Active IEEE Engineering Network Member'],
+  },
+  {
+    degree: 'BS in Data Science & Applications',
+    institution: 'IIT Madras',
+    specialization: 'Advanced Statistical Foundations, Large-Scale Data Modeling, Algorithmic Analysis',
+    status: 'Concurrent Degree Track',
+    highlights: ['IIT Madras Online Degree Framework', 'Mathematical Modeling & Data Engineering'],
+  },
+  {
+    degree: 'BS in Data Science & Artificial Intelligence (DSAI)',
+    institution: 'IIT Guwahati',
+    specialization: 'Neural Architecture, Machine Intelligence, Deep Learning Optimization',
+    status: 'Concurrent Degree Track',
+    highlights: ['IIT Guwahati Core DSAI Track', 'Exploration of Neuromorphic Computing'],
+  },
+];
+
+export const PROJECTS_DATA: Project[] = [
+  {
+    id: 'proj-1',
+    tag: 'SYS_NODE//01',
+    title: 'Pharmaceutical Evergreening Detection Engine',
+    category: 'Software Systems',
+    description: 'High-complexity computational engine written in structural C. Detects intellectual property patent extensions and anticompetitive evergreen patterns utilizing optimized Levenshtein edit distance algorithms, customized struct-based database records, binary file I/O operations, and dynamic categorical table visualization grids designed for B.Tech Project Expo standards.',
+    technologies: ['C (Strict ANSI)', 'Levenshtein Metric', 'Binary I/O', 'Patent Data Analytics'],
+    metrics: ['Sub-millisecond Patent Matching', '100% Binary Serialized DB', 'B.Tech Expo Finalist'],
+    status: 'Production',
+    githubUrl: 'https://github.com/priyanrajj-hub/PORTFOLIO',
+  },
+  {
+    id: 'proj-2',
+    tag: 'SYS_NODE//02',
+    title: 'Smart Autonomous Patrol Robot Architecture',
+    category: 'Embedded / IoT',
+    description: 'Autonomous tracking robotics platform engineered with hardware safe-states. Integrates real-time ultrasonic distance sensor arrays for obstacle avoidance, hazardous gas/smoke intelligence parsing, specialized step-down buck converters, a dedicated safety power switch, and an on-board MicroSD card module for stable telemetry data logging.',
+    technologies: ['Embedded C', 'Arduino / ESP32', 'Ultrasonic Array', 'Gas Telemetry', 'MicroSD Logging'],
+    metrics: ['Real-time 20ms Loop Timing', 'Automated Gas Hazard Trigger', 'Hardware Safe-State Relay'],
+    status: 'Prototype',
+    githubUrl: 'https://github.com/priyanrajj-hub/ardiuno-and-canopy2',
+  },
+  {
+    id: 'proj-3',
+    tag: 'SYS_NODE//03',
+    title: 'Smart Plant Health Monitoring Using Solar Images',
+    category: 'AI / ML',
+    description: 'Computer vision framework analyzing vegetation wellness, multispectral solar image reflectance, and agricultural stress indicators. Generates real-time health indexes and anomaly detection heatmaps for precision agriculture.',
+    technologies: ['Python', 'Computer Vision', 'Solar Spectrum Analytics', 'Image Processing'],
+    metrics: ['Multispectral Normalized Difference', 'Automated Disease Pinpointing', 'MIT License'],
+    status: 'Research',
+    githubUrl: 'https://github.com/priyanrajj-hub/smart-plant-health-monitoring-using-solar-images',
+  },
+  {
+    id: 'proj-4',
+    tag: 'SYS_NODE//04',
+    title: 'Student Data Management Mainframe Engine',
+    category: 'Software Systems',
+    description: 'Clean command-line operational environment built in optimized Python 3. Evaluates class attendance records, calculates multi-tier academic performance ranking arrays, manages automated CSV data log stream exports, and handles redundant database validation checks tailored to curriculum specifications.',
+    technologies: ['Python 3', 'CLI Architecture', 'CSV Streaming', 'Data Lifecycle'],
+    metrics: ['Zero Dependency Core', 'Dynamic GPA/Attendance Matrix', 'Instant CSV Sync'],
+    status: 'Production',
+    githubUrl: 'https://github.com/priyanrajj-hub/student-management-system-python',
+  },
+  {
+    id: 'proj-5',
+    tag: 'SYS_NODE//05',
+    title: 'Operating System Project Capstone',
+    category: 'Software Systems',
+    description: 'Low-level systems capstone investigating CPU scheduling algorithms, page replacement mechanisms, memory allocation strategies, and multi-threaded synchronization primitives with benchmarking visualizations.',
+    technologies: ['C / C++', 'POSIX Threads', 'OS Kernel Principles', 'Memory Allocation'],
+    metrics: ['Round Robin & Priority Simulation', 'LRU Cache Simulation', 'Deadlock Avoidance'],
+    status: 'Research',
+    githubUrl: 'https://github.com/priyanrajj-hub/operatingsystemprojectcapstone',
+  },
+  {
+    id: 'proj-6',
+    tag: 'SYS_NODE//06',
+    title: 'MAOM Project 2 ADM Analytics',
+    category: 'AI / ML',
+    description: 'Advanced Data Mining and Mathematical Optimization modeling system applying statistical heuristics and linear programming to optimize decision variables in complex operational constraints.',
+    technologies: ['Python', 'Mathematical Optimization', 'Data Mining Heuristics', 'Pandas / NumPy'],
+    metrics: ['Constrained Optimization Solvers', 'Automated Heuristic Search'],
+    status: 'Production',
+    githubUrl: 'https://github.com/priyanrajj-hub/MAOM-PROJECT-2-ADM',
+  },
+];
+
+export const CERTIFICATIONS_DATA: Certification[] = [
+  {
+    id: 'cert-1',
+    title: 'The Joy of Computing Using Python — Core Track',
+    issuer: 'NPTEL Framework',
+    skills: ['Python 3 Core', 'Algorithmic Problem Solving', 'Computational Logic'],
+    type: 'Certification',
+  },
+  {
+    id: 'cert-2',
+    title: 'English Language for Competitive Exams — Advanced Module',
+    issuer: 'NPTEL Framework',
+    skills: ['Technical Documentation', 'Verbal Reasoning', 'Professional Communication'],
+    type: 'Course',
+  },
+  {
+    id: 'cert-3',
+    title: 'Computational Problem Solving & Algorithmic Optimization',
+    issuer: 'Infosys Platform',
+    skills: ['Data Structures', 'Time Complexity Analysis', 'Greedy & Dynamic Paradigms'],
+    type: 'Certification',
+  },
+  {
+    id: 'cert-4',
+    title: 'BS DSAI Intensive Core Orientation Token',
+    issuer: 'IIT Guwahati',
+    skills: ['Data Science Foundations', 'AI Ethics', 'Mathematical Foundations of AI'],
+    type: 'Course',
+  },
+  {
+    id: 'cert-5',
+    title: 'Active Global Research Engineering Network Member',
+    issuer: 'IEEE Global Node',
+    skills: ['IEEE Standards', 'Hardware Research', 'Global Technical Publications'],
+    type: 'Affiliation',
+  },
+];
+
+export const ROADMAP_DATA: RoadmapItem[] = [
+  {
+    quarter: 'Q2 2026',
+    title: 'Advanced Data Structures & Algorithmic Optimization',
+    details: 'Mastering advanced graphs, segment trees, trie structures, and algorithmic optimization on competitive platforms.',
+    progress: 85,
+    tags: ['Competitive Programming', 'LeetCode Grind', 'Graphs & DP'],
+  },
+  {
+    quarter: 'Q3 2026',
+    title: 'Deploy Neuromorphic & Edge Deep Learning Models',
+    details: 'Designing quantized neural network weights on microcontrollers and embedded accelerators for ultra-low power inference.',
+    progress: 45,
+    tags: ['TinyML', 'Edge AI', 'TensorFlow Lite Micro', 'ESP32-S3'],
+  },
+  {
+    quarter: 'Q4 2026',
+    title: 'Publish Cryptographic Open-Source Hardware Protocols',
+    details: 'Architecting fault-resistant cryptographic primitives for embedded microcontrollers and IoT secure element interfaces.',
+    progress: 20,
+    tags: ['Applied Cryptography', 'Rust for Embedded', 'Post-Quantum Primitives'],
+  },
+  {
+    quarter: 'CY 2027',
+    title: 'GATE CSE & Elite Engineering Target Architecture',
+    details: 'Exhaustive mastery across Computer Architecture, Operating Systems, Theory of Computation, and Compiler Design.',
+    progress: 10,
+    tags: ['GATE CSE Target', 'Core Systems', 'Compiler Theory'],
+  },
+];
